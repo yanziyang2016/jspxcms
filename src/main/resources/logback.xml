@@ -1,5 +1,7 @@
 
 
+
+
 <configuration>
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <file>logs/jspxcms_server.log</file>
