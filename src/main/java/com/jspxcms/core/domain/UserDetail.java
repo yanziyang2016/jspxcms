@@ -67,7 +67,10 @@ public class UserDetail implements java.io.Serializable {
 	private String qq;
 	private String msn;
 	private String weixin;
-
+	private String kaihu;
+	private String homeAddress;
+	private String accountName;
+	private String accountNo;
 	@Id
 	public Integer getId() {
 		return this.id;
@@ -253,5 +256,39 @@ public class UserDetail implements java.io.Serializable {
 	public void setWeixin(String weixin) {
 		this.weixin = weixin;
 	}
+	
+	@Column(name = "f_kaihu", length = 50)
+	public String getKaihu() {
+		return kaihu;
+	}
 
+	public void setKaihu(String kaihu) {
+		this.kaihu = kaihu;
+	}
+	@Column(name = "f_home_address", length = 50)
+	public String getHomeAddress() {
+		return homeAddress;
+	}
+
+	public void setHomeAddress(String homeAddress) {
+		this.homeAddress = homeAddress;
+	}
+	@Column(name = "f_account_name", length = 50)
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+	@Column(name = "f_account_no", length = 50)
+	public String getAccountNo() {
+		return accountNo;
+	}
+
+	public void setAccountNo(String accountNo) {
+		this.accountNo = accountNo;
+	}
+
+	
 }

@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +27,7 @@ import com.jspxcms.core.support.Context;
 import com.jspxcms.core.support.ForeContext;
 import com.jspxcms.core.support.Response;
 import com.jspxcms.core.support.SiteResolver;
+import com.jspxcms.core.web.back.UserController;
 
 /**
  * NodeController
@@ -34,9 +37,11 @@ import com.jspxcms.core.support.SiteResolver;
  */
 @Controller
 public class NodeController {
+	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 	@RequestMapping(value = { "/", "/index.jspx" })
 	public String index(HttpServletRequest request,
 			HttpServletResponse response, org.springframework.ui.Model modelMap) {
+		logger.info("NodeController---index---");
 		return index(null, request, response, modelMap);
 	}
 
@@ -44,6 +49,7 @@ public class NodeController {
 	public String index(@PathVariable String siteNumber,
 			HttpServletRequest request, HttpServletResponse response,
 			org.springframework.ui.Model modelMap) {
+		logger.info("NodeController---0000000000---");
 		siteResolver.resolveSite(siteNumber);
 		Site site = Context.getCurrentSite();
 		Response resp = new Response(request, response, modelMap);
@@ -67,6 +73,7 @@ public class NodeController {
 	@RequestMapping("/node/{id:[0-9]+}.jspx")
 	public String node(@PathVariable Integer id, HttpServletRequest request,
 			HttpServletResponse response, org.springframework.ui.Model modelMap) {
+		logger.info("NodeController---1---"+id);
 		return node(null, id, 1, request, response, modelMap);
 	}
 
@@ -74,6 +81,7 @@ public class NodeController {
 	public String node(@PathVariable String siteNumber,
 			@PathVariable Integer id, HttpServletRequest request,
 			HttpServletResponse response, org.springframework.ui.Model modelMap) {
+		logger.info("NodeController---2---"+id);
 		return node(siteNumber, id, 1, request, response, modelMap);
 	}
 
@@ -81,6 +89,7 @@ public class NodeController {
 	public String node(@PathVariable Integer id, @PathVariable Integer page,
 			HttpServletRequest request, HttpServletResponse response,
 			org.springframework.ui.Model modelMap) {
+		logger.info("NodeController---4---"+id);
 		return node(null, id, page, request, response, modelMap);
 	}
 
@@ -90,6 +99,7 @@ public class NodeController {
 			@PathVariable Integer id, @PathVariable Integer page,
 			HttpServletRequest request, HttpServletResponse response,
 			org.springframework.ui.Model modelMap) {
+		logger.info("NodeController---3---"+id);
 		Node node = query.get(id);
 		siteResolver.resolveSite(siteNumber, node);
 		Site site = Context.getCurrentSite();
@@ -124,6 +134,7 @@ public class NodeController {
 	@RequestMapping(value = { "/node_views/{id:[0-9]+}.jspx",
 			Constants.SITE_PREFIX_PATH + "/node_views/{id:[0-9]+}.jspx" })
 	public String views(@PathVariable Integer id) {
+		logger.info("NodeController---node_views---"+id);
 		return Integer.toString(bufferService.updateViews(id));
 	}
 

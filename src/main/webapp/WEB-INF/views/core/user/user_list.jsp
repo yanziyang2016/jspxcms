@@ -117,11 +117,12 @@ function optDeletePassword(form) {
       </select>
     </label>
 	  <label class="c-lab"><s:message code="user.status"/>:
-      <select name="search_EQ_status">
+      <select name="search_EQ_memStatus">
         <option value=""><s:message code="allSelect"/></option>
-        <option value="0"<c:if test="${'0' eq search_EQ_status[0]}"> selected="selected"</c:if>><s:message code="user.status.0"/></option>
-        <option value="1"<c:if test="${'1' eq search_EQ_status[0]}"> selected="selected"</c:if>><s:message code="user.status.1"/></option>
-        <option value="2"<c:if test="${'2' eq search_EQ_status[0]}"> selected="selected"</c:if>><s:message code="user.status.2"/></option>
+        <option value="0"<c:if test="${'0' eq search_EQ_memStatus[0]}"> selected="selected"</c:if>><s:message code="user.status.0"/></option>
+        <option value="3"<c:if test="${'3' eq search_EQ_memStatus[0]}"> selected="selected"</c:if>><s:message code="user.status.3"/></option>
+        <option value="4"<c:if test="${'4' eq search_EQ_memStatus[0]}"> selected="selected"</c:if>><s:message code="user.status.4"/></option>
+        <option value="5"<c:if test="${'5' eq search_EQ_memStatus[0]}"> selected="selected"</c:if>><s:message code="user.status.5"/></option>
       </select>
     </label>
 	  <label class="c-lab"><input type="submit" value="<s:message code="search"/>"/></label>
@@ -162,12 +163,17 @@ function optDeletePassword(form) {
     <th width="130"><s:message code="operate"/></th>
     <th width="30" class="ls-th-sort"><span class="ls-sort" pagesort="id">ID</span></th>
     <th class="ls-th-sort"><span class="ls-sort" pagesort="username"><s:message code="user.username"/></span></th>
+    <th class="ls-th-sort"><span class="ls-sort" pagesort="tuiJianId">推荐人ID</span></th>
+    <th class="ls-th-sort"><span class="ls-sort" pagesort="tuiJianFei">推荐费</span></th>
+    <th class="ls-th-sort"><span class="ls-sort" pagesort="yuanBao">元宝数</span></th>
+    <th class="ls-th-sort"><span class="ls-sort" pagesort="memStatus">用户状态</span></th>
+    <!--  
     <th class="ls-th-sort"><span class="ls-sort" pagesort="org.treeNumber"><s:message code="user.org"/></span></th>
     <th><s:message code="user.roles"/></th>
     <th class="ls-th-sort"><span class="ls-sort" pagesort="group.seq"><s:message code="user.group"/></span></th>
     <th class="ls-th-sort"><span class="ls-sort" pagesort="type"><s:message code="user.type"/></span></th>
     <th class="ls-th-sort"><span class="ls-sort" pagesort="rank"><s:message code="user.rank"/></span></th>
-    <th class="ls-th-sort"><span class="ls-sort" pagesort="status"><s:message code="user.status"/></span></th>
+    -->
   </tr>
   </thead>
   <tbody>
@@ -197,6 +203,13 @@ function optDeletePassword(form) {
      </td>
     <td>${bean.id}</td>
     <td><c:out value="${bean.username}"/><c:if test="${!empty bean.realName}"> (<c:out value="${bean.realName}"/>)</c:if></td>
+    <td align="right">${bean.tuiJianId}</td>
+    <td align="right">
+    <c:if test="${bean.tuiJianFei=='Y'}">已发放</c:if><c:if test="${bean.tuiJianFei=='N'}">未发放</c:if>
+    </td>
+    <td align="right">${bean.yuanBao}</td>
+    <td align="right"><s:message code="user.status.${bean.memStatus}"/></td>
+    <!-- 
     <td>${bean.org.displayName}</td>
     <td>
 	    <c:forEach var="role" items="${bean.currRoles}" varStatus="status">
@@ -207,6 +220,7 @@ function optDeletePassword(form) {
     <td align="right"><s:message code="user.type.${bean.type}"/></td>
     <td align="right">${bean.rank}</td>
     <td align="center"><c:if test="${bean.status!=0}"><strong></c:if><s:message code="user.status.${bean.status}"/><c:if test="${bean.status!=0}"></strong></c:if></td>
+ 	-->
   </tr>
   </c:forEach>
   </tbody>

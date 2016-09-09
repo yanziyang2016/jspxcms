@@ -32,13 +32,9 @@ table td br{display:none;}
 			<img src="${info.largeImageUrl}" width="350" height="350"/>
 		</div>
 		<div class="right mt20" style="width:610px;">
-			<h1 class="fs16 b" style="margin:0;line-height:1.5;color:#262626;">${title}</h1>
-			<div class="ff-yh mt20" style="color:#999;line-height:28px;">
-				<span style="display:inline-block;width:55px;">优惠价</span>
-				<span style="color:#dc0000;font-size:20px;font-weight:bold;">￥${info.customs['price']}</span>
-			</div>
+			<h1 class="fs16 b" style="margin:0;line-height:1.5;color:#262626;">${title}(第${infoPeriod}期)</h1>
 			<div class="ff-yh" style="color:#999;line-height:28px;">
-				<span style="display:inline-block;width:55px;">市场价</span>
+				<span style="display:inline-block;width:55px;">商品价格</span>
 				<span>￥${info.customs['marketPrice']}</span>
 			</div>
 			<div class="ff-yh" style="color:#999;line-height:28px;">
@@ -85,10 +81,50 @@ table td br{display:none;}
 			</script>
 			<div class="ff-yh" style="color:#999;line-height:28px;">
 				<span style="display:inline-block;width:55px;">请您评价</span>
-				<span id="evaluationGroup" style="font-family:\5b8b\4f53;font-size:14px;">[#list group.items as item]<span class="cursor-point" onclick="scoring(${info.id},${item.id});">★</span><input type="hidden" value="${item.score!}" id="item-score-${item.id}"/>[/#list]</span>
+				<span id="evaluationGroup" style="font-family:\5b8b\4f53;font-size:14px;">
+				[#list group.items as item]
+				<span class="cursor-point" onclick="scoring(${info.id},${item.id});">★</span>
+				<input type="hidden" value="${item.score!}" id="item-score-${item.id}"/>
+				[/#list]</span>
 				<span id="evaluation"></span>
 			</div>
+			<div class="ff-yh" style="color:#999;line-height:48px;">
+				<a class="a fs14 fs16 b"   style="margin:0;line-height:1.5;color:#262626;" href="/gotproduct_this.jspx?fid=${info.id}&infoPeriod=${infoPeriod}" target="_blank" title="本期申请记录">本期申请记录</a>
+			</div>
+			<div class="ff-yh" style="color:#999;line-height:48px;">
+				<a class="a fs14 fs16 b"   style="margin:0;line-height:1.5;color:#262626;" href="/gotallproduct.jspx?fid=${info.id}" target="_blank" title="往期申请成功记录">往期申请成功记录</a>
+			</div>
+			
+			<div class="ff-yh" style="color:#999;line-height:48px;">
+				<button id="freeget" style="width:150px;height:30px">免费领取 </button>
+				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+				<button style="width:150px;height:30px">直接兑换</button>
+			</div>
 			<script type="text/javascript">
+			var userid=${userfore.id};
+			var userstatus=${userfore.memStatus};
+			var yuanbao=${userfore.yuanBao};
+			$("#freeget").click(function(){
+				if(userid==-1){
+					alert("请登录后进行领取！");
+					return;
+				}
+				if(userstatus==0){
+					alert("您的个人信息未完善，请完善后进行免费商品领取！");
+				}else if(userstatus==4){
+					alert("您已被管理员加入黑名单，不能进行商品领取，如有疑问，请联系管理员！");
+				}else if(yuanbao<100){
+					alert("本次领取需要100元宝，您元宝数目不够，不能进行领取！");
+				}else{
+					$.post('${ctx}/freeget.jspx',
+							{id:${info.id},infoPeriod:${infoPeriod}},
+							function(data) {
+								yuanbao=yuanbao-100;
+									alert(data);	
+							}
+					);
+				}
+			});
 			function scoring(id,itemId) {
 				$.post('${ctx}/info_scoring.jspx',
 					{id:id,itemId:itemId},
@@ -145,9 +181,10 @@ table td br{display:none;}
 			<div class="hide" style="padding:0 10px">
 				[#noescape]${info.clobs['services']}[/#noescape]
 			</div>
-		</div>
+			
 		<script>
 		$(function(){
+			
 			$("#tabHead > a").each(function(index) {
 				$(this).click(function() {
 					for(var i=0,len=$("#tabHead > a").length;i<len;i++) {

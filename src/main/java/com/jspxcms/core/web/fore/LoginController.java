@@ -9,6 +9,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,7 +35,7 @@ public class LoginController {
 	public static final String LOGIN_TEMPLATE = "sys_member_login.html";
 	public static final String LOGIN_INCLUDE_TEMPLATE = "sys_member_login_include.html";
 	public static final String LOGIN_AJAX_TEMPLATE = "sys_member_login_ajax.html";
-
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	@RequestMapping(value = { LOGIN_URL,
 			Constants.SITE_PREFIX_PATH + "" + LOGIN_URL })
 	public String login(String fallbackUrl, HttpServletRequest request,
@@ -75,13 +77,16 @@ public class LoginController {
 			@RequestParam(DEFAULT_USERNAME_PARAM) String username,
 			String fallbackUrl, HttpServletRequest request,
 			RedirectAttributes ra) {
+		logger.info("username--------------"+username);
 		Object errorName = request
 				.getAttribute(DEFAULT_ERROR_KEY_ATTRIBUTE_NAME);
+		logger.info("errorName--------------"+errorName.toString());
 		if (errorName != null) {
 			ra.addFlashAttribute(DEFAULT_ERROR_KEY_ATTRIBUTE_NAME, errorName);
 		}
 		ra.addFlashAttribute(DEFAULT_USERNAME_PARAM, username);
 		ra.addAttribute(FALLBACK_URL_PARAM, fallbackUrl);
+		logger.info("fallbackUrl--------------"+fallbackUrl);
 		return "redirect:login.jspx";
 	}
 }

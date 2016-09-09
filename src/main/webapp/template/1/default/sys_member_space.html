@@ -58,6 +58,9 @@
 				<div class="user-box-body-item"><label>注册时间：</label>${targetUser.creationDate?string('yyyy-MM-dd HH:mm')}</div>
 				<div class="user-box-body-item"><label>最后访问：</label>${targetUser.lastLoginDate?string('yyyy-MM-dd HH:mm')}</div>
 				<div class="user-box-body-item"><label>登录次数：</label>${targetUser.logins}</div>
+				<div class="user-box-body-item"><label>元宝数：</label>${targetUser.yuanBao}</div>
+				<div class="user-box-body-item"><label>我的推广链接：</label></div>
+				<div class="user-box-body-item"><a href="http://localhost:8080/register.jspx?${targetUser.id}">http://localhost:8080/register.jspx?${targetUser.id}</a></div>
 			</div>
 		</div>
 	</div>

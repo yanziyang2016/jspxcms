@@ -39,7 +39,15 @@ function confirmDelete() {
 <body class="c-body">
 <jsp:include page="/WEB-INF/views/commons/show_message.jsp"/>
 <div class="c-bar margin-top5">
-  <span class="c-position"><s:message code="info.management"/> - <s:message code="${oprt=='edit' ? 'edit' : 'create'}"/><c:if test="${oprt=='edit'}"> <span style="font-weight:normal;font-size:12px;">(<s:message code="info.status"/>: <s:message code="info.status.${bean.status}"/>, ID:${bean.id})</span></c:if></span>
+  <span class="c-position">
+  <c:if test="${isProduct==0}"><s:message code="info.management"/></c:if>
+  <c:if test="${isProduct==1 }">商品管理</c:if>
+   - <s:message code="${oprt=='edit' ? 'edit' : 'create'}"/><c:if test="${oprt=='edit'}"> 
+   <span style="font-weight:normal;font-size:12px;">(<s:message code="info.status"/>: 
+   
+   <c:if test="${isProduct==0}"><s:message code="info.status.${bean.status}"/></c:if>
+  <c:if test="${isProduct==1 }"><s:message code="product.status.${bean.status}"/></c:if>
+   , ID:${bean.id})</span></c:if></span>
 </div>
 <form id="validForm" action="${oprt=='edit' ? 'update' : 'save'}.do" method="post">
 <tags:search_params/>
@@ -66,6 +74,7 @@ function confirmDelete() {
 			<div class="in-btn"><input type="button" value="<s:message code="delete"/>" onclick="if(confirmDelete()){location.href='delete.do?ids=${bean.id}&queryNodeId=${queryNodeId}&queryNodeType=${queryNodeType}&queryInfoPermType=${queryInfoPermType}&queryStatus=${queryStatus}&${searchstring}';}"<c:if test="${oprt=='create' || !bean.auditPerm}"> disabled="disabled"</c:if>/></div>
 			</shiro:hasPermission>
 			<div class="in-btn"></div>
+			<c:if test="${isProduct==0 }">
 			<shiro:hasPermission name="core:info:audit_pass">
 			<div class="ls-btn"><input type="button" value="<s:message code="info.auditPass"/>" onclick="location.href='audit_pass.do?ids=${bean.id}&redirect=edit&queryNodeId=${queryNodeId}&queryNodeType=${queryNodeType}&queryInfoPermType=${queryInfoPermType}&queryStatus=${queryStatus}&position=${pagedList.number*pagedList.size+status.index}&${searchstring}';"<c:if test="${oprt=='create' || !bean.auditPerm}"> disabled="disabled"</c:if>/></div>
 			</shiro:hasPermission>
@@ -75,6 +84,15 @@ function confirmDelete() {
 			<shiro:hasPermission name="core:info:audit_return">
 			<div class="ls-btn"><input type="button" value="<s:message code="info.auditReturn"/>" onclick="location.href='audit_return.do?ids=${bean.id}&redirect=edit&queryNodeId=${queryNodeId}&queryNodeType=${queryNodeType}&queryInfoPermType=${queryInfoPermType}&queryStatus=${queryStatus}&position=${pagedList.number*pagedList.size+status.index}&${searchstring}';"<c:if test="${oprt=='create' || !bean.auditPerm}"> disabled="disabled"</c:if>/></div>
 			</shiro:hasPermission>
+			</c:if>
+			<c:if test="${isProduct==1 }">
+			<shiro:hasPermission name="core:info:audit_pass">
+			<div class="ls-btn"><input type="button" value="上架" onclick="location.href='audit_pass.do?ids=${bean.id}&redirect=edit&queryNodeId=${queryNodeId}&queryNodeType=${queryNodeType}&queryInfoPermType=${queryInfoPermType}&queryStatus=${queryStatus}&position=${pagedList.number*pagedList.size+status.index}&${searchstring}';"<c:if test="${oprt=='create' || !bean.auditPerm}"> disabled="disabled"</c:if>/></div>
+			</shiro:hasPermission>
+			<shiro:hasPermission name="core:info:audit_reject">
+			<div class="ls-btn"><input type="button" value="下架" onclick="location.href='audit_reject.do?ids=${bean.id}&redirect=edit&queryNodeId=${queryNodeId}&queryNodeType=${queryNodeType}&queryInfoPermType=${queryInfoPermType}&queryStatus=${queryStatus}&position=${pagedList.number*pagedList.size+status.index}&${searchstring}';"<c:if test="${oprt=='create' || !bean.auditPerm}"> disabled="disabled"</c:if>/></div>
+			</shiro:hasPermission>
+			</c:if>
 			<div class="in-btn"></div>
 			<div class="in-btn"><input type="button" value="<s:message code="prev"/>" onclick="location.href='edit.do?id=${side.prev.id}&queryNodeId=${queryNodeId}&queryNodeType=${queryNodeType}&queryInfoPermType=${queryInfoPermType}&queryStatus=${queryStatus}&position=${position-1}&${searchstring}';"<c:if test="${empty side.prev}"> disabled="disabled"</c:if>/></div>
 			<div class="in-btn"><input type="button" value="<s:message code="next"/>" onclick="location.href='edit.do?id=${side.next.id}&queryNodeId=${queryNodeId}&queryNodeType=${queryNodeType}&queryInfoPermType=${queryInfoPermType}&queryStatus=${queryStatus}&position=${position+1}&${searchstring}';"<c:if test="${empty side.next}"> disabled="disabled"</c:if>/></div>
@@ -601,9 +619,11 @@ function confirmDelete() {
 	 <tags:feild_custom bean="${bean}" field="${field}"/>
 	</div>
 </c:forEach>
+<c:if test="${ bean.status!='A'}">
 <table border="0" cellpadding="0" cellspacing="0" class="in-tb">
   <tr>
     <td colspan="4" class="in-opt">
+     
       <div class="in-btn"><input type="submit" value="<s:message code="save"/>"<c:if test="${oprt=='edit' && !bean.auditPerm}"> disabled="disabled"</c:if>/></div>
     	<c:if test="${oprt=='create'}">
     	<input type="hidden" id="draft" name="draft" value="false"/>
@@ -618,9 +638,11 @@ function confirmDelete() {
       <div class="in-btn"><input type="submit" value="<s:message code="saveAndCreate"/>" onclick="$('#redirect').val('create');"/></div>
       </c:if>
       <div style="clear:both;"></div>
+     
     </td>
   </tr>
 </table>
+</c:if>
 </form>
 </body>
 </html>

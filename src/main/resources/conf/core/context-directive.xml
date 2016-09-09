@@ -30,10 +30,14 @@
 	<bean id="CmsInfoPrev" class="com.jspxcms.core.web.directive.InfoPrevDirective" />
 	<bean id="CmsInfoList" class="com.jspxcms.core.web.directive.InfoListDirective" />
 	<bean id="CmsInfoPage" class="com.jspxcms.core.web.directive.InfoPageDirective" />
+	<bean id="CmsTuijianPage" class="com.jspxcms.core.web.directive.TuijianPageDirective" />
+	<bean id="CmsGotproductPage" class="com.jspxcms.core.web.directive.GotproductPageDirective" />
 	<bean id="CmsInfoFulltextList" class="com.jspxcms.core.web.directive.InfoFulltextListDirective" />
 	<bean id="CmsInfoFulltextPage" class="com.jspxcms.core.web.directive.InfoFulltextPageDirective" />
 	<bean id="CmsCommentList" class="com.jspxcms.core.web.directive.CommentListDirective" />
 	<bean id="CmsCommentPage" class="com.jspxcms.core.web.directive.CommentPageDirective" />
+	<bean id="CmsThisProductPage" class="com.jspxcms.core.web.directive.ThisProductPageDirective" />
+	<bean id="CmsAllOrderPage" class="com.jspxcms.core.web.directive.AllOrderPageDirective" />
 	<bean id="CmsTagList" class="com.jspxcms.core.web.directive.TagListDirective" />
 	<bean id="CmsTagPage" class="com.jspxcms.core.web.directive.TagPageDirective" />
 	<bean id="CmsSpecialCategoryList" class="com.jspxcms.core.web.directive.SpecialCategoryListDirective" />

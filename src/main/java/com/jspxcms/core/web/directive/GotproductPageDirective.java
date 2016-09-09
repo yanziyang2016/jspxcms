@@ -15,18 +15,18 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateModel;
 
 /**
- * CommentPageDirective
+ * GotproductPageDirective
  * 
  * @author liufang
  * 
  */
-public class CommentPageDirective extends AbstractCommentListPageDirective
-		implements TemplateDirectiveModel {
-	protected final static Logger logger = LoggerFactory.getLogger(CommentPageDirective.class);
+public class GotproductPageDirective extends AbstractInfoListPageDirective implements
+		TemplateDirectiveModel {
+	protected final static Logger logger = LoggerFactory.getLogger(GotproductPageDirective.class);
 	@SuppressWarnings("rawtypes")
 	public void execute(Environment env, Map params, TemplateModel[] loopVars,
 			TemplateDirectiveBody body) throws TemplateException, IOException {
-		logger.info("CommentPageDirective--------"+params.toString());
-		super.doExecute(env, params, loopVars, body, true);
+		logger.info("GotproductPageDirective---"+params.toString());
+		super.doExecuteGotProduct(env, params, loopVars, body, true);
 	}
 }

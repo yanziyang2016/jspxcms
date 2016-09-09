@@ -197,6 +197,10 @@ public class UserController {
 			bean.setRank(currRank);
 		}
 		Integer topOrgId = site.getOrg().getId();
+		logger.info("userstatus---"+bean.getMemStatus()+"--user yuanbao"+bean.getYuanBao());
+		if(bean.getMemStatus()==4){
+			bean.setYuanBao(0);
+		}
 		service.update(bean, detail, roleIds, orgIds, groupIds, orgId, groupId, topOrgId, site.getId());
 		String ip = Servlets.getRemoteAddr(request);
 		logService.operation("opr.user.edit", bean.getUsername(), null, bean.getId(), ip, currUser.getId(),

@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +30,7 @@ import com.jspxcms.core.service.UserService;
 import com.jspxcms.core.support.Context;
 import com.jspxcms.core.support.ForeContext;
 import com.jspxcms.core.support.Response;
+import com.jspxcms.core.web.back.UserController;
 import com.octo.captcha.service.CaptchaService;
 
 /**
@@ -59,6 +62,7 @@ public class RegisterController {
 	 */
 	public static final String RETRIEVE_PASSWORD_TEMPLATE = "sys_member_retrieve_password.html";
 
+	private static final Logger logger = LoggerFactory.getLogger(RegisterController.class);
 	@RequestMapping(value = { "/register.jspx",
 			Constants.SITE_PREFIX_PATH + "/register.jspx" })
 	public String registerForm(HttpServletRequest request,
@@ -76,7 +80,7 @@ public class RegisterController {
 
 	@RequestMapping(value = { "/register.jspx",
 			Constants.SITE_PREFIX_PATH + "/register.jspx" }, method = RequestMethod.POST)
-	public String registerSubmit(String captcha, String username,
+	public String registerSubmit(String captcha, String username,String tuiJianId,
 			String password, String email, String gender, Date birthDate,
 			String bio, String comeFrom, String qq, String msn, String weixin,
 			HttpServletRequest request, HttpServletResponse response,
@@ -86,6 +90,10 @@ public class RegisterController {
 		GlobalRegister reg = site.getGlobal().getRegister();
 		String result = validateRegisterSubmit(request, resp, reg, captcha,
 				username, password, email, gender);
+		if(tuiJianId==null||tuiJianId.length()==0){
+			tuiJianId="-1";
+		}
+		logger.info("tuiJianId-------"+tuiJianId);
 		if (resp.hasErrors()) {
 			return result;
 		}
@@ -98,7 +106,7 @@ public class RegisterController {
 				: User.UNACTIVATED;
 		User user = userService.register(ip, groupId, orgId, status, username,
 				password, email, null, null, null, gender, birthDate, bio,
-				comeFrom, qq, msn, weixin);
+				comeFrom, qq, msn, weixin,tuiJianId);
 		if (verifyMode == GlobalRegister.VERIFY_MODE_EMAIL) {
 			GlobalMail mail = site.getGlobal().getMail();
 			String subject = reg.getVerifyEmailSubject();

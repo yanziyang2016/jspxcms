@@ -128,11 +128,26 @@ public class InfoController {
 		Page<Info> pagedList = query.findAll(siteId, mainNodeId, nodeId,
 				treeNumber, user.getId(), allInfoPerm, infoPermType,
 				queryStatus, params, pageable);
+		int isProduct = 0;
+		if(queryNodeId!=null&&(queryNodeId==52||queryNodeId==83||queryNodeId==84||queryNodeId==85||queryNodeId==95||queryNodeId==96)){
+			isProduct = 1;
+			for(int i=0;i<pagedList.getContent().size();i++){
+				Info temp = query.findOne(pagedList.getContent().get(i).getId());
+				logger.info("temp-------"+temp.getId());
+				logger.info("stock-------"+temp.getCustomsValue("stock"));
+//				logger.info("productpro-------"+temp.getCustomsValue("productpro"));
+				logger.info("periodCount-------"+temp.getCustomsValue("periodCount"));
+				pagedList.getContent().get(i).setStock(temp.getCustomsValueNew("stock"));
+			}
+		}
+//		pagedList.getContent().get(0).getCustomsValue("stock")
 		List<Attribute> attributeList = attributeService.findList(siteId);
 		modelMap.addAttribute("pagedList", pagedList);
 		modelMap.addAttribute("attributeList", attributeList);
 		modelMap.addAttribute("queryNodeId", queryNodeId);
 		modelMap.addAttribute("queryNodeType", queryNodeType);
+		modelMap.addAttribute("isProduct", isProduct);
+		logger.info("queryNodeId----"+queryNodeId+"---isProduct--"+isProduct);
 		modelMap.addAttribute("queryInfoPermType", queryInfoPermType);
 		modelMap.addAttribute("queryStatus", queryStatus);
 		return "core/info/info_list";
@@ -230,13 +245,22 @@ public class InfoController {
 		List<Attribute> attrList = attributeService.findList(site.getId());
 		List<MemberGroup> groupList = memberGroupService.findList();
 		String orgTreeNumber = site.getOrg().getTreeNumber();
-
+		for(int i=0;i<model.getNormalFields().size();i++){
+			logger.info("InfoController-----model--"+model.getNormalFields().get(i).getName());
+		}
+		
+		logger.info("InfoController----node---"+node.getName());
+		int isProduct = 0;
+		if(queryNodeId!=null&&(queryNodeId==52||queryNodeId==83||queryNodeId==84||queryNodeId==85||queryNodeId==95||queryNodeId==96)){
+			isProduct = 1;
+		}
 		modelMap.addAttribute("model", model);
 		modelMap.addAttribute("node", node);
 		modelMap.addAttribute("attrList", attrList);
 		modelMap.addAttribute("groupList", groupList);
 		modelMap.addAttribute("orgTreeNumber", orgTreeNumber);
 		modelMap.addAttribute("queryNodeId", queryNodeId);
+		modelMap.addAttribute("isProduct", isProduct);
 		modelMap.addAttribute("queryNodeType", queryNodeType);
 		modelMap.addAttribute("queryInfoPermType", queryInfoPermType);
 		modelMap.addAttribute("queryStatus", queryStatus);

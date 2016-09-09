@@ -20,6 +20,7 @@
 	<cache name="com.jspxcms.core.domain.Site" maxEntriesLocalHeap="500" eternal="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" overflowToDisk="false" />
 	<cache name="com.jspxcms.core.domain.Site.customs" maxEntriesLocalHeap="500" eternal="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" overflowToDisk="false" />
 	<cache name="com.jspxcms.core.domain.Org" maxEntriesLocalHeap="500" eternal="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" overflowToDisk="false" />
+	
 	<cache name="com.jspxcms.core.domain.User" maxEntriesLocalHeap="500" eternal="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" overflowToDisk="false" />
 	<cache name="com.jspxcms.core.domain.User.details" maxEntriesLocalHeap="500" eternal="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" overflowToDisk="false" />
 	<cache name="com.jspxcms.core.domain.UserDetail" maxEntriesLocalHeap="500" eternal="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" overflowToDisk="false" />
@@ -58,7 +59,8 @@
 	<cache name="com.jspxcms.ext.domain.AdSlot.ads" maxEntriesLocalHeap="500" eternal="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" overflowToDisk="false" />
 	<cache name="com.jspxcms.ext.domain.Ad" maxEntriesLocalHeap="500" eternal="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" overflowToDisk="false" />
 
-
+<cache name="com.jspxcms.core.domain.ProductRecord" maxEntriesLocalHeap="500" eternal="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" overflowToDisk="false" />
+<cache name="com.jspxcms.core.domain.Order" maxEntriesLocalHeap="500" eternal="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" overflowToDisk="false" />
 	<!-- <cache name="com" maxEntriesLocalHeap="500" eternal="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" overflowToDisk="false" /> -->
 	<!-- <cache name="com" maxEntriesLocalHeap="500" eternal="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" overflowToDisk="true" diskSpoolBufferSizeMB="1" maxEntriesLocalDisk="10000" /> -->
 

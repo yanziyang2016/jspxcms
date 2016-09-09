@@ -117,6 +117,7 @@ public class MemberController {
 			HttpServletResponse response, org.springframework.ui.Model modelMap) {
 		Site site = Context.getCurrentSite();
 		Map<String, Object> data = modelMap.asMap();
+		logger.info(request.toString());
 		ForeContext.setData(data, request);
 		return site.getTemplate(PROFILE_TEMPLATE);
 	}
@@ -124,19 +125,35 @@ public class MemberController {
 	@RequestMapping(value = { "/my/profile.jspx",
 			Constants.SITE_PREFIX_PATH + "/my/profile.jspx" }, method = RequestMethod.POST)
 	public String profileSubmit(String gender, Date birthDate, String bio,
-			String comeFrom, String qq, String msn, String weixin,
+			String comeFrom, String qq, String msn, String weixin,String kaihu,
+			String homeAddress, String accountName,String accountNo,String mobile,String realName,
 			HttpServletRequest request, HttpServletResponse response,
 			org.springframework.ui.Model modelMap) {
 		Response resp = new Response(request, response, modelMap);
 		User user = Context.getCurrentUser();
 		user.setGender(gender);
 		user.setBirthDate(birthDate);
+		user.setMobile(mobile);
+		user.setRealName(realName);
+		logger.info(kaihu+"---"+accountName+"---"+accountNo+"---"+homeAddress+"---"+user.getMemStatus());
+		if(birthDate!=null&&gender!=null&&comeFrom!=null&&bio!=null&&qq!=null&&kaihu!=null&&homeAddress!=null&&accountName!=null&&accountNo!=null
+				&&realName!=null&&mobile!=null&&mobile.length()>0&&realName.length()>0
+				&&gender.length()>0&&comeFrom.length()>0&&bio.length()>0&&qq.length()>0&&kaihu.length()>0
+				&&homeAddress.length()>0&&accountName.length()>0&&accountNo.length()>0){
+			if(user.getMemStatus()==0){
+				user.setMemStatus(3);
+			}
+		}
 		UserDetail detail = user.getDetail();
 		detail.setBio(bio);
 		detail.setComeFrom(comeFrom);
 		detail.setQq(qq);
 		detail.setMsn(msn);
 		detail.setQq(qq);
+		detail.setKaihu(kaihu);
+		detail.setAccountName(accountName);
+		detail.setAccountNo(accountNo);
+		detail.setHomeAddress(homeAddress);
 		userService.update(user, detail);
 		return resp.post();
 	}

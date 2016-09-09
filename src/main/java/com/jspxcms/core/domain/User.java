@@ -575,6 +575,30 @@ public class User implements java.io.Serializable {
 		UserDetail detail = getDetail();
 		return detail != null ? detail.getQq() : null;
 	}
+	
+	@Transient
+	public String getKaihu() {
+		UserDetail detail = getDetail();
+		return detail != null ? detail.getKaihu() : null;
+	}
+	
+	@Transient
+	public String getAccountName() {
+		UserDetail detail = getDetail();
+		return detail != null ? detail.getAccountName() : null;
+	}
+	
+	@Transient
+	public String getAccountNo() {
+		UserDetail detail = getDetail();
+		return detail != null ? detail.getAccountNo() : null;
+	}
+	
+	@Transient
+	public String getHomeAddress() {
+		UserDetail detail = getDetail();
+		return detail != null ? detail.getHomeAddress() : null;
+	}
 
 	@Transient
 	public String getMsn() {
@@ -612,12 +636,12 @@ public class User implements java.io.Serializable {
 	private List<UserOrg> userOrgs = new ArrayList<UserOrg>(0);
 	private List<UserMemberGroup> userGroups = new ArrayList<UserMemberGroup>(0);
 	private Set<UserDetail> details = new HashSet<UserDetail>(0);
-
 	private Global global;
 	private Org org;
 	private MemberGroup group;
 
 	private String username;
+	
 	private String password;
 	private String salt;
 	private String email;
@@ -630,10 +654,14 @@ public class User implements java.io.Serializable {
 	private Integer rank;
 	private Integer type;
 	private Integer status;
+	private Integer memStatus;
 	private String qqOpenid;
 	private String weiboUid;
 	private String weixinOpenid;
 	private String rawPassword;
+	private Integer yuanBao;
+	private Integer tuiJianId;
+	private String tuiJianFei;
 
 	@Id
 	@Column(name = "f_user_id", unique = true, nullable = false)
@@ -735,6 +763,9 @@ public class User implements java.io.Serializable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	
+	
 
 	@Column(name = "f_salt", length = 32)
 	public String getSalt() {
@@ -844,6 +875,15 @@ public class User implements java.io.Serializable {
 		this.status = status;
 	}
 
+	@Column(name = "f_mem_status", nullable = false)
+	public Integer getMemStatus() {
+		return memStatus;
+	}
+
+	public void setMemStatus(Integer memStatus) {
+		this.memStatus = memStatus;
+	}
+
 	@Length(max = 64)
 	@Column(name = "f_qq_openid", length = 64)
 	public String getQqOpenid() {
@@ -883,4 +923,32 @@ public class User implements java.io.Serializable {
 	public void setRawPassword(String rawPassword) {
 		this.rawPassword = rawPassword;
 	}
+	@Column(name = "f_yuanbao", nullable = false)
+	public Integer getYuanBao() {
+		return yuanBao;
+	}
+
+	public void setYuanBao(Integer yuanBao) {
+		this.yuanBao = yuanBao;
+	}
+	
+	
+	@Column(name = "f_tuijian_id", nullable = false)
+	public Integer getTuiJianId() {
+		return tuiJianId;
+	}
+
+	public void setTuiJianId(Integer tuiJianId) {
+		this.tuiJianId = tuiJianId;
+	}
+	@Column(name = "f_tuijian_fei", nullable = false)
+	public String getTuiJianFei() {
+		return tuiJianFei;
+	}
+
+	public void setTuiJianFei(String tuiJianFei) {
+		this.tuiJianFei = tuiJianFei;
+	}
+	
+	
 }

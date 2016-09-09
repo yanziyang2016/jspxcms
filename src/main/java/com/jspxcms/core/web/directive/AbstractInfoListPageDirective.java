@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,16 +24,21 @@ import com.jspxcms.core.domain.Info;
 import com.jspxcms.core.domain.MemberGroup;
 import com.jspxcms.core.domain.Model;
 import com.jspxcms.core.domain.Node;
+import com.jspxcms.core.domain.Order;
 import com.jspxcms.core.domain.Org;
+import com.jspxcms.core.domain.ProductRecord;
 import com.jspxcms.core.domain.Tag;
 import com.jspxcms.core.domain.User;
 import com.jspxcms.core.service.AttributeService;
 import com.jspxcms.core.service.InfoQueryService;
 import com.jspxcms.core.service.ModelService;
 import com.jspxcms.core.service.NodeQueryService;
+import com.jspxcms.core.service.OrderService;
+import com.jspxcms.core.service.RecordService;
 import com.jspxcms.core.service.TagService;
 import com.jspxcms.core.service.UserService;
 import com.jspxcms.core.support.ForeContext;
+import com.jspxcms.core.web.fore.InfoController;
 
 import freemarker.core.Environment;
 import freemarker.template.TemplateDirectiveBody;
@@ -46,6 +53,7 @@ import freemarker.template.TemplateModelException;
  * 
  */
 public abstract class AbstractInfoListPageDirective {
+	protected final static Logger logger = LoggerFactory.getLogger(AbstractInfoListPageDirective.class);
 	public static final String SITE_ID = "siteId";
 
 	public static final String MODEL = "model";
@@ -236,6 +244,7 @@ public abstract class AbstractInfoListPageDirective {
 					beginDate, endDate, title, includeId, excludeId,
 					excludeMainNodeId, excludeTreeNumber, isWithImage, status,
 					p1, p2, p3, p4, p5, p6, pageable);
+			logger.info("AbstractInfoListPageDirective 111---"+pagedList);
 			ForeContext.setTotalPages(pagedList.getTotalPages());
 			loopVars[0] = env.getObjectWrapper().wrap(pagedList);
 		} else {
@@ -246,6 +255,7 @@ public abstract class AbstractInfoListPageDirective {
 					beginDate, endDate, title, includeId, excludeId,
 					excludeMainNodeId, excludeTreeNumber, isWithImage, status,
 					p1, p2, p3, p4, p5, p6, limitable);
+			logger.info("AbstractInfoListPageDirective 222---"+list);
 			loopVars[0] = env.getObjectWrapper().wrap(list);
 		}
 		if (ArrayUtils.isNotEmpty(attr)) {
@@ -262,6 +272,571 @@ public abstract class AbstractInfoListPageDirective {
 		}
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void doExecute1(Environment env, Map params,
+			TemplateModel[] loopVars, TemplateDirectiveBody body, boolean isPage)
+			throws TemplateException, IOException {
+		if (loopVars.length < 1) {
+			throw new TemplateModelException("Loop variable is required.");
+		}
+		if (body == null) {
+			throw new RuntimeException("missing body");
+		}
+
+		Integer[] siteId = Freemarkers.getIntegers(params, SITE_ID);
+		if (siteId == null) {
+			siteId = new Integer[] { ForeContext.getSiteId(env) };
+		}
+
+		Integer[] modelId = Freemarkers.getIntegers(params, MODEL_ID);
+		String[] model = Freemarkers.getStrings(params, MODEL);
+
+		Integer[] nodeId = Freemarkers.getIntegers(params, NODE_ID);
+		String[] node = Freemarkers.getStrings(params, NODE);
+		String[] nodeNumber = Freemarkers.getStrings(params, NODE_NUMBER);
+
+		Integer[] excludeNodeId = Freemarkers.getIntegers(params,
+				EXCLUDE_NODE_ID);
+		String[] excludeNode = Freemarkers.getStrings(params, EXCLUDE_NODE);
+		String[] excludeNodeNumber = Freemarkers.getStrings(params,
+				EXCLUDE_NODE_NUMBER);
+
+		Integer[] attrId = Freemarkers.getIntegers(params, ATTR_ID);
+		String[] attr = Freemarkers.getStrings(params, ATTR);
+
+		Integer[] tagId = Freemarkers.getIntegers(params, TAG_ID);
+		String[] tag = Freemarkers.getStrings(params, TAG);
+		
+
+		Integer[] userId = Freemarkers.getIntegers(params, USER_ID);
+		String[] user = Freemarkers.getStrings(params, USER);
+
+	
+
+	
+		String[] status = Freemarkers.getStrings(params, STATUS);
+		if (status == null) {
+			status = new String[] { Info.NORMAL };
+		}
+
+		boolean isIncludeChildren = Freemarkers.getBoolean(params,
+				IS_INCLUDE_CHILDREN, false);
+		boolean isMainNodeOnly = Freemarkers.getBoolean(params,
+				IS_MAIN_NODE_ONLY, false);
+		Boolean isWithImage = Freemarkers.getBoolean(params, IS_WITH_IMAGE);
+
+		boolean isPerm = Freemarkers.getBoolean(params, IS_PERM, false);
+		Integer[] viewGroupId = null;
+		Integer[] viewOrgId = null;
+		if (isPerm) {
+			Collection<MemberGroup> groups = ForeContext.getGroups(env);
+			Collection<Org> orgs = ForeContext.getOrgs(env);
+			if (groups != null && !groups.isEmpty()) {
+				viewGroupId = new Integer[groups.size()];
+				int i = 0;
+				for (MemberGroup group : groups) {
+					viewGroupId[i++] = group.getId();
+				}
+			}
+			if (orgs != null && !orgs.isEmpty()) {
+				viewOrgId = new Integer[orgs.size()];
+				int i = 0;
+				for (Org org : orgs) {
+					viewOrgId[i++] = org.getId();
+				}
+			}
+		}
+
+		String[] treeNumber = null;
+		Integer[] mainNodeId = null;
+		List<Integer> nodeIdList = getNodeIdList(nodeId, node, nodeNumber,
+				siteId);
+		nodeId = nodeIdList.toArray(new Integer[nodeIdList.size()]);
+		if (isIncludeChildren) {
+			treeNumber = getNodeTreeNumberList(nodeIdList).toArray(
+					new String[nodeIdList.size()]);
+			nodeId = null;
+		} else if (isMainNodeOnly) {
+			mainNodeId = nodeId;
+			nodeId = null;
+		}
+
+		String[] excludeTreeNumber = null;
+		Integer[] excludeMainNodeId = null;
+		List<Integer> excludeNodeIdList = getNodeIdList(excludeNodeId,
+				excludeNode, excludeNodeNumber, siteId);
+		excludeMainNodeId = excludeNodeIdList
+				.toArray(new Integer[excludeNodeIdList.size()]);
+		if (isIncludeChildren) {
+			excludeTreeNumber = getNodeTreeNumberList(excludeNodeIdList)
+					.toArray(new String[excludeNodeIdList.size()]);
+			excludeMainNodeId = null;
+		}
+
+		List<Integer> modelIdList = getModelIdList(modelId, model, siteId);
+		modelId = modelIdList.toArray(new Integer[modelIdList.size()]);
+
+		List<Integer> attrIdList = getAttrIdList(attrId, attr, siteId);
+		attrId = attrIdList.toArray(new Integer[attrIdList.size()]);
+
+		List<Integer> tagIdList = getTagIdList(tagId, tag, siteId);
+		tagId = tagIdList.toArray(new Integer[tagIdList.size()]);
+
+		List<Integer> userIdList = getUserIdList(userId, user);
+		userId = userIdList.toArray(new Integer[userIdList.size()]);
+
+		Sort defSort = new Sort(Direction.DESC, "memStatus");
+		if (isPage) {
+			Pageable pageable = Freemarkers.getPageable(params, env, defSort);
+			logger.info("userid------------"+userId[0]);
+			Page<User> pagedList = userService.findPage( userId[0], pageable);
+			logger.info("AbstractInfoListPageDirective 111---"+pagedList);
+			ForeContext.setTotalPages(pagedList.getTotalPages());
+			loopVars[0] = env.getObjectWrapper().wrap(pagedList);
+		} else {
+			Limitable limitable = Freemarkers.getLimitable(params, defSort);
+			List<Info> list = null;
+			logger.info("AbstractInfoListPageDirective 222---"+list);
+			loopVars[0] = env.getObjectWrapper().wrap(list);
+		}
+		if (ArrayUtils.isNotEmpty(attr)) {
+			Info.setAttrName(attr[0]);
+		} else if (ArrayUtils.isNotEmpty(attrId)) {
+			Info.setAttrId(attrId[0]);
+		}
+
+		body.render(env.getOut());
+		if (ArrayUtils.isNotEmpty(attr)) {
+			Info.resetAttrName();
+		} else if (ArrayUtils.isNotEmpty(attrId)) {
+			Info.resetAttrId();
+		}
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void doExecuteGotProduct(Environment env, Map params,
+			TemplateModel[] loopVars, TemplateDirectiveBody body, boolean isPage)
+			throws TemplateException, IOException {
+		if (loopVars.length < 1) {
+			throw new TemplateModelException("Loop variable is required.");
+		}
+		if (body == null) {
+			throw new RuntimeException("missing body");
+		}
+
+		Integer[] siteId = Freemarkers.getIntegers(params, SITE_ID);
+		if (siteId == null) {
+			siteId = new Integer[] { ForeContext.getSiteId(env) };
+		}
+
+		Integer[] modelId = Freemarkers.getIntegers(params, MODEL_ID);
+		String[] model = Freemarkers.getStrings(params, MODEL);
+
+		Integer[] nodeId = Freemarkers.getIntegers(params, NODE_ID);
+		String[] node = Freemarkers.getStrings(params, NODE);
+		String[] nodeNumber = Freemarkers.getStrings(params, NODE_NUMBER);
+
+		Integer[] excludeNodeId = Freemarkers.getIntegers(params,
+				EXCLUDE_NODE_ID);
+		String[] excludeNode = Freemarkers.getStrings(params, EXCLUDE_NODE);
+		String[] excludeNodeNumber = Freemarkers.getStrings(params,
+				EXCLUDE_NODE_NUMBER);
+
+		Integer[] attrId = Freemarkers.getIntegers(params, ATTR_ID);
+		String[] attr = Freemarkers.getStrings(params, ATTR);
+
+		Integer[] tagId = Freemarkers.getIntegers(params, TAG_ID);
+		String[] tag = Freemarkers.getStrings(params, TAG);
+		
+
+		Integer[] userId = Freemarkers.getIntegers(params, USER_ID);
+		String[] user = Freemarkers.getStrings(params, USER);
+
+	
+
+	
+		String[] status = Freemarkers.getStrings(params, STATUS);
+		if (status == null) {
+			status = new String[] { Info.NORMAL };
+		}
+
+		boolean isIncludeChildren = Freemarkers.getBoolean(params,
+				IS_INCLUDE_CHILDREN, false);
+		boolean isMainNodeOnly = Freemarkers.getBoolean(params,
+				IS_MAIN_NODE_ONLY, false);
+		Boolean isWithImage = Freemarkers.getBoolean(params, IS_WITH_IMAGE);
+
+		boolean isPerm = Freemarkers.getBoolean(params, IS_PERM, false);
+		Integer[] viewGroupId = null;
+		Integer[] viewOrgId = null;
+		if (isPerm) {
+			Collection<MemberGroup> groups = ForeContext.getGroups(env);
+			Collection<Org> orgs = ForeContext.getOrgs(env);
+			if (groups != null && !groups.isEmpty()) {
+				viewGroupId = new Integer[groups.size()];
+				int i = 0;
+				for (MemberGroup group : groups) {
+					viewGroupId[i++] = group.getId();
+				}
+			}
+			if (orgs != null && !orgs.isEmpty()) {
+				viewOrgId = new Integer[orgs.size()];
+				int i = 0;
+				for (Org org : orgs) {
+					viewOrgId[i++] = org.getId();
+				}
+			}
+		}
+
+		String[] treeNumber = null;
+		Integer[] mainNodeId = null;
+		List<Integer> nodeIdList = getNodeIdList(nodeId, node, nodeNumber,
+				siteId);
+		nodeId = nodeIdList.toArray(new Integer[nodeIdList.size()]);
+		if (isIncludeChildren) {
+			treeNumber = getNodeTreeNumberList(nodeIdList).toArray(
+					new String[nodeIdList.size()]);
+			nodeId = null;
+		} else if (isMainNodeOnly) {
+			mainNodeId = nodeId;
+			nodeId = null;
+		}
+
+		String[] excludeTreeNumber = null;
+		Integer[] excludeMainNodeId = null;
+		List<Integer> excludeNodeIdList = getNodeIdList(excludeNodeId,
+				excludeNode, excludeNodeNumber, siteId);
+		excludeMainNodeId = excludeNodeIdList
+				.toArray(new Integer[excludeNodeIdList.size()]);
+		if (isIncludeChildren) {
+			excludeTreeNumber = getNodeTreeNumberList(excludeNodeIdList)
+					.toArray(new String[excludeNodeIdList.size()]);
+			excludeMainNodeId = null;
+		}
+
+		List<Integer> modelIdList = getModelIdList(modelId, model, siteId);
+		modelId = modelIdList.toArray(new Integer[modelIdList.size()]);
+
+		List<Integer> attrIdList = getAttrIdList(attrId, attr, siteId);
+		attrId = attrIdList.toArray(new Integer[attrIdList.size()]);
+
+		List<Integer> tagIdList = getTagIdList(tagId, tag, siteId);
+		tagId = tagIdList.toArray(new Integer[tagIdList.size()]);
+
+		List<Integer> userIdList = getUserIdList(userId, user);
+		userId = userIdList.toArray(new Integer[userIdList.size()]);
+
+		Sort defSort = new Sort(Direction.DESC, "memStatus");
+		if (isPage) {
+			Pageable pageable = Freemarkers.getPageable(params, env, defSort);
+			logger.info("doExecuteGotProduct userid------------"+userId[0]);
+			Page<Order> pagedList = orderService.findPage( userId[0], pageable);
+			logger.info("AbstractInfoListPageDirective 333---"+pagedList);
+			ForeContext.setTotalPages(pagedList.getTotalPages());
+			loopVars[0] = env.getObjectWrapper().wrap(pagedList);
+		} else {
+			Limitable limitable = Freemarkers.getLimitable(params, defSort);
+			List<Info> list = null;
+			logger.info("AbstractInfoListPageDirective 444---"+list);
+			loopVars[0] = env.getObjectWrapper().wrap(list);
+		}
+		if (ArrayUtils.isNotEmpty(attr)) {
+			Info.setAttrName(attr[0]);
+		} else if (ArrayUtils.isNotEmpty(attrId)) {
+			Info.setAttrId(attrId[0]);
+		}
+
+		body.render(env.getOut());
+		if (ArrayUtils.isNotEmpty(attr)) {
+			Info.resetAttrName();
+		} else if (ArrayUtils.isNotEmpty(attrId)) {
+			Info.resetAttrId();
+		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void doExecuteGotThisProduct(Environment env, Map params,
+			TemplateModel[] loopVars, TemplateDirectiveBody body, boolean isPage)
+			throws TemplateException, IOException {
+		if (loopVars.length < 1) {
+			throw new TemplateModelException("Loop variable is required.");
+		}
+		if (body == null) {
+			throw new RuntimeException("missing body");
+		}
+
+		Integer[] siteId = Freemarkers.getIntegers(params, SITE_ID);
+		if (siteId == null) {
+			siteId = new Integer[] { ForeContext.getSiteId(env) };
+		}
+
+		Integer[] modelId = Freemarkers.getIntegers(params, MODEL_ID);
+		String[] model = Freemarkers.getStrings(params, MODEL);
+
+		Integer[] nodeId = Freemarkers.getIntegers(params, NODE_ID);
+		String[] node = Freemarkers.getStrings(params, NODE);
+		String[] nodeNumber = Freemarkers.getStrings(params, NODE_NUMBER);
+
+		Integer[] excludeNodeId = Freemarkers.getIntegers(params,
+				EXCLUDE_NODE_ID);
+		String[] excludeNode = Freemarkers.getStrings(params, EXCLUDE_NODE);
+		String[] excludeNodeNumber = Freemarkers.getStrings(params,
+				EXCLUDE_NODE_NUMBER);
+
+		Integer[] attrId = Freemarkers.getIntegers(params, ATTR_ID);
+		String[] attr = Freemarkers.getStrings(params, ATTR);
+
+		Integer[] tagId = Freemarkers.getIntegers(params, TAG_ID);
+		String[] tag = Freemarkers.getStrings(params, TAG);
+		
+
+		Integer[] userId = Freemarkers.getIntegers(params, USER_ID);
+		String[] user = Freemarkers.getStrings(params, USER);
+
+	
+
+	
+		String[] status = Freemarkers.getStrings(params, STATUS);
+		if (status == null) {
+			status = new String[] { Info.NORMAL };
+		}
+
+		boolean isIncludeChildren = Freemarkers.getBoolean(params,
+				IS_INCLUDE_CHILDREN, false);
+		boolean isMainNodeOnly = Freemarkers.getBoolean(params,
+				IS_MAIN_NODE_ONLY, false);
+		Boolean isWithImage = Freemarkers.getBoolean(params, IS_WITH_IMAGE);
+
+		boolean isPerm = Freemarkers.getBoolean(params, IS_PERM, false);
+		Integer[] viewGroupId = null;
+		Integer[] viewOrgId = null;
+		if (isPerm) {
+			Collection<MemberGroup> groups = ForeContext.getGroups(env);
+			Collection<Org> orgs = ForeContext.getOrgs(env);
+			if (groups != null && !groups.isEmpty()) {
+				viewGroupId = new Integer[groups.size()];
+				int i = 0;
+				for (MemberGroup group : groups) {
+					viewGroupId[i++] = group.getId();
+				}
+			}
+			if (orgs != null && !orgs.isEmpty()) {
+				viewOrgId = new Integer[orgs.size()];
+				int i = 0;
+				for (Org org : orgs) {
+					viewOrgId[i++] = org.getId();
+				}
+			}
+		}
+
+		String[] treeNumber = null;
+		Integer[] mainNodeId = null;
+		List<Integer> nodeIdList = getNodeIdList(nodeId, node, nodeNumber,
+				siteId);
+		nodeId = nodeIdList.toArray(new Integer[nodeIdList.size()]);
+		if (isIncludeChildren) {
+			treeNumber = getNodeTreeNumberList(nodeIdList).toArray(
+					new String[nodeIdList.size()]);
+			nodeId = null;
+		} else if (isMainNodeOnly) {
+			mainNodeId = nodeId;
+			nodeId = null;
+		}
+
+		String[] excludeTreeNumber = null;
+		Integer[] excludeMainNodeId = null;
+		List<Integer> excludeNodeIdList = getNodeIdList(excludeNodeId,
+				excludeNode, excludeNodeNumber, siteId);
+		excludeMainNodeId = excludeNodeIdList
+				.toArray(new Integer[excludeNodeIdList.size()]);
+		if (isIncludeChildren) {
+			excludeTreeNumber = getNodeTreeNumberList(excludeNodeIdList)
+					.toArray(new String[excludeNodeIdList.size()]);
+			excludeMainNodeId = null;
+		}
+
+		List<Integer> modelIdList = getModelIdList(modelId, model, siteId);
+		modelId = modelIdList.toArray(new Integer[modelIdList.size()]);
+
+		List<Integer> attrIdList = getAttrIdList(attrId, attr, siteId);
+		attrId = attrIdList.toArray(new Integer[attrIdList.size()]);
+
+		List<Integer> tagIdList = getTagIdList(tagId, tag, siteId);
+		tagId = tagIdList.toArray(new Integer[tagIdList.size()]);
+
+		List<Integer> userIdList = getUserIdList(userId, user);
+		userId = userIdList.toArray(new Integer[userIdList.size()]);
+		Integer[] infoId= Freemarkers.getIntegers(params, "infoId");
+		Integer[] infoPeriod= Freemarkers.getIntegers(params, "infoPeriod");
+		Sort defSort = new Sort(Direction.DESC, "infoId");
+		if (isPage) {
+			Pageable pageable = Freemarkers.getPageable(params, env, defSort);
+			Page<ProductRecord> pagedList = recordService.findPage( infoId[0],infoPeriod[0], pageable);
+			logger.info("AbstractInfoListPageDirective 555---"+pagedList);
+			ForeContext.setTotalPages(pagedList.getTotalPages());
+			loopVars[0] = env.getObjectWrapper().wrap(pagedList);
+		} else {
+			Limitable limitable = Freemarkers.getLimitable(params, defSort);
+			List<Info> list = null;
+			logger.info("AbstractInfoListPageDirective 666---"+list);
+			loopVars[0] = env.getObjectWrapper().wrap(list);
+		}
+		if (ArrayUtils.isNotEmpty(attr)) {
+			Info.setAttrName(attr[0]);
+		} else if (ArrayUtils.isNotEmpty(attrId)) {
+			Info.setAttrId(attrId[0]);
+		}
+
+		body.render(env.getOut());
+		if (ArrayUtils.isNotEmpty(attr)) {
+			Info.resetAttrName();
+		} else if (ArrayUtils.isNotEmpty(attrId)) {
+			Info.resetAttrId();
+		}
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void doExecuteGotAllOrder(Environment env, Map params,
+			TemplateModel[] loopVars, TemplateDirectiveBody body, boolean isPage)
+			throws TemplateException, IOException {
+		if (loopVars.length < 1) {
+			throw new TemplateModelException("Loop variable is required.");
+		}
+		if (body == null) {
+			throw new RuntimeException("missing body");
+		}
+
+		Integer[] siteId = Freemarkers.getIntegers(params, SITE_ID);
+		if (siteId == null) {
+			siteId = new Integer[] { ForeContext.getSiteId(env) };
+		}
+
+		Integer[] modelId = Freemarkers.getIntegers(params, MODEL_ID);
+		String[] model = Freemarkers.getStrings(params, MODEL);
+
+		Integer[] nodeId = Freemarkers.getIntegers(params, NODE_ID);
+		String[] node = Freemarkers.getStrings(params, NODE);
+		String[] nodeNumber = Freemarkers.getStrings(params, NODE_NUMBER);
+
+		Integer[] excludeNodeId = Freemarkers.getIntegers(params,
+				EXCLUDE_NODE_ID);
+		String[] excludeNode = Freemarkers.getStrings(params, EXCLUDE_NODE);
+		String[] excludeNodeNumber = Freemarkers.getStrings(params,
+				EXCLUDE_NODE_NUMBER);
+
+		Integer[] attrId = Freemarkers.getIntegers(params, ATTR_ID);
+		String[] attr = Freemarkers.getStrings(params, ATTR);
+
+		Integer[] tagId = Freemarkers.getIntegers(params, TAG_ID);
+		String[] tag = Freemarkers.getStrings(params, TAG);
+		
+
+		Integer[] userId = Freemarkers.getIntegers(params, USER_ID);
+		String[] user = Freemarkers.getStrings(params, USER);
+
+	
+
+	
+		String[] status = Freemarkers.getStrings(params, STATUS);
+		if (status == null) {
+			status = new String[] { Info.NORMAL };
+		}
+
+		boolean isIncludeChildren = Freemarkers.getBoolean(params,
+				IS_INCLUDE_CHILDREN, false);
+		boolean isMainNodeOnly = Freemarkers.getBoolean(params,
+				IS_MAIN_NODE_ONLY, false);
+		Boolean isWithImage = Freemarkers.getBoolean(params, IS_WITH_IMAGE);
+
+		boolean isPerm = Freemarkers.getBoolean(params, IS_PERM, false);
+		Integer[] viewGroupId = null;
+		Integer[] viewOrgId = null;
+		if (isPerm) {
+			Collection<MemberGroup> groups = ForeContext.getGroups(env);
+			Collection<Org> orgs = ForeContext.getOrgs(env);
+			if (groups != null && !groups.isEmpty()) {
+				viewGroupId = new Integer[groups.size()];
+				int i = 0;
+				for (MemberGroup group : groups) {
+					viewGroupId[i++] = group.getId();
+				}
+			}
+			if (orgs != null && !orgs.isEmpty()) {
+				viewOrgId = new Integer[orgs.size()];
+				int i = 0;
+				for (Org org : orgs) {
+					viewOrgId[i++] = org.getId();
+				}
+			}
+		}
+
+		String[] treeNumber = null;
+		Integer[] mainNodeId = null;
+		List<Integer> nodeIdList = getNodeIdList(nodeId, node, nodeNumber,
+				siteId);
+		nodeId = nodeIdList.toArray(new Integer[nodeIdList.size()]);
+		if (isIncludeChildren) {
+			treeNumber = getNodeTreeNumberList(nodeIdList).toArray(
+					new String[nodeIdList.size()]);
+			nodeId = null;
+		} else if (isMainNodeOnly) {
+			mainNodeId = nodeId;
+			nodeId = null;
+		}
+
+		String[] excludeTreeNumber = null;
+		Integer[] excludeMainNodeId = null;
+		List<Integer> excludeNodeIdList = getNodeIdList(excludeNodeId,
+				excludeNode, excludeNodeNumber, siteId);
+		excludeMainNodeId = excludeNodeIdList
+				.toArray(new Integer[excludeNodeIdList.size()]);
+		if (isIncludeChildren) {
+			excludeTreeNumber = getNodeTreeNumberList(excludeNodeIdList)
+					.toArray(new String[excludeNodeIdList.size()]);
+			excludeMainNodeId = null;
+		}
+
+		List<Integer> modelIdList = getModelIdList(modelId, model, siteId);
+		modelId = modelIdList.toArray(new Integer[modelIdList.size()]);
+
+		List<Integer> attrIdList = getAttrIdList(attrId, attr, siteId);
+		attrId = attrIdList.toArray(new Integer[attrIdList.size()]);
+
+		List<Integer> tagIdList = getTagIdList(tagId, tag, siteId);
+		tagId = tagIdList.toArray(new Integer[tagIdList.size()]);
+
+		List<Integer> userIdList = getUserIdList(userId, user);
+		userId = userIdList.toArray(new Integer[userIdList.size()]);
+		Integer[] infoId= Freemarkers.getIntegers(params, "infoId");
+		Sort defSort = new Sort(Direction.DESC, "infoId");
+		if (isPage) {
+			Pageable pageable = Freemarkers.getPageable(params, env, defSort);
+			Page<Order> pagedList = orderService.findPage2( infoId[0], pageable);
+			logger.info("AbstractInfoListPageDirective 555---"+pagedList);
+			ForeContext.setTotalPages(pagedList.getTotalPages());
+			loopVars[0] = env.getObjectWrapper().wrap(pagedList);
+		} else {
+			Limitable limitable = Freemarkers.getLimitable(params, defSort);
+			List<Info> list = null;
+			logger.info("AbstractInfoListPageDirective 666---"+list);
+			loopVars[0] = env.getObjectWrapper().wrap(list);
+		}
+		if (ArrayUtils.isNotEmpty(attr)) {
+			Info.setAttrName(attr[0]);
+		} else if (ArrayUtils.isNotEmpty(attrId)) {
+			Info.setAttrId(attrId[0]);
+		}
+
+		body.render(env.getOut());
+		if (ArrayUtils.isNotEmpty(attr)) {
+			Info.resetAttrName();
+		} else if (ArrayUtils.isNotEmpty(attrId)) {
+			Info.resetAttrId();
+		}
+	}
+
+
+	
 	private List<Integer> getModelIdList(Integer[] modelId, String[] model,
 			Integer[] siteId) {
 		List<Integer> list = new ArrayList<Integer>();
@@ -363,6 +938,10 @@ public abstract class AbstractInfoListPageDirective {
 	private NodeQueryService nodeQuery;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private OrderService orderService;
+	@Autowired
+	private RecordService recordService;
 	@Autowired
 	private InfoQueryService query;
 }

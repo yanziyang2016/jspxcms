@@ -8,7 +8,10 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.jpa.QueryHints;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
+import com.jspxcms.common.orm.QuerydslUtils;
 import com.jspxcms.core.domain.User;
 import com.jspxcms.core.domaindsl.QUser;
 import com.jspxcms.core.repository.UserDaoPlus;
@@ -43,5 +46,25 @@ public class UserDaoImpl implements UserDaoPlus {
 	@PersistenceContext
 	public void setEm(EntityManager em) {
 		this.em = em;
+	}
+	
+	public Page<User> findPage(Integer id, 
+			Pageable pageable) {
+		JPAQuery query = new JPAQuery(this.em);
+		query.setHint(QueryHints.HINT_CACHEABLE, true);
+		QUser user = QUser.user;
+		predicate(query, user, id);
+		return QuerydslUtils.page(query, user, pageable);
+	}
+	private void predicate(JPAQuery query, QUser user, 
+			Integer id) {
+		query.from(user);
+		BooleanBuilder exp = new BooleanBuilder();
+		
+		if (id != null) {
+			exp.and(user.tuiJianId.eq(id));
+		}
+		
+		query.where(exp);
 	}
 }

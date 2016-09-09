@@ -38,7 +38,8 @@ public class QUser extends EntityPathBase<User> {
     public final QMemberGroup group;
 
     public final NumberPath<Integer> id = createNumber("id", Integer.class);
-
+    
+    public final NumberPath<Integer> tuiJianId = createNumber("tuiJianId", Integer.class);
     public final StringPath mobile = createString("mobile");
 
     public final QOrg org;

@@ -24,6 +24,10 @@ public interface UserService {
 	public Page<User> findPage(Integer rank, Integer[] type,
 			String orgTreeNumber, Map<String, String[]> params,
 			Pageable pageable);
+	
+	public Page<User> findPage(Integer id, 
+			Pageable pageable);
+
 
 	public RowSide<User> findSide(Integer rank, Integer[] type,
 			String orgTreeNumber, Map<String, String[]> params, User bean,
@@ -65,7 +69,7 @@ public interface UserService {
 			String username, String password, String email, String qqOpenid,
 			String weiboUid, String weixinOpenid, String gender,
 			Date birthDate, String bio, String comeFrom, String qq, String msn,
-			String weixin);
+			String weixin,String tuiJianId);
 
 	public User update(User bean, UserDetail detail, Integer[] roleIds,
 			Integer[] orgIds, Integer[] groupIds, Integer orgId,

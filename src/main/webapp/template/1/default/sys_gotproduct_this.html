@@ -1,0 +1,93 @@
+[#escape x as (x)!?html]
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<title>${anchor.title}_${site.name}${global.customs['poweredby']}</title>
+<meta name="keywords" content="${anchor.title}"/>
+<meta name="description" content="${anchor.title}"/>
+<link href="_files/global.css" rel="stylesheet"/>
+<link href="_files/style.css" rel="stylesheet"/>
+[#include 'inc_js.html'/]
+</head>
+<body>
+
+[#assign commentIndex = 1/]
+[#macro printComment parent]
+	<div style="background-color:#FFE;border:1px solid #999;padding:3px;">
+		[#if parent.parent??]
+		[@printComment parent=parent.parent/] 
+		[/#if]
+		<div style="padding:5px;">
+			<div class="oh">
+				<div style="float:left;">[#if parent.creator.id==0]<span class="c-comment">匿名网友</span>[#else]<a href="${ctx}/space/${parent.creator.id}.jspx" target="_blank" class="a-hover c-comment">${parent.creator.username}</a>[/#if]</div>
+				<div style="float:right;">${commentIndex}[#assign commentIndex = commentIndex+1/]</div>
+			</div>
+			<div class="mt5">[#noescape]${bbcode(parent.text)}[/#noescape]</div>
+		</div>
+	</div>
+[/#macro]
+
+		
+[#include 'inc_header.html'/]
+[@ThisProductPage infoId=Param.fid infoPeriod=Param.infoPeriod pageSize=30;pagedList]
+<div class="w center oh">
+	<div class="left w2">
+		<h1 class="info-title" style="border-top:2px solid #458fce;">[#noescape]${bbcode(anchor.title)}[/#noescape]</h1>		
+		
+		[#assign info=getInfo(Param.fid)/]
+		[#assign status=info.getCommentStatus(user,groups)/]
+		[#assign conf = site.getConf('com.jspxcms.core.domain.SiteComment')/]
+		[#if status != 0]
+		<div>
+			<div class="mt10" style="border-bottom:1px solid #ddd;">
+				<span class="fs16 ff-yh" style="padding-bottom:5px;display:inline-block;border-bottom:3px solid #379be9;">申请记录</span>
+			</div>
+			[#if pagedList.totalElements > 0]
+			
+			<table class="table-list">
+				<thead>
+					<tr>
+						<th width="200px">申请用户</th>
+						<th width="200px">申请期数</th>
+						<th width="200px">申请序列</th>
+						<th width="300px">申请时间</th>
+					</tr>
+				</thead>
+				<tbody>
+					[#list pagedList.content as info]
+					<tr>
+						<td align="center">${info.userName}</td>
+						<td align="center">第${info.infoPeriod}期</td>
+						<td align="center">
+							${info.periodNo}
+						</td>
+						<td align="center">
+							${info.addDate}
+						</td>
+						
+					</tr>
+					[/#list]
+				</tbody>
+			</table>
+			
+			[#else]
+				<h1>该商品暂无申请领取记录！</h1>
+			[/#if]
+			<div class="mt20">
+				[#include 'page.html'/]
+			</div>
+		
+		</div>
+		[/#if]				
+	</div>
+	<div class="right w1">
+		[#include 'inc_news_right.html'/]
+	</div>
+</div>
+[/@ThisProductPage]
+[#include 'inc_friendlink.html'/]
+[#include 'inc_footer.html'/]
+</body>
+</html>
+[/#escape]

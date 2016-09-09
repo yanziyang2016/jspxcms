@@ -226,4 +226,9 @@ public class InfoQueryServiceImpl implements InfoQueryService {
 	public void setDao(InfoDao dao) {
 		this.dao = dao;
 	}
+
+	@Override
+	public Info findOne(Integer id) {
+		return dao.findOne(id);
+	}
 }

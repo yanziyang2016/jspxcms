@@ -88,7 +88,10 @@ function optDelete(form) {
 <body class="c-body">
 <jsp:include page="/WEB-INF/views/commons/show_message.jsp"/>
 <div class="c-bar margin-top5">
-  <span class="c-position"><s:message code="info.management"/> - <s:message code="list"/></span>
+  <span class="c-position">
+  <c:if test="${isProduct==0 }"><s:message code="info.management"/> </c:if>
+  <c:if test="${isProduct==1 }">商品管理</c:if>
+  - <s:message code="list"/></span>
 	<span class="c-total">(<s:message code="totalElements" arguments="${pagedList.totalElements}"/>)</span>
 </div>
 <form id="searchForm" action="list.do" method="get">
@@ -162,6 +165,7 @@ function optDelete(form) {
   <div class="ls-btn"><input type="button" value="<s:message code="info.recall"/>" onclick="return optMulti(this.form,'recall.do');"/></div>
   </shiro:hasPermission>
 	<div class="ls-btn"></div>
+	<c:if test="${isProduct==0}">
 	<shiro:hasPermission name="core:info:audit_pass">
 	<div class="ls-btn"><input type="button" value="<s:message code="info.auditPass"/>" onclick="return optMulti(this.form,'audit_pass.do');"/></div>
 	</shiro:hasPermission>
@@ -171,6 +175,15 @@ function optDelete(form) {
 	<shiro:hasPermission name="core:info:audit_return">
 	<div class="ls-btn"><input type="button" value="<s:message code="info.auditReturn"/>" onclick="return optMulti(this.form,'audit_return.do');"/></div>
 	</shiro:hasPermission>
+	</c:if>
+	<c:if test="${isProduct==1}">
+	<shiro:hasPermission name="core:info:audit_pass">
+	<div class="ls-btn"><input type="button" value="上架" onclick="return optMulti(this.form,'audit_pass.do');"/></div>
+	</shiro:hasPermission>
+	<shiro:hasPermission name="core:info:audit_reject">
+	<div class="ls-btn"><input type="button" value="下架" onclick="return optMulti(this.form,'audit_reject.do');"/></div>
+	</shiro:hasPermission>
+	</c:if>
 	<div class="ls-btn"></div>
   <shiro:hasPermission name="core:info:mass_weixin_form">
   <div class="ls-btn"><input type="button" value="<s:message code="info.massWeixin"/>" onclick="return optMulti(this.form,'mass_weixin_form.do');"/></div>
@@ -187,6 +200,7 @@ function optDelete(form) {
 	<div style="clear:both"></div>
 </div>
 <ul id="tabs" class="tabs margin-top5">
+<c:if test="${isProduct==0}">
 <shiro:hasPermission name="core:info:status">
 	<li<c:if test="${empty queryStatus}"> class="active"</c:if>><a href="javascript:void(0);" onclick="$('#queryStatus').val('');$('#searchForm').submit();"><s:message code="info.status.all"/></a></li>
 	<li<c:if test="${queryStatus eq 'pending'}"> class="active"</c:if>><a href="javascript:void(0);" onclick="$('#queryStatus').val('pending');$('#searchForm').submit();"><s:message code="info.status.pending"/></a></li>
@@ -206,6 +220,17 @@ function optDelete(form) {
 	<li<c:if test="${queryStatus eq 'X'}"> class="active"</c:if>><a href="javascript:void(0);" onclick="$('#queryStatus').val('X');$('#searchForm').submit();"><s:message code="info.status.X"/></a></li>
 	</shiro:hasPermission>
 </shiro:hasPermission>
+</c:if>
+<c:if test="${isProduct==1}">
+<shiro:hasPermission name="core:info:status">
+	<li<c:if test="${empty queryStatus}"> class="active"</c:if>><a href="javascript:void(0);" onclick="$('#queryStatus').val('');$('#searchForm').submit();"><s:message code="info.status.all"/></a></li>
+  <li<c:if test="${queryStatus eq 'A'}"> class="active"</c:if>><a href="javascript:void(0);" onclick="$('#queryStatus').val('A');$('#searchForm').submit();">已上架</a></li>
+	<li<c:if test="${queryStatus eq 'D'}"> class="active"</c:if>><a href="javascript:void(0);" onclick="$('#queryStatus').val('D');$('#searchForm').submit();">已下架</a></li>
+	<shiro:hasPermission name="core:info:recall">
+	<li<c:if test="${queryStatus eq 'X'}"> class="active"</c:if>><a href="javascript:void(0);" onclick="$('#queryStatus').val('X');$('#searchForm').submit();"><s:message code="info.status.X"/></a></li>
+	</shiro:hasPermission>
+</shiro:hasPermission>
+</c:if>
 </ul>
 <table id="pagedTable" border="0" cellpadding="0" cellspacing="0" class="ls-tb">
   <thead id="sortHead" pagesort="<c:out value='${page_sort[0]}' />" pagedir="${page_sort_dir[0]}" pageurl="list.do?page_sort={0}&page_sort_dir={1}&queryNodeId=${queryNodeId}&queryNodeType=${queryNodeType}&queryInfoPermType=${queryInfoPermType}&queryStatus=${queryStatus}&${searchstringnosort}">
@@ -215,8 +240,13 @@ function optDelete(form) {
     <th width="30" class="ls-th-sort"><span class="ls-sort" pagesort="id">ID</span></th>
     <th class="ls-th-sort"><span class="ls-sort" pagesort="detail.title"><s:message code="info.title"/></span></th>
     <th class="ls-th-sort"><span class="ls-sort" pagesort="publishDate"><s:message code="info.publishDate"/></span></th>
+    <c:if test="${isProduct==1}">
+    <th class="ls-th-sort"><span class="ls-sort" >库存</span></th>
+    </c:if>
+      <c:if test="${isProduct==0}">
     <th class="ls-th-sort"><span class="ls-sort" pagesort="priority"><s:message code="info.priority"/></span></th>
     <th class="ls-th-sort"><span class="ls-sort" pagesort="views"><s:message code="info.views"/></span></th>
+    </c:if>
     <th class="ls-th-sort"><span class="ls-sort" pagesort="status"><s:message code="info.status"/></span></th>
   </tr>
   </thead>
@@ -272,10 +302,17 @@ function optDelete(form) {
     	  <c:if test="${!empty bean.author}">&nbsp; <span style="color:blue;"><c:out value="${bean.author}"/></span></c:if>
     	</div>
     </td>
+    <c:if test="${isProduct==1}">
+    	<td align="right"><c:out value="${bean.stock}"/></td>
+    	
+    </c:if>
+    <c:if test="${isProduct==0}">
     <td align="right"><c:out value="${bean.priority}"/></td>
     <td align="right"><c:out value="${bean.views}"/></td>
+     </c:if>
     <td align="center">
       <div>
+      	 <c:if test="${isProduct==0}">
 	    	<c:choose>
 	    	<c:when test="${bean.status eq '1'}">
 	    		${bean.stepName}
@@ -287,6 +324,20 @@ function optDelete(form) {
 	    		<s:message code="info.status.${bean.status}"/>
 	    	</c:otherwise>
 	    	</c:choose>
+	     </c:if>
+	     <c:if test="${isProduct==1}">
+	    	<c:choose>
+	    	<c:when test="${bean.status eq '1'}">
+	    		${bean.stepName}
+	    	</c:when>    	
+	    	<c:when test="${bean.status eq 'A'}">
+	    		<a href="${bean.url}" target="_blank"><s:message code="product.status.${bean.status}"/></a>
+	    	</c:when>
+	    	<c:otherwise>
+	    		<s:message code="product.status.${bean.status}"/>
+	    	</c:otherwise>
+	    	</c:choose>
+	     </c:if>
     	</div>
     	<div>
         html:

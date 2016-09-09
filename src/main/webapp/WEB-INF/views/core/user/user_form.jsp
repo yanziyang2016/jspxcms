@@ -11,7 +11,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<title>Jspxcms管理平台 - Powered by Jspxcms</title>
+<title>1111111111111111111</title>
 <jsp:include page="/WEB-INF/views/commons/head.jsp"></jsp:include>
 <script type="text/javascript">
 $(function() {
@@ -132,10 +132,15 @@ function confirmDelete() {
     </td>
     <td class="in-lab" width="15%"><s:message code="user.status"/>:</td>
     <td class="in-ctt" width="35%">
-    	<select name="status">
-    		<f:option value="0" selected="${bean.status}" default="0"><s:message code='user.status.0'/></f:option>
+    	<select name="memStatus">
+    		<f:option value="0" selected="${bean.memStatus}" default="0"><s:message code='user.status.0'/></f:option>
+    		<!--  
     		<f:option value="1" selected="${bean.status}"><s:message code='user.status.1'/></f:option>
     		<f:option value="2" selected="${bean.status}"><s:message code='user.status.2'/></f:option>
+    		-->
+    		<f:option value="3" selected="${bean.memStatus}"><s:message code='user.status.3'/></f:option>
+    		<f:option value="4" selected="${bean.memStatus}"><s:message code='user.status.4'/></f:option>
+    		<f:option value="5" selected="${bean.memStatus}"><s:message code='user.status.5'/></f:option>
     	</select>
    	</td>
   </tr>
@@ -153,7 +158,13 @@ function confirmDelete() {
 			<label><f:radio name="gender" value="M" checked="${bean.gender}"/><s:message code="male"/></label>
 			<label><f:radio name="gender" value="F" checked="${bean.gender}"/><s:message code="female"/></label>
 			<label><f:radio name="gender" value="" checked="${bean.gender}" default=""/><s:message code="secret"/></label>
-		</td>
+	</td>
+  </tr>
+  <tr>
+    <td class="in-lab" width="15%">用户ID:</td>
+    <td class="in-ctt" width="35%"><f:text name="id" value="${bean.id}" maxlength="64" readonly="readonly" style="width:180px;"/></td>
+    <td class="in-lab" width="15%">出生年月:</td>
+    <td class="in-ctt" width="35%"><input type="text" name="birthDate" value="<fmt:formatDate value="${bean.birthDate}" pattern="yyyy-MM-dd'T'HH:mm:ss"/>" onclick="WdatePicker({dateFmt:'yyyy-MM-ddTHH:mm:ss'});" style="width:180px;"/></td>
   </tr>
   <tr>
     <td class="in-lab" width="15%"><s:message code="user.qqOpenid"/>:</td>
@@ -198,7 +209,30 @@ function confirmDelete() {
   </tr>
   <tr>
     <td class="in-lab" width="15%"><s:message code="user.logins"/>:</td>
-    <td class="in-ctt" width="85%" colspan="3"><f:text name="logins" value="${bean.logins}" class="digits" maxlength="10" style="width:180px;"/></td>
+    <td class="in-ctt" width="35%" ><f:text name="logins" value="${bean.logins}"  maxlength="10" style="width:180px;"/></td>
+    <td class="in-lab" width="15%">开户机构:</td>
+    <td class="in-ctt" width="35%" ><f:text name="kaihu" value="${bean.kaihu}"  maxlength="10" style="width:180px;"/></td>
+  </tr>
+  <tr>
+    <td class="in-lab" width="15%">账户名称:</td>
+    <td class="in-ctt" width="35%" ><f:text name="accountName" value="${bean.accountName}"  maxlength="10" style="width:180px;"/></td>
+    <td class="in-lab" width="15%">账户帐号:</td>
+    <td class="in-ctt" width="35%" ><f:text name="accountNo" value="${bean.accountNo}"  maxlength="10" style="width:180px;"/></td>
+  </tr>
+  <tr>
+    <td class="in-lab" width="15%">家庭住址:</td>
+    <td class="in-ctt" width="35%" ><f:text name="homeAddress" value="${bean.homeAddress}"  maxlength="10" style="width:180px;"/></td>
+    <td class="in-lab" width="15%">元宝:</td>
+    <td class="in-ctt" width="35%" ><f:text name="yuanBao" value="${bean.yuanBao}"  maxlength="10" style="width:180px;"/></td>
+  </tr>
+  <tr>
+    <td class="in-lab" width="15%">推荐人ID:</td>
+    <td class="in-ctt" width="35%" ><f:text name="tuiJianId" value="${bean.tuiJianId}" readonly="readonly" maxlength="10" style="width:180px;"/></td>
+    <td class="in-lab" width="15%">推荐费发放:</td>
+    <td class="in-ctt" width="35%">
+			<label><f:radio name="tuiJianFei" value="Y" checked="${bean.tuiJianFei}"/>已发放</label>
+			<label><f:radio name="tuiJianFei" value="N" checked="${bean.tuiJianFei}" />未发放</label>
+	</td>
   </tr>
   </c:if>
   <tr>

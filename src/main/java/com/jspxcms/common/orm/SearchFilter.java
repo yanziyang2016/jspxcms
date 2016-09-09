@@ -20,7 +20,11 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.Specification;
+
+import com.jspxcms.core.web.fore.TuiJianController;
 
 /**
  * 搜索过滤器
@@ -29,7 +33,7 @@ import org.springframework.data.jpa.domain.Specification;
  * 
  */
 public class SearchFilter {
-
+	protected final static Logger logger = LoggerFactory.getLogger(SearchFilter.class);
 	public enum Operator {
 		EQ, LIKE, CONTAIN, STARTWITH, ENDWITH, GT, LT, GTE, LTE, IN
 	}
@@ -186,7 +190,7 @@ public class SearchFilter {
 		if (params == null || params.isEmpty()) {
 			return Collections.emptyMap();
 		}
-
+		logger.info("SearchFilter---"+params);
 		Map<String, SearchFilter> filters = new HashMap<String, SearchFilter>();
 
 		for (Entry<String, String[]> entry : params.entrySet()) {

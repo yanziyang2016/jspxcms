@@ -58,6 +58,8 @@ import org.htmlparser.tags.ImageTag;
 import org.htmlparser.util.NodeList;
 import org.htmlparser.util.ParserException;
 import org.htmlparser.util.SimpleNodeIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jspxcms.common.file.Files;
 import com.jspxcms.common.util.Reflections;
@@ -72,6 +74,7 @@ import com.jspxcms.core.support.Commentable;
 import com.jspxcms.core.support.Context;
 import com.jspxcms.core.support.Siteable;
 import com.jspxcms.core.support.TitleText;
+import com.jspxcms.core.web.back.InfoController;
 
 /**
  * Info
@@ -84,6 +87,9 @@ import com.jspxcms.core.support.TitleText;
 public class Info implements java.io.Serializable, Anchor, Siteable,
 		Commentable, PageUrlResolver {
 	private static final long serialVersionUID = 1L;
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(Info.class);
 	/**
 	 * 附件类型
 	 */
@@ -1602,7 +1608,18 @@ public class Info implements java.io.Serializable, Anchor, Siteable,
 	@Transient
 	public String getCustomsValue(String name) {
 		String key = getCustoms().get(name);
+		logger.info("name---"+name);
+		logger.info("key---"+key);
 		return getModel().getCustomOptionValue(name, key);
+	}
+	
+	@Transient
+	public String getCustomsValueNew(String name) {
+		
+		String key = getCustoms().get(name);
+		logger.info("name1---"+name);
+		logger.info("key1---"+key);
+		return key;
 	}
 
 	/**
@@ -1782,6 +1799,17 @@ public class Info implements java.io.Serializable, Anchor, Siteable,
 
 	private String highlightTitle;
 	private String highlightText;
+	
+	private String stock;
+	
+	@Transient
+	public String getStock() {
+		return stock;
+	}
+
+	public void setStock(String stock) {
+		this.stock = stock;
+	}
 
 	public Info() {
 	}

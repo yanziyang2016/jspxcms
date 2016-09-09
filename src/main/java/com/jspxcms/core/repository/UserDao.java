@@ -20,6 +20,9 @@ import com.jspxcms.core.domain.User;
  */
 public interface UserDao extends Repository<User, Integer>, UserDaoPlus {
 	public Page<User> findAll(Specification<User> spec, Pageable pageable);
+	
+	public Page<User> findPage(Integer id, 
+			Pageable pageable);
 
 	public List<User> findAll(Specification<User> spec, Limitable limitable);
 

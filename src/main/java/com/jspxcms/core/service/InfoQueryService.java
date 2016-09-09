@@ -60,4 +60,6 @@ public interface InfoQueryService {
 	public boolean containsTitle(String title, Integer siteId);
 
 	public Info get(Integer id);
+
+	public Info findOne(Integer id);
 }

@@ -68,6 +68,12 @@ public class UserServiceImpl implements UserService, OrgDeleteListener,
 			Pageable pageable) {
 		return dao.findAll(spec(rank, type, orgTreeNumber, params), pageable);
 	}
+	public Page<User> findPage(Integer id, 
+			Pageable pageable){
+		return dao.findPage(id, 
+				pageable);
+	}
+	
 
 	public RowSide<User> findSide(Integer rank, Integer[] type,
 			String orgTreeNumber, Map<String, String[]> params, User bean,
@@ -340,7 +346,7 @@ public class UserServiceImpl implements UserService, OrgDeleteListener,
 			String username, String password, String email, String qqOpenid,
 			String weiboUid, String weixinOpenid, String gender,
 			Date birthDate, String bio, String comeFrom, String qq, String msn,
-			String weixin) {
+			String weixin,String tuiJianId) {
 		User user = new User();
 		user.setUsername(username);
 		user.setRawPassword(password);
@@ -352,7 +358,10 @@ public class UserServiceImpl implements UserService, OrgDeleteListener,
 		user.setBirthDate(birthDate);
 		user.setStatus(status);
 		user.setType(User.MEMBER);
-
+		user.setYuanBao(0);
+		user.setTuiJianFei("N");
+		user.setMemStatus(0);
+		user.setTuiJianId(Integer.valueOf(tuiJianId));
 		UserDetail detail = new UserDetail();
 		detail.setBio(bio);
 		detail.setComeFrom(comeFrom);
