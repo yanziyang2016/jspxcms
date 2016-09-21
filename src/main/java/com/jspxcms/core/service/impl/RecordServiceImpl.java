@@ -9,6 +9,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +27,7 @@ import com.jspxcms.core.repository.InfoDao;
 import com.jspxcms.core.repository.RecordDao;
 import com.jspxcms.core.repository.UserDao;
 import com.jspxcms.core.service.RecordService;
+import com.jspxcms.core.web.fore.InfoController;
 
 /**
  * UserServiceImpl
@@ -36,7 +39,7 @@ import com.jspxcms.core.service.RecordService;
 @Transactional(readOnly = true)
 public class RecordServiceImpl implements RecordService{
 	private static final int SALT_SIZE = 8;
-
+	protected final static Logger logger = LoggerFactory.getLogger(RecordServiceImpl.class);
 	public Page<ProductRecord> findPage(Map<String, String[]> params,
 			Pageable pageable) {
 		Page<ProductRecord> orderPage=dao.findAll(spec( params), pageable);
@@ -135,8 +138,10 @@ public class RecordServiceImpl implements RecordService{
 		userdao.save(user);
 		Info info = infodao.findOne(bean.getInfoId());
 		Map<String, String> customs = info.getCustoms();
+		logger.info("stock--before--"+info.getCustomsValueNew("stock"));
 		String stock = String.valueOf((Integer.valueOf(info.getCustomsValueNew("stock"))-1));
 		customs.remove("stock");
+		logger.info("stock--after--"+stock);
 		customs.put("stock", stock);
 		info.setCustoms(customs);
 		infodao.save(info);

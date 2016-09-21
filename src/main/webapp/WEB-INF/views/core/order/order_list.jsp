@@ -123,7 +123,7 @@ function optDeletePassword(form) {
 	    </shiro:hasPermission>
      </td>
     <td>${bean.orderNo}</td>
-    <td>${bean.infoName}</td>
+    <td>${bean.infoName}(第${bean.infoPeriod}期)</td>
     <td >${bean.productPro}</td>
     <td >    ${bean.userName}    </td>
     <td >${bean.mobile}</td>
