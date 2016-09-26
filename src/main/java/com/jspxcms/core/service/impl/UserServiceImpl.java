@@ -409,6 +409,10 @@ public class UserServiceImpl implements UserService, OrgDeleteListener,
 		detailService.update(detail);
 		return user;
 	}
+	@Transactional
+	public void updateUserOnly(User userfore) {
+		dao.save(userfore);
+	}
 
 	private User doDelete(Integer id) {
 		User entity = dao.findOne(id);
@@ -548,5 +552,6 @@ public class UserServiceImpl implements UserService, OrgDeleteListener,
 	public void setDao(UserDao dao) {
 		this.dao = dao;
 	}
+	
 
 }

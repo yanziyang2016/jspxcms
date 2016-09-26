@@ -96,4 +96,6 @@ public interface UserService {
 	public User delete(Integer id);
 
 	public User[] delete(Integer[] ids);
+
+	public void updateUserOnly(User userfore);
 }

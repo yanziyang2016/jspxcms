@@ -46,6 +46,7 @@ import com.jspxcms.core.service.RecordService;
 import com.jspxcms.core.service.ScoreBoardService;
 import com.jspxcms.core.service.ScoreItemService;
 import com.jspxcms.core.service.SiteService;
+import com.jspxcms.core.service.UserService;
 import com.jspxcms.core.service.VoteMarkService;
 import com.jspxcms.core.support.Context;
 import com.jspxcms.core.support.ForeContext;
@@ -136,6 +137,10 @@ public class InfoController {
 			temp.setMemStatus(1);
 			modelMap.addAttribute("userfore", temp);
 		}else{
+			if(info.getTemplate().equals("/1/default/info_news.html")){
+				userfore.setYuanBao(userfore.getYuanBao()+4);
+				userService.updateUserOnly(userfore);
+			}
 			modelMap.addAttribute("userfore", userfore);
 		}
 		
@@ -167,13 +172,34 @@ public class InfoController {
 		ForeContext.setPage(data, page, info, pagedList);
 		logger.info("InfoController------"+pagedList);
 		String template = Servlets.getParam(request, "template");
+		logger.info("InfoController---smallImage---"+info.getCustomsValueNew("smallImage"));
+		logger.info("InfoController---front---template---"+info.getTemplate());
 		if (StringUtils.isNotBlank(template)) {
 			return template;
 		} else {
 			return info.getTemplate();
 		}
 	}
-	
+	@RequestMapping("/viewvideo.jspx")
+	public void viewvideo( HttpServletRequest request,
+			HttpServletResponse response, org.springframework.ui.Model modelMap) {
+		viewvideo(null, request, response, modelMap);
+	}
+	@RequestMapping(Constants.SITE_PREFIX_PATH + "/viewvideo.jspx")
+	public void viewvideo(@PathVariable String siteNumber, HttpServletRequest request,
+			HttpServletResponse response, org.springframework.ui.Model modelMap) {
+		try {
+			User userfore = Context.getCurrentUser();
+			if(userfore!=null){
+				userfore.setYuanBao(userfore.getYuanBao()+4);
+				userService.updateUserOnly(userfore);
+			}
+		} catch (Exception e) {
+			logger.error("viewvideo----------"+e.toString());
+			Servlets.writeHtml(response,"服务器异常，请联系管理员" );
+		}
+		
+	}
 
 	@RequestMapping("/freeget.jspx")
 	public void freeget(Integer id, Integer infoPeriod, HttpServletRequest request,
@@ -563,4 +589,7 @@ public class InfoController {
 	private RecordService recordService;
 	@Autowired
 	private OrderService orderService;
+	@Autowired
+	private UserService userService;
+	
 }
