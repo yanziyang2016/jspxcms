@@ -63,6 +63,7 @@ public class CmsAuthenticationFilter extends FormAuthenticationFilter {
 	protected boolean executeLogin(ServletRequest request,
 			ServletResponse response) throws Exception {
 		AuthenticationToken token = createToken(request, response);
+		logger.info("---------------");
 		if (token == null) {
 			String msg = "createToken method implementation returned null. A valid non-null AuthenticationToken "
 					+ "must be created in order to execute a login attempt.";
@@ -184,7 +185,7 @@ public class CmsAuthenticationFilter extends FormAuthenticationFilter {
 			WebUtils.issueRedirect(request, response, successUrl, null, false);
 			return;
 		}
-		logger.info("2222222222222");
+		logger.info("2222222222222--"+request.getRequestURI());
 		if (request.getRequestURI().startsWith(
 				request.getContextPath() + backUrl)) {
 			// 后台直接返回首页

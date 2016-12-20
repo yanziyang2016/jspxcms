@@ -61,6 +61,7 @@
 
 <cache name="com.jspxcms.core.domain.ProductRecord" maxEntriesLocalHeap="500" eternal="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" overflowToDisk="false" />
 <cache name="com.jspxcms.core.domain.Order" maxEntriesLocalHeap="500" eternal="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" overflowToDisk="false" />
+	<cache name="com.jspxcms.core.domain.UserRecord" maxEntriesLocalHeap="500" eternal="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" overflowToDisk="false" />
 	<!-- <cache name="com" maxEntriesLocalHeap="500" eternal="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" overflowToDisk="false" /> -->
 	<!-- <cache name="com" maxEntriesLocalHeap="500" eternal="false" timeToIdleSeconds="1200" timeToLiveSeconds="3600" overflowToDisk="true" diskSpoolBufferSizeMB="1" maxEntriesLocalDisk="10000" /> -->
 

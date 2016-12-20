@@ -92,6 +92,15 @@ public class NodeController {
 		logger.info("NodeController---4---"+id);
 		return node(null, id, page, request, response, modelMap);
 	}
+	
+	@RequestMapping("/f{id:[0-9]+}.jspx")
+	public String testnode(@PathVariable Integer id, HttpServletRequest request,
+			HttpServletResponse response, org.springframework.ui.Model modelMap) {
+		logger.info("NodeController ------ test---1---"+id);
+		return node(null, id, 1, request, response, modelMap);
+	}
+	
+
 
 	@RequestMapping(Constants.SITE_PREFIX_PATH
 			+ "/node/{id:[0-9]+}_{page:[0-9]+}.jspx")

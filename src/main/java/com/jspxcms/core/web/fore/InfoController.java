@@ -39,6 +39,7 @@ import com.jspxcms.core.domain.ScoreBoard;
 import com.jspxcms.core.domain.ScoreItem;
 import com.jspxcms.core.domain.Site;
 import com.jspxcms.core.domain.User;
+import com.jspxcms.core.domain.UserRecord;
 import com.jspxcms.core.service.InfoBufferService;
 import com.jspxcms.core.service.InfoQueryService;
 import com.jspxcms.core.service.OrderService;
@@ -46,6 +47,7 @@ import com.jspxcms.core.service.RecordService;
 import com.jspxcms.core.service.ScoreBoardService;
 import com.jspxcms.core.service.ScoreItemService;
 import com.jspxcms.core.service.SiteService;
+import com.jspxcms.core.service.UserRecordService;
 import com.jspxcms.core.service.UserService;
 import com.jspxcms.core.service.VoteMarkService;
 import com.jspxcms.core.support.Context;
@@ -138,8 +140,18 @@ public class InfoController {
 			modelMap.addAttribute("userfore", temp);
 		}else{
 			if(info.getTemplate().equals("/1/default/info_news.html")){
-				userfore.setYuanBao(userfore.getYuanBao()+4);
-				userService.updateUserOnly(userfore);
+				
+				int record = userRecordService.findRecordByUserAndInfo(userfore.getId(), id);
+				logger.info("info_news----------info id---"+id+"--user id --"+userfore.getId()+"--record--"+record);
+				if(record==0){
+					UserRecord userRecord = new UserRecord();
+					userRecord.setInfoId(id);
+					userRecord.setUserId(userfore.getId());
+					userRecord.setRecordDate(new Date());
+					userRecordService.save(userRecord);
+					userfore.setYuanBao(userfore.getYuanBao()+3);
+					userService.updateUserOnly(userfore);
+				}
 			}
 			modelMap.addAttribute("userfore", userfore);
 		}
@@ -181,18 +193,30 @@ public class InfoController {
 		}
 	}
 	@RequestMapping("/viewvideo.jspx")
-	public void viewvideo( HttpServletRequest request,
+	public void viewvideo(Integer id, HttpServletRequest request,
 			HttpServletResponse response, org.springframework.ui.Model modelMap) {
-		viewvideo(null, request, response, modelMap);
+		viewvideo(null,id, request, response, modelMap);
 	}
 	@RequestMapping(Constants.SITE_PREFIX_PATH + "/viewvideo.jspx")
-	public void viewvideo(@PathVariable String siteNumber, HttpServletRequest request,
+	public void viewvideo(@PathVariable String siteNumber, Integer id,HttpServletRequest request,
 			HttpServletResponse response, org.springframework.ui.Model modelMap) {
 		try {
+			
 			User userfore = Context.getCurrentUser();
 			if(userfore!=null){
-				userfore.setYuanBao(userfore.getYuanBao()+4);
-				userService.updateUserOnly(userfore);
+				
+				int record = userRecordService.findRecordByUserAndInfo(userfore.getId(), id);
+				logger.info("viewvideo----------info id---"+id+"--user id --"+userfore.getId()+"--record--"+record);
+				if(record==0){
+					UserRecord userRecord = new UserRecord();
+					userRecord.setInfoId(id);
+					userRecord.setUserId(userfore.getId());
+					userRecord.setRecordDate(new Date());
+					userRecordService.save(userRecord);
+					userfore.setYuanBao(userfore.getYuanBao()+4);
+					userService.updateUserOnly(userfore);
+				}
+				
 			}
 		} catch (Exception e) {
 			logger.error("viewvideo----------"+e.toString());
@@ -587,6 +611,8 @@ public class InfoController {
 	private PathResolver pathResolver;
 	@Autowired
 	private RecordService recordService;
+	@Autowired
+	private UserRecordService userRecordService;
 	@Autowired
 	private OrderService orderService;
 	@Autowired

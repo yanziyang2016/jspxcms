@@ -41,6 +41,7 @@ public class BackInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
 		// 用户登录信息
+		logger.info("---------------");
 		ShiroUser shiroUser = null;
 		Subject subject = SecurityUtils.getSubject();
 		if (subject.isAuthenticated()) {

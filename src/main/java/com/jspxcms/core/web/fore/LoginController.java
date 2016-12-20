@@ -41,9 +41,22 @@ public class LoginController {
 	public String login(String fallbackUrl, HttpServletRequest request,
 			org.springframework.ui.Model modelMap) {
 		Site site = Context.getCurrentSite();
+		
+		logger.info("fallbackUrl--"+fallbackUrl);
 		Map<String, Object> data = modelMap.asMap();
 		ForeContext.setData(data, request);
 		modelMap.addAttribute(FALLBACK_URL_PARAM, fallbackUrl);
+		if(Context.getCurrentUser()!=null){
+			logger.info("Context.getCurrentUser()--"+Context.getCurrentUser().getUsername());
+			modelMap.addAttribute("useracc", Context.getCurrentUser().getUsername());
+			modelMap.addAttribute("userpass", Context.getCurrentUser().getPassword());
+			modelMap.addAttribute("userid", Context.getCurrentUser().getId());
+		}else{
+			modelMap.addAttribute("useracc","aa");
+			modelMap.addAttribute("userpass", "aa");
+			modelMap.addAttribute("userid", -1);
+		}
+		
 		return site.getTemplate(LOGIN_TEMPLATE);
 	}
 
@@ -81,7 +94,7 @@ public class LoginController {
 		Object errorName = request
 				.getAttribute(DEFAULT_ERROR_KEY_ATTRIBUTE_NAME);
 		logger.info("errorName--------------"+errorName.toString());
-		if (errorName != null) {
+		if (errorName != null&&!errorName.equals("com.jspxcms.common.security.IncorrectCaptchaException")) {
 			ra.addFlashAttribute(DEFAULT_ERROR_KEY_ATTRIBUTE_NAME, errorName);
 		}
 		ra.addFlashAttribute(DEFAULT_USERNAME_PARAM, username);

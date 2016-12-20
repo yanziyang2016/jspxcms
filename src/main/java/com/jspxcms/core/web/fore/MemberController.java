@@ -98,12 +98,15 @@ public class MemberController {
 			Constants.SITE_PREFIX_PATH + "/my.jspx" })
 	public String my(HttpServletRequest request, HttpServletResponse response,
 			org.springframework.ui.Model modelMap) {
+		logger.info("url------:"+ForeContext.getCurrentUrl(request));
 		Response resp = new Response(request, response, modelMap);
+		
 		User user = Context.getCurrentUser();
+		logger.info("user == null:"+(user == null));
 		if (user == null) {
 			return resp.unauthorized();
 		}
-
+		
 		Site site = Context.getCurrentSite();
 		modelMap.addAttribute("own", true);
 		Map<String, Object> data = modelMap.asMap();

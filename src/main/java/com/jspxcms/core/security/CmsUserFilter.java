@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jspxcms.core.constant.Constants;
+import com.jspxcms.core.support.ForeContext;
 import com.jspxcms.core.web.back.InfoController;
 
 public class CmsUserFilter extends UserFilter {
@@ -26,13 +27,21 @@ public class CmsUserFilter extends UserFilter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 		String loginUrl;
-		logger.info("111111111111111");
+		String tempUrl = ForeContext.getCurrentUrl(request);
+		logger.info("tempUrl--sss----"+tempUrl);
 		if (request.getRequestURI().startsWith(
 				request.getContextPath() + getBackUrl())) {
 			loginUrl = getBackLoginUrl();
 		} else {
 			loginUrl = getLoginUrl();
 		}
+//		if(tempUrl.endsWith("/my.jspx")){
+//			loginUrl = "/my.jspx";
+//		}
+		logger.info("loginUrl----"+loginUrl);
+		logger.info("request----"+request.toString());
+		logger.info("response----"+response.toString());
+		
 		WebUtils.issueRedirect(request, response, loginUrl);
 	}
 

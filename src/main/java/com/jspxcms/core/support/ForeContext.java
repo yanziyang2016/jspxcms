@@ -115,6 +115,7 @@ public abstract class ForeContext {
 		
 		String jsessionid = request.getSession().getId();
 		String url = getCurrentUrl(request);
+		logger.info("ForeContext  url---- "+url);
 		User user = Context.getCurrentUser();
 		Site site = Context.getCurrentSite();
 		MemberGroup group = Context.getCurrentGroup(request);
