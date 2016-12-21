@@ -47,12 +47,11 @@ public class CmsLogoutFilter extends LogoutFilter {
 		Object principal = subject.getPrincipal();
 		String ip = Servlets.getRemoteAddr(request);
 		boolean result = super.preHandle(request, response);
-		logger.info("---------------");
-		UserStatus userStatus = userStatusService.getByMacAddress(LocalMac.getLocalMac());
+		String macAddress = ((HttpServletRequest) request).getHeader("User-Agent")+ request.getRemoteAddr();
+		logger.info("macAddress---------------");
+		UserStatus userStatus = userStatusService.getByMacAddress(macAddress);
 		if(userStatus!=null){
-			userStatus.setStatus(2);
-			userStatus.setLastDate(new Date());
-			userStatusService.save(userStatus);
+			userStatusService.delete(userStatus.getId());
 		}
 		if (principal != null) {
 			logService.logout(ip, principal.toString());

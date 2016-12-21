@@ -61,8 +61,8 @@ public class UserStatus implements java.io.Serializable {
 	}
 	
 
-	@Length(max = 64)
-	@Column(name = "f_mac_address", length = 64)
+	@Length(max = 640)
+	@Column(name = "f_mac_address", length = 640)
 	public String getMacAddress() {
 		return macAddress;
 	}

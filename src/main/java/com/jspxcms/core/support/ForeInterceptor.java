@@ -36,7 +36,7 @@ public class ForeInterceptor implements HandlerInterceptor {
 	protected final static Logger logger = LoggerFactory.getLogger(ForeInterceptor.class);
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
-		logger.info("ForeInterceptor----------111111");
+//		logger.info("ForeInterceptor----------111111");
 		Site site = null;
 		Global global = globalService.findUnique();
 		// URL不带域名就不识别域名识别。
@@ -44,7 +44,7 @@ public class ForeInterceptor implements HandlerInterceptor {
 			site = siteService.findByDomain(request.getServerName());
 			
 		}
-		logger.info("ForeInterceptor----------222222222");
+//		logger.info("ForeInterceptor----------222222222");
 		if (site == null) {
 			site = siteService.findDefault();
 		}
@@ -52,7 +52,7 @@ public class ForeInterceptor implements HandlerInterceptor {
 			throw new CmsException("site.error.siteNotFound");
 		}
 		Context.setCurrentSite(site);
-		logger.info("ForeInterceptor----------33333333333");
+//		logger.info("ForeInterceptor----------33333333333");
 		ShiroUser shiroUser = null;
 		Subject subject = SecurityUtils.getSubject();
 		Object principal = subject.getPrincipal();
@@ -67,8 +67,8 @@ public class ForeInterceptor implements HandlerInterceptor {
 			}
 		}
 		logger.info("ForeInterceptor----------"+(shiroUser != null));
-		UserStatus userStatus = userStatusService.getByMacAddress(LocalMac.getLocalMac());
-		
+		String macAddress = request.getHeader("User-Agent")+ request.getRemoteAddr();
+		UserStatus userStatus = userStatusService.getByMacAddress(macAddress);
 		if(userStatus!=null&&userStatus.getStatus()==1){
 			shiroUser = new ShiroUser(userStatus.getUserId(), userStatus.getUserName());
 		}
@@ -83,7 +83,7 @@ public class ForeInterceptor implements HandlerInterceptor {
 			if(userStatus == null){
 				userStatus = new UserStatus();
 				userStatus.setLastDate(new Date());
-				userStatus.setMacAddress(LocalMac.getLocalMac());
+				userStatus.setMacAddress(macAddress);
 				userStatus.setStatus(1);
 				userStatus.setUserId(shiroUser.id);
 				userStatus.setUserName(user.getUsername());
@@ -91,6 +91,7 @@ public class ForeInterceptor implements HandlerInterceptor {
 			}else{
 				userStatus.setStatus(1);
 				userStatus.setLastDate(new Date());
+				
 				userStatusService.save(userStatus);
 			}
 		} else {
