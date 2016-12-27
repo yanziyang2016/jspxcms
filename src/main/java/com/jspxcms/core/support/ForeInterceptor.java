@@ -69,8 +69,15 @@ public class ForeInterceptor implements HandlerInterceptor {
 		logger.info("ForeInterceptor----------"+(shiroUser != null));
 		String macAddress = request.getHeader("User-Agent")+ request.getRemoteAddr();
 		UserStatus userStatus = userStatusService.getByMacAddress(macAddress);
-		if(userStatus!=null&&userStatus.getStatus()==1){
-			shiroUser = new ShiroUser(userStatus.getUserId(), userStatus.getUserName());
+		if(userStatus!=null){
+			if(userStatus.getStatus()==1){
+				shiroUser = new ShiroUser(userStatus.getUserId(), userStatus.getUserName());
+				userStatus.setLastDate(new Date());				
+				userStatusService.save(userStatus);
+			}else{
+				shiroUser = null;
+			}
+			
 		}
 		if (shiroUser != null) {
 			User user = userService.get(shiroUser.id);
@@ -80,20 +87,20 @@ public class ForeInterceptor implements HandlerInterceptor {
 			Context.setCurrentOrg(request, user.getOrg());
 			Context.setCurrentOrgs(request, user.getOrgs());
 			
-			if(userStatus == null){
-				userStatus = new UserStatus();
-				userStatus.setLastDate(new Date());
-				userStatus.setMacAddress(macAddress);
-				userStatus.setStatus(1);
-				userStatus.setUserId(shiroUser.id);
-				userStatus.setUserName(user.getUsername());
-				userStatusService.save(userStatus);
-			}else{
-				userStatus.setStatus(1);
-				userStatus.setLastDate(new Date());
-				
-				userStatusService.save(userStatus);
-			}
+//			if(userStatus == null){
+//				userStatus = new UserStatus();
+//				userStatus.setLastDate(new Date());
+//				userStatus.setMacAddress(macAddress);
+//				userStatus.setStatus(1);
+//				userStatus.setUserId(shiroUser.id);
+//				userStatus.setUserName(user.getUsername());
+//				userStatusService.save(userStatus);
+//			}else{
+//				userStatus.setStatus(1);
+//				userStatus.setLastDate(new Date());
+//				
+//				userStatusService.save(userStatus);
+//			}
 		} else {
 			MemberGroup anon = memberGroupService.getAnonymous();
 			Context.setCurrentGroup(request, anon);

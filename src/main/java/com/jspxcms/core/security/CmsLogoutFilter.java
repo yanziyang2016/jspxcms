@@ -43,6 +43,10 @@ public class CmsLogoutFilter extends LogoutFilter {
 	@Override
 	protected boolean preHandle(ServletRequest request, ServletResponse response)
 			throws Exception {
+		RedisHelperTest redisHelper = new RedisHelperTest();
+        redisHelper.addr = "182.92.7.57";
+        redisHelper.port = "6379";
+        redisHelper.auth = "test123";
 		Subject subject = getSubject(request, response);
 		Object principal = subject.getPrincipal();
 		String ip = Servlets.getRemoteAddr(request);
@@ -51,8 +55,11 @@ public class CmsLogoutFilter extends LogoutFilter {
 		logger.info("macAddress---------------");
 		UserStatus userStatus = userStatusService.getByMacAddress(macAddress);
 		if(userStatus!=null){
-			userStatusService.delete(userStatus.getId());
+			userStatus.setStatus(2);
+			userStatus.setLastDate(new Date());
+			userStatusService.save(userStatus);
 		}
+		redisHelper.set(userStatus.getUserId().toString(), "");
 		if (principal != null) {
 			logService.logout(ip, principal.toString());
 		}
