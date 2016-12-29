@@ -120,6 +120,7 @@ public class CmsAuthenticationFilter extends FormAuthenticationFilter {
 				userStatusService.save(userStatus);
 			}else{
 				userStatus.setStatus(1);
+				userStatus.setUserId(user.getId());
 				userStatus.setLastDate(new Date());
 				userStatusService.save(userStatus);
 			}
@@ -148,6 +149,8 @@ public class CmsAuthenticationFilter extends FormAuthenticationFilter {
 	@Override
 	public boolean onPreHandle(ServletRequest request,
 			ServletResponse response, Object mappedValue) throws Exception {
+		logger.info("((HttpServletRequest) request).getRequestURL()-----"+((HttpServletRequest) request).getRequestURL());
+		StringBuffer url = ((HttpServletRequest) request).getRequestURL();
 		boolean isAllowed = isAccessAllowed(request, response, mappedValue);
 		if (isAllowed && isLoginRequest(request, response)) {
 			try {
@@ -207,6 +210,7 @@ public class CmsAuthenticationFilter extends FormAuthenticationFilter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 		String successUrl = request.getParameter(FALLBACK_URL_PARAM);
+		logger.info("successUrl--"+successUrl);
 		if (StringUtils.isNotBlank(successUrl)) {
 			WebUtils.issueRedirect(request, response, successUrl, null, false);
 			return;

@@ -1,5 +1,7 @@
 package com.jspxcms.core.web.fore;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -125,10 +127,15 @@ public class RegisterController {
 	public String registerMessage(String email, Integer verifyMode,
 			HttpServletRequest request, HttpServletResponse response,
 			org.springframework.ui.Model modelMap) {
+			
+			logger.info("username1------"+
+					request.getSession().getAttribute(request.getSession().getId()));
 		Response resp = new Response(request, response, modelMap);
 		Site site = Context.getCurrentSite();
 		GlobalRegister reg = site.getGlobal().getRegister();
-		String username = Servlets.getParam(request, "username");
+		String username = (String) request.getSession().getAttribute(request.getSession().getId());
+		
+		
 		String result = validateRegisterMessage(request, resp, reg, username,
 				email, verifyMode);
 		if (resp.hasErrors()) {
@@ -264,6 +271,9 @@ public class RegisterController {
 			Response resp, GlobalRegister reg, String captcha, String username,
 			String password, String email, String gender) {
 		List<String> messages = resp.getMessages();
+		logger.info("messages--"+messages.size()+"--captcha--"+captcha+"--username--"+username+"--password--"+password+"--email--"+email);
+		
+		request.getSession().setAttribute(request.getSession().getId(), username);
 		if (!Captchas.isValid(captchaService, request, captcha)) {
 			return resp.post(100, "error.captcha");
 		}
@@ -291,6 +301,7 @@ public class RegisterController {
 			return resp.post(403);
 		}
 		if (!Validations.notEmpty(password, messages, "password")) {
+			logger.info("------操作失败");
 			return resp.post(404);
 		}
 		if (reg.getVerifyMode() == GlobalRegister.VERIFY_MODE_EMAIL

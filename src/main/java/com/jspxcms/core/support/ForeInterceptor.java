@@ -36,7 +36,7 @@ public class ForeInterceptor implements HandlerInterceptor {
 	protected final static Logger logger = LoggerFactory.getLogger(ForeInterceptor.class);
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
-//		logger.info("ForeInterceptor----------111111");
+		logger.info("ForeInterceptor---------getRequestURL----"+request.getRequestURL());
 		Site site = null;
 		Global global = globalService.findUnique();
 		// URL不带域名就不识别域名识别。
@@ -76,6 +76,13 @@ public class ForeInterceptor implements HandlerInterceptor {
 				userStatusService.save(userStatus);
 			}else{
 				shiroUser = null;
+				String requestURL= request.getRequestURL().toString();
+				if(requestURL.contains("register")||requestURL.contains("check_username")){
+					
+				}else{
+					subject.logout();
+				}
+
 			}
 			
 		}
