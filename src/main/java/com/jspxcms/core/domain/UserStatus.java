@@ -35,6 +35,7 @@ public class UserStatus implements java.io.Serializable {
 	private String macAddress;//MAC地址
 	private Date lastDate;
 	private String userName;//用户名
+	private String userPass;
 
 
 	@Id
@@ -102,6 +103,15 @@ public class UserStatus implements java.io.Serializable {
 
 	public void setStatus(Integer status) {
 		this.status = status;
+	}
+	@Length(max = 640)
+	@Column(name = "f_user_p", length = 640)
+	public String getUserPass() {
+		return userPass;
+	}
+
+	public void setUserPass(String userPass) {
+		this.userPass = userPass;
 	}
 	
 	

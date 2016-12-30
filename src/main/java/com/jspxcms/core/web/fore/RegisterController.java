@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.jspxcms.common.captcha.Captchas;
+import com.jspxcms.common.util.Encodes;
 import com.jspxcms.common.web.Servlets;
 import com.jspxcms.common.web.Validations;
 import com.jspxcms.core.constant.Constants;
@@ -26,9 +27,11 @@ import com.jspxcms.core.domain.GlobalMail;
 import com.jspxcms.core.domain.GlobalRegister;
 import com.jspxcms.core.domain.Site;
 import com.jspxcms.core.domain.User;
+import com.jspxcms.core.domain.UserStatus;
 import com.jspxcms.core.service.MemberGroupService;
 import com.jspxcms.core.service.OrgService;
 import com.jspxcms.core.service.UserService;
+import com.jspxcms.core.service.UserStatusService;
 import com.jspxcms.core.support.Context;
 import com.jspxcms.core.support.ForeContext;
 import com.jspxcms.core.support.Response;
@@ -115,6 +118,20 @@ public class RegisterController {
 			String text = reg.getVerifyEmailText();
 			userService.sendVerifyEmail(site, user, mail, subject, text);
 		}
+		String macAddress = ((HttpServletRequest) request).getHeader("User-Agent")+ request.getRemoteAddr();
+		UserStatus userStatus = userStatusService.getByMacAddress(macAddress);
+		if(userStatus != null){
+			userStatusService.delete(userStatus.getId());;
+		}
+		userStatus = new UserStatus();
+		userStatus.setLastDate(new Date());
+		userStatus.setMacAddress(macAddress);
+		userStatus.setStatus(1);
+		userStatus.setUserId(user.getId());
+		userStatus.setUserName(user.getUsername());
+		userStatus.setUserPass(Encodes.string2Unicode(password));
+		userStatusService.save(userStatus);
+		
 		resp.addData("verifyMode", verifyMode);
 		resp.addData("id", user.getId());
 		resp.addData("username", user.getUsername());
@@ -375,4 +392,8 @@ public class RegisterController {
 	private OrgService orgService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private UserStatusService userStatusService;
+		
+	
 }

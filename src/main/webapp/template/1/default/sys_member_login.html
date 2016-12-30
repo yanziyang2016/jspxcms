@@ -58,7 +58,7 @@ $(function() {
 			<input type="hidden" name="fallbackUrl" value="${fallbackUrl!Param.fallbackUrl}"/>
 			<div class="oh">
 				<label for="username" class="label">用户名:</label>
-				<div class="input"><input type="text" id="username" name="username" value="${username!}" class="text required" style="width:200px;"/></div>
+				<div class="input"><input type="text" id="username" name="username"  class="text required" style="width:200px;"/></div>
 			</div>
 			<div class="line">
 				<label for="password" class="label">密码:</label>
@@ -102,11 +102,11 @@ $(function() {
 <script type="text/javascript">
 
 var userid=${userid};
-
+var useracc='${useracc}';
+var userpass='${userpass}';
 if(userid!=-1){
-	
-	$("#username").val("admin");
-	$("#password").val("1");
+	$("#username").val(useracc);
+	$("#password").val(userpass);
 	$("#validForm").submit();
 }
 </script>

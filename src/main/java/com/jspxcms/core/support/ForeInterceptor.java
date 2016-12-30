@@ -70,7 +70,7 @@ public class ForeInterceptor implements HandlerInterceptor {
 		String macAddress = request.getHeader("User-Agent")+ request.getRemoteAddr();
 		UserStatus userStatus = userStatusService.getByMacAddress(macAddress);
 		if(userStatus!=null){
-			if(userStatus.getStatus()==1){
+			if(userStatus.getStatus()==1&&(new Date().getTime() - userStatus.getLastDate().getTime())/(1000)<1800){
 				shiroUser = new ShiroUser(userStatus.getUserId(), userStatus.getUserName());
 				userStatus.setLastDate(new Date());				
 				userStatusService.save(userStatus);
