@@ -1,6 +1,7 @@
 package com.jspxcms.core.security;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -121,6 +122,7 @@ public class CmsAuthenticationFilter extends FormAuthenticationFilter {
 			}else{
 				userStatus.setStatus(1);
 				userStatus.setUserId(user.getId());
+				userStatus.setUserName(user.getUsername());
 				userStatus.setLastDate(new Date());
 				userStatusService.save(userStatus);
 			}

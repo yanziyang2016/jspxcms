@@ -29,6 +29,7 @@ import com.jspxcms.common.file.FileHandler;
 import com.jspxcms.common.security.CredentialsDigest;
 import com.jspxcms.common.upload.UploadResult;
 import com.jspxcms.common.upload.Uploader;
+import com.jspxcms.common.util.Encodes;
 import com.jspxcms.common.util.JsonMapper;
 import com.jspxcms.common.web.PathResolver;
 import com.jspxcms.common.web.Servlets;
@@ -39,7 +40,9 @@ import com.jspxcms.core.domain.PublishPoint;
 import com.jspxcms.core.domain.Site;
 import com.jspxcms.core.domain.User;
 import com.jspxcms.core.domain.UserDetail;
+import com.jspxcms.core.domain.UserStatus;
 import com.jspxcms.core.service.UserService;
+import com.jspxcms.core.service.UserStatusService;
 import com.jspxcms.core.support.Context;
 import com.jspxcms.core.support.ForeContext;
 import com.jspxcms.core.support.Response;
@@ -61,6 +64,12 @@ public class MemberController {
 	public static final String PASSWORD_TEMPLATE = "sys_member_password.html";
 	public static final String EMAIL_TEMPLATE = "sys_member_email.html";
 
+	private UserStatusService userStatusService;	
+	
+	@Autowired
+	public void setUserStatusService(UserStatusService userStatusService) {
+		this.userStatusService = userStatusService;
+	}
 	/**
 	 * 会员首页
 	 * 
@@ -296,6 +305,7 @@ public class MemberController {
 		Site site = Context.getCurrentSite();
 		Map<String, Object> data = modelMap.asMap();
 		ForeContext.setData(data, request);
+		logger.info("password.jspx111---------- " );
 		return site.getTemplate(PASSWORD_TEMPLATE);
 	}
 
@@ -306,6 +316,7 @@ public class MemberController {
 			org.springframework.ui.Model modelMap) {
 		Response resp = new Response(request, response, modelMap);
 		User user = Context.getCurrentUser();
+		logger.info("password.jspx22222222---------- " );
 		if (!credentialsDigest.matches(user.getPassword(), password,
 				user.getSaltBytes())) {
 			return resp.post(501, "member.passwordError");

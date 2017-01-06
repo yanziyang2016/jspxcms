@@ -1,14 +1,15 @@
 package com.jspxcms.core.domain;
 
-public class VideoUrl {
+public class VideoFour2 {
 	
 	private String aid;
 	private String length;
 	private String name;
-	private String no;
-	private String pubtime;			
-	private String vid;
+	private String no;// 集数序号
+	private String pubtime;		//发布时间	
+	private String vid;//视频ID
 	private String videoPic;
+	private String url;//播放地址
 	public String getAid() {
 		return aid;
 	}
@@ -51,7 +52,14 @@ public class VideoUrl {
 	public void setVideoPic(String videoPic) {
 		this.videoPic = videoPic;
 	}
-	
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+
 	
 
 }

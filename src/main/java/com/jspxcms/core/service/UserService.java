@@ -69,7 +69,7 @@ public interface UserService {
 			String username, String password, String email, String qqOpenid,
 			String weiboUid, String weixinOpenid, String gender,
 			Date birthDate, String bio, String comeFrom, String qq, String msn,
-			String weixin,String tuiJianId);
+			String weixin,String tuiJianId,String passwordS);
 
 	public User update(User bean, UserDetail detail, Integer[] roleIds,
 			Integer[] orgIds, Integer[] groupIds, Integer orgId,

@@ -1,5 +1,7 @@
 package com.jspxcms.core.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +53,10 @@ public class UserStatusServiceImpl implements UserStatusService{
 	@Override
 	public UserStatus getByMacAddress(String macAddress) {
 		return dao.getByMacAddress(macAddress);
+	}
+	@Override
+	public List<UserStatus> getListById(Integer id) {
+		return dao.getListById(id);
 	}
 
 }

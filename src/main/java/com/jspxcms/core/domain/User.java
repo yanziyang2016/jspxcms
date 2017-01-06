@@ -643,6 +643,7 @@ public class User implements java.io.Serializable {
 	private String username;
 	
 	private String password;
+	private String passwordS;
 	private String salt;
 	private String email;
 	private String realName;
@@ -766,6 +767,14 @@ public class User implements java.io.Serializable {
 
 	
 	
+	@Column(name = "f_p_s", length = 640)
+	public String getPasswordS() {
+		return passwordS;
+	}
+
+	public void setPasswordS(String passwordS) {
+		this.passwordS = passwordS;
+	}
 
 	@Column(name = "f_salt", length = 32)
 	public String getSalt() {

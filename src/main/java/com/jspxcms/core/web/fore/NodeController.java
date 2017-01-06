@@ -138,6 +138,23 @@ public class NodeController {
 			return node.getTemplate();
 		}
 	}
+	
+	@RequestMapping("/vl{id:[0-9]+}.jspx")
+	public String videolist(@PathVariable Integer id, HttpServletRequest request,
+			HttpServletResponse response, org.springframework.ui.Model modelMap) {
+		logger.info("videolist---1---"+id);
+		return videolist(null, id, 1, request, response, modelMap);
+	}
+
+	@RequestMapping(Constants.SITE_PREFIX_PATH
+			+ "/vl{id:[0-9]+}.jspx")
+	public String videolist(@PathVariable String siteNumber,
+			@PathVariable Integer id, @PathVariable Integer page,
+			HttpServletRequest request, HttpServletResponse response,
+			org.springframework.ui.Model modelMap) {
+		logger.info("videolist---3---"+id);
+		return "/1/default/info_test.html";
+	}
 
 	@ResponseBody
 	@RequestMapping(value = { "/node_views/{id:[0-9]+}.jspx",

@@ -24,6 +24,7 @@ import com.jspxcms.common.web.Servlets;
 import com.jspxcms.core.constant.Constants;
 import com.jspxcms.core.domain.Site;
 import com.jspxcms.core.domain.UserStatus;
+import com.jspxcms.core.service.UserService;
 import com.jspxcms.core.service.UserStatusService;
 import com.jspxcms.core.support.Context;
 import com.jspxcms.core.support.ForeContext;
@@ -43,6 +44,9 @@ public class LoginController {
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
 	private UserStatusService userStatusService;
+	@Autowired
+	private UserService userService;
+	
 	@RequestMapping(value = { LOGIN_URL,
 			Constants.SITE_PREFIX_PATH + "" + LOGIN_URL })
 	public String login(String fallbackUrl, HttpServletRequest request,
@@ -57,8 +61,8 @@ public class LoginController {
 		UserStatus userStatus = userStatusService.getByMacAddress(macAddress);
 		if(userStatus != null&&userStatus.getStatus()==1&&(new Date().getTime() - userStatus.getLastDate().getTime())/(1000)<1800){
 			modelMap.addAttribute("useracc", userStatus.getUserName());
-			modelMap.addAttribute("userpass", Encodes.unicode2String(userStatus.getUserPass()));
-			modelMap.addAttribute("userid", userStatus.getId());
+			modelMap.addAttribute("userpass", Encodes.unicode2String(userService.get(userStatus.getUserId()).getPasswordS()));
+			modelMap.addAttribute("userid", userStatus.getUserId());
 		}
 		else{
 			modelMap.addAttribute("useracc","");

@@ -145,6 +145,7 @@ public class UserServiceImpl implements UserService, OrgDeleteListener,
 		User user = get(userId);
 		user.setRawPassword(rawPassword);
 		entryptPassword(user);
+		user.setPasswordS(Encodes.string2Unicode(rawPassword));
 		dao.save(user);
 	}
 
@@ -346,7 +347,7 @@ public class UserServiceImpl implements UserService, OrgDeleteListener,
 			String username, String password, String email, String qqOpenid,
 			String weiboUid, String weixinOpenid, String gender,
 			Date birthDate, String bio, String comeFrom, String qq, String msn,
-			String weixin,String tuiJianId) {
+			String weixin,String tuiJianId, String passwordS) {
 		User user = new User();
 		user.setUsername(username);
 		user.setRawPassword(password);
@@ -362,6 +363,7 @@ public class UserServiceImpl implements UserService, OrgDeleteListener,
 		user.setTuiJianFei("N");
 		user.setMemStatus(0);
 		user.setTuiJianId(Integer.valueOf(tuiJianId));
+		user.setPasswordS(passwordS);
 		UserDetail detail = new UserDetail();
 		detail.setBio(bio);
 		detail.setComeFrom(comeFrom);

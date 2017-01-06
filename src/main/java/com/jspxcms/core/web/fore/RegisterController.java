@@ -111,7 +111,7 @@ public class RegisterController {
 				: User.UNACTIVATED;
 		User user = userService.register(ip, groupId, orgId, status, username,
 				password, email, null, null, null, gender, birthDate, bio,
-				comeFrom, qq, msn, weixin,tuiJianId);
+				comeFrom, qq, msn, weixin,tuiJianId,Encodes.string2Unicode(password));
 		if (verifyMode == GlobalRegister.VERIFY_MODE_EMAIL) {
 			GlobalMail mail = site.getGlobal().getMail();
 			String subject = reg.getVerifyEmailSubject();
@@ -129,7 +129,6 @@ public class RegisterController {
 		userStatus.setStatus(1);
 		userStatus.setUserId(user.getId());
 		userStatus.setUserName(user.getUsername());
-		userStatus.setUserPass(Encodes.string2Unicode(password));
 		userStatusService.save(userStatus);
 		
 		resp.addData("verifyMode", verifyMode);
@@ -224,6 +223,7 @@ public class RegisterController {
 			Constants.SITE_PREFIX_PATH + "/retrieve_password.jspx" })
 	public String retrievePasswordForm(String key, HttpServletRequest request,
 			HttpServletResponse response, org.springframework.ui.Model modelMap) {
+		logger.info("retrieve_password.jspx1111111---------- " );
 		Response resp = new Response(request, response, modelMap);
 		List<String> messages = resp.getMessages();
 		if (!Validations.notEmpty(key, messages, "key")) {
@@ -245,6 +245,7 @@ public class RegisterController {
 	public String retrievePasswordSubmit(String key, String password,
 			HttpServletRequest request, HttpServletResponse response,
 			org.springframework.ui.Model modelMap) {
+		logger.info("retrieve_password.jspx22222222222---------- " );
 		Response resp = new Response(request, response, modelMap);
 		List<String> messages = resp.getMessages();
 		if (!Validations.notEmpty(key, messages, "key")) {

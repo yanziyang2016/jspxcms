@@ -1,5 +1,7 @@
 package com.jspxcms.core.service;
 
+import java.util.List;
+
 import com.jspxcms.core.domain.UserStatus;
 
 /**
@@ -19,6 +21,8 @@ public interface UserStatusService {
 	public void update(UserStatus bean);
 
 	public void delete(Integer id);
+
+	public List<UserStatus> getListById(Integer id);
 
 	
 }

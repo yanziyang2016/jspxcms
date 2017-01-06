@@ -2,20 +2,20 @@ package com.jspxcms.core.domain;
 
 import java.util.List;
 
-public class VideoDomain {
+public class VideoThree {
 	
 	private String domain;
-	private List<VideoUrl> urls;
+	private List<VideoFour> urls;
 	public String getDomain() {
 		return domain;
 	}
 	public void setDomain(String domain) {
 		this.domain = domain;
 	}
-	public List<VideoUrl> getUrls() {
+	public List<VideoFour> getUrls() {
 		return urls;
 	}
-	public void setUrls(List<VideoUrl> urls) {
+	public void setUrls(List<VideoFour> urls) {
 		this.urls = urls;
 	}
 	

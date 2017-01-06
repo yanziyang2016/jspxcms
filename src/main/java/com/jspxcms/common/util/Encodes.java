@@ -161,5 +161,7 @@ public class Encodes {
 		String p ="1";
 		System.out.println(string2Unicode(p));
 		System.out.println(unicode2String(string2Unicode(p)));
+		System.out.println(unicode2String("\\u31\\u39\\u38\\u37\\u34\\u32\\u36\\u61"));
+		
 	}
 }
