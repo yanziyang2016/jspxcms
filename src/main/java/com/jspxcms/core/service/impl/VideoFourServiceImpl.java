@@ -1,6 +1,7 @@
 package com.jspxcms.core.service.impl;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -86,8 +87,12 @@ public class VideoFourServiceImpl implements VideoFourService{
 
 	@Override
 	public VideoFour getbyvid(String vid) {
-		// TODO Auto-generated method stub
 		return dao.getbyvid(vid);
+	}
+
+	@Override
+	public List<VideoFour> findAllByAid(String aid) {
+		return dao.findAllByAid(aid);
 	}
 
 }

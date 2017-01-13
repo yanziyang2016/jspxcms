@@ -17,6 +17,10 @@ public interface UserRecordDao extends Repository<UserRecord, Integer> , UserRec
 	
 	@Query("select count(*) from UserRecord where userId=?1 and infoId=?2 and recordDate > CURDATE()")
 	public int findRecordByUserAndInfo(Integer userId, Integer infoId);
+
+
+	@Query("select count(*) from UserRecord where userId=?1 and infoId=?2 and type=?3")
+	public int findRecordByUserAndVideo(Integer userId, Integer infoId, String type);
 	
 
 }

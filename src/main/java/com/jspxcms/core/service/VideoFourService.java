@@ -1,5 +1,6 @@
 package com.jspxcms.core.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
@@ -28,6 +29,9 @@ public interface VideoFourService {
 
 
 	public VideoFour getbyvid(String vid);
+
+
+	public List<VideoFour> findAllByAid(String aid);
 
 	
 	

@@ -30,6 +30,7 @@ public class UserRecord implements java.io.Serializable {
 	private Integer userId;
 	private Integer infoId;
 	private Date recordDate;
+	private String type;
 
 
 	@Id
@@ -63,7 +64,16 @@ public class UserRecord implements java.io.Serializable {
 		this.infoId = infoId;
 	}
 
+	
 
+	@Column(name = "type")
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "f_record_date", length = 19)

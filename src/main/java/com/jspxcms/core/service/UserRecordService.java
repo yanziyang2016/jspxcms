@@ -21,6 +21,8 @@ public interface UserRecordService {
 
 	public int findRecordByUserAndInfo(Integer userId, Integer infoId);
 
+	public int findRecordByUserAndVideo(Integer userId, Integer infoId, String type);
+
 	
 	
 	

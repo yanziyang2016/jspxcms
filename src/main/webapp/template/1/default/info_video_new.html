@@ -17,18 +17,29 @@
 </head>
 <body>
 [#include 'inc_header_video.html'/]
+
 <div class="w center">	
 	<h1 class="ff-yh fs24 lh" style="margin:15px 0 0 0;font-weight:normal;">${videoTwo.title}</h1>
 </div>
 <div class="w center" style="margin-top:12px;">
 	<div class="left" style="width:672px;">
 		<img alt="" src="${videoTwo.bigPic}" width="672" height="449">
-		<table class="digg center mt20"><tr><td>
-			
-			<button id="clickplay" style="margin-left: 20px;width: 136px;height: 36px">点击播放</button>
+		<table class="digg center mt20">
+		
+		<tr><td>
+			<p id="dt"><span>导演：</span><span>${videoTwo.dt}</span></p>
+			<p id="mA"><span>主演：</span><span>${videoTwo.mA}</span></p>
+			<p id="area"><span>地区：</span><span>${videoTwo.area}</span></p>
+			<p id="year"><span>年代：</span><span>${videoTwo.year}</span></p>
+			<p id="desc"><span>详情：</span><span>${videoTwo.desc}</span></p>
 			<div class="clear"></div>
-		</td></tr></table>
-	
+		</td></tr>
+		<tr><td id="clicktd">
+			<button class="clickplay" style="margin-left: 20px;width: 136px;height: 36px" url="${videoTwo.videoUrl}" id="${videoTwo.vmid}">点击播放</button>
+			<div class="clear"></div>
+		</td></tr>
+		
+		</table>
 		
 		<div id="commentDiv" class="mt20"></div>		
 		<script type="text/javascript">
@@ -40,13 +51,61 @@
 	<div class="clear"></div>
 </div>
 <script type="text/javascript">
-$("#clickplay").click(function(){
-	$.post('${ctx}/viewvideo.jspx',{id:${videoTwo.vmid}},
-			function(data) {
-		
-			}
+var dt='${videoTwo.dt}';
+var mA='${videoTwo.mA}';
+var area='${videoTwo.area}';
+var year='${videoTwo.year}';
+var desc='${videoTwo.desc}';
+var cname='${videoTwo.cname}';
+if(dt.length==0){
+	$("#dt").hide();
+}
+if(mA.length==0){
+	$("#mA").hide();
+}
+if(area.length==0){
+	$("#area").hide();
+}
+if(year.length==0){
+	$("#year").hide();
+}
+if(desc.length==0){
+	$("#desc").hide();
+}
+var isaid = ${isaid};
+var aid='${videoTwo.aid}';
+if(isaid==1){
+	$.ajax({    
+	    url:'videofourlist.jspx',// 跳转到 action    
+	    data:{    
+	             aid :aid
+	    },    
+	    type:'post',    
+	    cache:false,  
+	    async:false,  
+	    dataType:'json',    
+	    success:function(data) { 
+	    	
+	    	$("#clicktd").empty();
+	    	for(var i=0;i<data.length;i++){
+	    		$("#clicktd").append(
+	    				'<button class="clickplay" style="margin-left: 20px;width: 136px;height: 36px" url="'+data[i].url+'" id="'+data[i].vid+'">'+(i+1)+'</button>'	
+	    		);
+	    	}
+	    	$("#clicktd").append(
+			'<div class="clear"></div>');
+	    },
+        error : function() { 
+        }
+	}); 
+}
+
+$(".clickplay").click(function(){
+	$.post('${ctx}/viewvideo.jspx',{id:$(this).attr("id"),type:cname},
+		function(data) {
+		}
 	);
-	window.open('${videoTwo.videoUrl}');
+	window.open($(this).attr("url"));
 });
 </script>
 [#include 'inc_friendlink.html'/]

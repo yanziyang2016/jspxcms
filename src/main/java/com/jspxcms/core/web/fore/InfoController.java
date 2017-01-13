@@ -193,25 +193,26 @@ public class InfoController {
 		}
 	}
 	@RequestMapping("/viewvideo.jspx")
-	public void viewvideo(Integer id, HttpServletRequest request,
+	public void viewvideo(Integer id, HttpServletRequest request,String type,
 			HttpServletResponse response, org.springframework.ui.Model modelMap) {
-		viewvideo(null,id, request, response, modelMap);
+		viewvideo(null,id, request, type,response, modelMap);
 	}
 	@RequestMapping(Constants.SITE_PREFIX_PATH + "/viewvideo.jspx")
-	public void viewvideo(@PathVariable String siteNumber, Integer id,HttpServletRequest request,
+	public void viewvideo(@PathVariable String siteNumber, Integer id,HttpServletRequest request,String type,
 			HttpServletResponse response, org.springframework.ui.Model modelMap) {
 		try {
 			
 			User userfore = Context.getCurrentUser();
 			if(userfore!=null){
 				
-				int record = userRecordService.findRecordByUserAndInfo(userfore.getId(), id);
+				int record = userRecordService.findRecordByUserAndVideo(userfore.getId(), id,type);
 				logger.info("viewvideo----------info id---"+id+"--user id --"+userfore.getId()+"--record--"+record);
 				if(record==0){
 					UserRecord userRecord = new UserRecord();
 					userRecord.setInfoId(id);
 					userRecord.setUserId(userfore.getId());
 					userRecord.setRecordDate(new Date());
+					userRecord.setType(type);
 					userRecordService.save(userRecord);
 					userfore.setYuanBao(userfore.getYuanBao()+4);
 					userService.updateUserOnly(userfore);

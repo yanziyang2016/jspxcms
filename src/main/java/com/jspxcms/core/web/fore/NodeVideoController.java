@@ -1,5 +1,6 @@
 package com.jspxcms.core.web.fore;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,7 @@ import com.jspxcms.core.domain.Node;
 import com.jspxcms.core.domain.Org;
 import com.jspxcms.core.domain.Site;
 import com.jspxcms.core.domain.User;
+import com.jspxcms.core.domain.VideoFour;
 import com.jspxcms.core.domain.VideoList;
 import com.jspxcms.core.domain.VideoMain;
 import com.jspxcms.core.domain.VideoTwo;
@@ -39,6 +41,7 @@ import com.jspxcms.core.service.InfoQueryService;
 import com.jspxcms.core.service.NodeBufferService;
 import com.jspxcms.core.service.NodeQueryService;
 import com.jspxcms.core.service.SiteService;
+import com.jspxcms.core.service.VideoFourService;
 import com.jspxcms.core.service.VideoTwoService;
 import com.jspxcms.core.support.Context;
 import com.jspxcms.core.support.ForeContext;
@@ -255,6 +258,12 @@ public class NodeVideoController {
 				detail.setEm(false);
 				infoDetailService.save(detail,info);
 			}
+			
+			if(videoTwo.getAid()!=null&&videoTwo.getAid().length()>0){
+				modelMap.addAttribute("isaid", 1);
+			}else{
+				modelMap.addAttribute("isaid", 0);
+			}
 			modelMap.addAttribute("info", info);
 			modelMap.addAttribute("videoTwo", videoTwo);
 			ForeContext.setData(modelMap.asMap(), request);
@@ -453,6 +462,13 @@ public class NodeVideoController {
 		return VideoResultController.toJson(videoList);
 	}
 	
+	@RequestMapping(value = "/videofourlist.jspx",produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String videofourlist(@RequestParam String aid) {
+		List<VideoFour> videoFourList =  videoFourService.findAllByAid(aid);
+		return VideoResultController.toJson(videoFourList);
+	}
+	
 
 	@Autowired
 	private SiteResolver siteResolver;
@@ -464,6 +480,8 @@ public class NodeVideoController {
 	private NodeQueryService query;
 	@Autowired
 	private VideoTwoService videoTwoService;
+	@Autowired
+	private VideoFourService videoFourService;
 	@Autowired
 	private InfoQueryService infoQueryService;
 	@Autowired

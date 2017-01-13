@@ -34,6 +34,11 @@ public class UserRecordServiceImpl implements UserRecordService{
 		return dao.findRecordByUserAndInfo(userId,infoId);
 	}
 
+	@Override
+	public int findRecordByUserAndVideo(Integer userId, Integer infoId, String type) {
+		return dao.findRecordByUserAndVideo(userId,infoId,type);
+	}
+
 	
 
 }
