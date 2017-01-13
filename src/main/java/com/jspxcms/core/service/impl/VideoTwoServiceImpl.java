@@ -1,6 +1,7 @@
 package com.jspxcms.core.service.impl;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -88,5 +89,7 @@ public class VideoTwoServiceImpl implements VideoTwoService{
 	public VideoTwo getbyid(String id) {
 		return  dao.getbyid(id);
 	}
+
+
 
 }

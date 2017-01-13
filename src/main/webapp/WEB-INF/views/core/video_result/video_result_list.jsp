@@ -111,9 +111,11 @@ function optDelete(form) {
 <script type="text/javascript">
 $("#videocollect").click(function(){
 	$.ajax({    
-	    url:'videocollect1.do',// 跳转到 action    
+	    url:'videocollect.do',// 跳转到 action    
 	    data:{    
-	             id :1
+	             id :6,
+	             s:20,
+	             istart:1
 	    },    
 	    type:'post',    
 	    cache:false,  

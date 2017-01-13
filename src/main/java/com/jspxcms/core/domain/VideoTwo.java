@@ -150,16 +150,16 @@ public class VideoTwo implements java.io.Serializable  {
 	public void setCname(String cname) {
 		this.cname = cname;
 	}
-	@Length(max = 1000)
-	@Column(name = "desc1", length = 1000)
+	@Length(max = 4000)
+	@Column(name = "desc1", length = 4000)
 	public String getDesc() {
 		return desc;
 	}
 	public void setDesc(String desc) {
 		this.desc = desc;
 	}
-	@Length(max = 50)
-	@Column(name = "dt", length = 50)
+	@Length(max = 200)
+	@Column(name = "dt", length = 200)
 	public String getDt() {
 		return dt;
 	}
@@ -214,8 +214,8 @@ public class VideoTwo implements java.io.Serializable  {
 	public void setIsover(String isover) {
 		this.isover = isover;
 	}
-	@Length(max = 50)
-	@Column(name = "mA", length = 50)
+	@Length(max = 200)
+	@Column(name = "mA", length = 200)
 	public String getmA() {
 		return mA;
 	}

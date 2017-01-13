@@ -60,38 +60,38 @@ public class VideoResultController {
 	public String videoCollect(@RequestParam int id) {
 		logger.info("videoCollect --- id---"+id);
 		try {
-//			 String videoData = "";
-//			    videoData= 	GetLocalFile.readTxtFileNoSpace(id+".txt");
+			 String videoData = "";
+			    videoData= 	GetLocalFile.readTxtFileNoSpace(id+".txt");
 				Map<String, Class> classMap = new HashMap<String, Class>();  
 				  
 				classMap.put("r", VideoTwo.class);  
 				classMap.put("videos", VideoThree.class);
 				classMap.put("urls", VideoFour.class);
-				String videoURL="";
+//				String videoURL="";
 				
-			    JSONObject videoOnejsonObj = JSONObject.fromObject(getUrlContentTest(videoURL));
-//				JSONObject videoOnejsonObj = JSONObject.fromObject(videoData);
+//			    JSONObject videoOnejsonObj = JSONObject.fromObject(getUrlContentTest(videoURL));
+				JSONObject videoOnejsonObj = JSONObject.fromObject(videoData);
 				VideoOne videoOne =(VideoOne)videoOnejsonObj.toBean(videoOnejsonObj,VideoOne.class,classMap);//指定转换的类型，但仍需要强制转化-成功
 				
 				for(VideoTwo videoTwo:videoOne.getR()){
-//					VideoTwo temptwo = videoTwoService.getbyid(videoTwo.getId());
-//					if(temptwo==null){
+					VideoTwo temptwo = videoTwoService.getbyid(videoTwo.getId());
+					if(temptwo==null){
 						videoTwoService.save(videoTwo);
-//					}
-//					if(videoTwo.getVideos()!=null&&videoTwo.getVideos().size()>0){
-//						for(VideoThree videoThree:videoTwo.getVideos()){
-//							for(VideoFour videoFour:videoThree.getUrls()){
-//								if(videoFour.getName().length()<4){
-//									VideoFour tempfour = videoFourService.getbyvid(videoFour.getVid());
-//									if(tempfour==null){
-//										videoFourService.save(videoFour);	
-//									}
+					}
+					if(videoTwo.getVideos()!=null&&videoTwo.getVideos().size()>0){
+						for(VideoThree videoThree:videoTwo.getVideos()){
+							for(VideoFour videoFour:videoThree.getUrls()){
+								if(videoFour.getName().length()<4){
+									VideoFour tempfour = videoFourService.getbyvid(videoFour.getVid());
+									if(tempfour==null){
+										videoFourService.save(videoFour);	
+									}
 									
-//								}
-//								
-//							}
-//						}
-//					}
+								}
+								
+							}
+						}
+					}
 				}
 //				VideoResult videoResult = new VideoResult();
 //				videoResult.setCount(100);
@@ -105,36 +105,51 @@ public class VideoResultController {
 		}
 	}
 	
-	@RequestMapping("videocollect1.do")
+	
+	@RequestMapping("videocollectall.do")
 	@ResponseBody
-	public String videoCollect1(@RequestParam int id) {
-		logger.info("videoCollect --- id---"+id);
+	public String videoCollectall(@RequestParam int id,@RequestParam int s,@RequestParam int istart) {
+		
 		try {
-			Map<String, Class> classMap = new HashMap<String, Class>();  
-			  
-			classMap.put("r", VideoTwo.class);  
-			classMap.put("videos", VideoThree.class);
-			classMap.put("urls", VideoFour.class);
-			String videoURL="";
-			for(int i=1;i<349;i++){
-				videoURL="http://info.lm.tv.sohu.com/a.do?qd=12441&c=121&p="+i+"&s=200&inc=0";
-				JSONObject videoOnejsonObj = JSONObject.fromObject(getUrlContentTest(videoURL));
+				Map<String, Class> classMap = new HashMap<String, Class>();  
+				  
+				classMap.put("r", VideoTwo.class);  
+				classMap.put("videos", VideoThree.class);
+				classMap.put("urls", VideoFour.class);
+				String videoURL="";
+				videoURL="http://info.lm.tv.sohu.com/a.do?qd=12441&c="+id+"&p=1&s=20&inc=0";
+			    JSONObject videoOnejsonObj = JSONObject.fromObject(getUrlContentTest(videoURL));
 				VideoOne videoOne =(VideoOne)videoOnejsonObj.toBean(videoOnejsonObj,VideoOne.class,classMap);//指定转换的类型，但仍需要强制转化-成功
-				
-				for(VideoTwo videoTwo:videoOne.getR()){
-						videoTwoService.save(videoTwo);
+				int p = Integer.valueOf(videoOne.getC())/s+2;
+				logger.info("videocollectall --- id---"+id+"---s---"+s+"---p---"+p);
+				for(int i=istart;i<p;i++){
+					videoURL="http://info.lm.tv.sohu.com/a.do?qd=12441&c="+id+"&p="+i+"&s="+s+"&inc=0";
+					videoOnejsonObj = JSONObject.fromObject(getUrlContentTest(videoURL));
+					videoOne =(VideoOne)videoOnejsonObj.toBean(videoOnejsonObj,VideoOne.class,classMap);//指定转换的类型，但仍需要强制转化-成功
+					
+					for(VideoTwo videoTwo:videoOne.getR()){
+							videoTwoService.save(videoTwo);
+							if(videoTwo.getVideos()!=null&&videoTwo.getVideos().size()>0){
+								for(VideoThree videoThree:videoTwo.getVideos()){
+									for(VideoFour videoFour:videoThree.getUrls()){
+										if(videoFour.getName().length()<4){
+												videoFourService.save(videoFour);	
+										}
+										
+									}
+								}
+							}
+					}
 				}
-			}
 				
-				
-				
-			    
 				return toJson("success");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return toJson("fail");
 		}
 	}
+	
+	
 	
 	public static String getUrlContentTest( String urlStr) throws Exception {
 	    String httpUrl =  urlStr;
@@ -162,6 +177,7 @@ public class VideoResultController {
 	     }
 	     return null;
 	   }
+	 
 
 
 	@Autowired

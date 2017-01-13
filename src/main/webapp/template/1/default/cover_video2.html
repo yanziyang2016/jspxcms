@@ -18,7 +18,67 @@ a.vtitle:hover{color:#699f00;}
 </style>
 </head>
 <body>
-
+[#include 'inc_header.html'/]
+[@InfoList attr='focusvideo' limit='10';list]
+<div class="w center mt10 relative" style="width:1000px;height:410px;">
+	<div id="focusContent">
+		[#list list as info]
+		<a href="${info.url}" target="_blank" title="${info.title}" class="absolute[#if info_index!=0] hide[/#if]"><img src="${info.attrImageUrl}" width="1000" height="410"/></a>
+		[/#list]
+	</div>
+	<div class="absolute fs14" style="bottom:6px;right:0;padding:18px 18px 0 16px;width:213px;height:353px;background:url(_files/img/video_bg.png)">
+		<ul id="focusPage" class="list-unstyled" style="height:100%;border-radius:6px;overflow:hidden;">
+			[#list list as info]
+			<li><a href="${info.url}" target="_blank" title="${info.title}" class="ff-yh vfocus[#if info_index==0] vfocus-hover[/#if]">${substring(info.title,16,'...')}</a></li>
+			[/#list]
+		</ul>
+	</div>
+</div>
+<script>
+$(function() {
+	var interval = 5000;
+	var speed = 100;
+	var currFocus = 0;
+	var maxFocus = ${list?size};
+	var $fc = $("#focusContent");
+	var $fp = $("#focusPage");
+	var fsTimeout;
+	function focusSwitch(targetFocus) {
+		if(targetFocus >= maxFocus) {
+			targetFocus = 0;
+		}
+		if(targetFocus < 0) {
+			targetFocus = maxFocus-1;
+		}
+		$fc.children().eq(currFocus).fadeOut(speed);
+		$fc.children().eq(targetFocus).fadeIn(speed);
+		$fp.children().eq(currFocus).children(":first").removeClass("vfocus-hover");
+		$fp.children().eq(targetFocus).children(":first").addClass("vfocus-hover");				
+		currFocus = targetFocus;
+	}
+	function focusSwitchAuto() {	
+		targetFocus = currFocus + 1;
+		focusSwitch(targetFocus);
+		fsTimeout = setTimeout(focusSwitchAuto,interval);
+	}
+	$fc.hover(function() {
+		clearTimeout(fsTimeout);
+	},function() {
+		fsTimeout = setTimeout(focusSwitchAuto,interval);
+	});
+	$fp.children().each(function(index) {
+		$(this).children(":first").hover(function(){
+			clearTimeout(fsTimeout);
+			$fc.stop(true);
+			focusSwitch(index);
+		},function() {
+			fsTimeout = setTimeout(focusSwitchAuto,interval);			
+		});
+	});
+	fsTimeout = setTimeout(focusSwitchAuto,interval);
+});
+</script>
+[/@InfoList]
 [@NodeList parentId=node.id;list]
 [#list list as n]
 <div class="w center">

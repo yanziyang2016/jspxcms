@@ -1,5 +1,6 @@
 package com.jspxcms.core.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
@@ -28,6 +29,9 @@ public interface VideoTwoService {
 
 
 	public VideoTwo getbyid(String id);
+
+
+
 
 	
 	

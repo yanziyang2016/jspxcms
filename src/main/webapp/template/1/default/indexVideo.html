@@ -1,0 +1,264 @@
+[#escape x as (x)!?html]
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<title>视频主页</title>
+<meta name="keywords" content="${node.keywords}"/>
+<meta name="description" content="${node.description}"/>
+<link href="_files/global.css" rel="stylesheet"/>
+<link href="_files/style.css" rel="stylesheet"/>
+[#include 'inc_js.html'/]
+<style>
+a.vfocus{color:#ccc;text-decoration:none;display:block;padding:0 5px 0 8px;height:34px;line-height:34px;overflow:hidden;}
+a.vfocus-hover{color:#fff;text-decoration:none;background-color:#699f00;}
+
+a.vtitle{color:#333;text-decoration:none;}
+a.vtitle:hover{color:#699f00;}
+</style>
+</head>
+<body>
+[#include 'inc_header_video.html'/]
+
+<div class="w center">
+	<div class="left" style="width:765px;">
+		<div class="mt30" style="color:#699f00;padding-bottom:6px;border-bottom:2px solid #699f00;">
+			<div class="ff-yh fs28" style="padding-left:20px;background:url(_files/img/video_play.png) left center no-repeat;">
+			<a href="dsl1.jspx" class="a-none" style="color:#699f00;">电视剧</a>
+			<a href="dsl1.jspx" class="ff-yh fs14 a-none" style="padding-left:10px;color:#699f00;">更多></a></div>
+		</div>
+		<div class="mt20" id="dianshidiv">
+		<!--  
+			<div class="left mt5" >
+				<div class="relative">
+					<a href="${info.url}" target="_blank" title="${info.title}">
+						<img src="${info.smallImageUrl}" width="176" height="99"/>
+					</a>
+				</div>
+				<div style="height:56px;padding:0 4px;background-color:#f2f2f2;">
+					<a href="${info.url}" target="_blank" title="${info.url}" class="vtitle fs14 ff-yh" style="display:block;padding-top:6px;">${substring(info.title,12,'...')}</a>
+				</div>
+			</div>
+			-->
+			<div class="clear"></div>
+		</div>
+	</div>
+	<div class="clear"></div>
+</div>
+
+<div class="w center">
+	<div class="left" style="width:765px;">
+		<div class="mt30" style="color:#699f00;padding-bottom:6px;border-bottom:2px solid #699f00;">
+			<div class="ff-yh fs28" style="padding-left:20px;background:url(_files/img/video_play.png) left center no-repeat;">
+			<a href="zyl1.jspx" class="a-none" style="color:#699f00;">综艺</a>
+			<a href="zyl1.jspx" class="ff-yh fs14 a-none" style="padding-left:10px;color:#699f00;">更多></a></div>
+		</div>
+		<div class="mt20" id="zongyidiv">
+			<div class="clear"></div>
+		</div>
+	</div>
+	<div class="clear"></div>
+</div>
+
+<div class="w center">
+	<div class="left" style="width:765px;">
+		<div class="mt30" style="color:#699f00;padding-bottom:6px;border-bottom:2px solid #699f00;">
+			<div class="ff-yh fs28" style="padding-left:20px;background:url(_files/img/video_play.png) left center no-repeat;">
+			<a href="dml1.jspx" class="a-none" style="color:#699f00;">动漫</a>
+			<a href="dml1.jspx" class="ff-yh fs14 a-none" style="padding-left:10px;color:#699f00;">更多></a></div>
+		</div>
+		<div class="mt20" id="dongmandiv">
+			<div class="clear"></div>
+		</div>
+	</div>
+	<div class="clear"></div>
+</div>
+
+<div class="w center">
+	<div class="left" style="width:765px;">
+		<div class="mt30" style="color:#699f00;padding-bottom:6px;border-bottom:2px solid #699f00;">
+			<div class="ff-yh fs28" style="padding-left:20px;background:url(_files/img/video_play.png) left center no-repeat;">
+			<a href="yll1.jspx" class="a-none" style="color:#699f00;">娱乐</a>
+			<a href="yll1.jspx" class="ff-yh fs14 a-none" style="padding-left:10px;color:#699f00;">更多></a></div>
+		</div>
+		<div class="mt20" id="yulediv">
+			<div class="clear"></div>
+		</div>
+	</div>
+	<div class="clear"></div>
+</div>
+
+<div class="w center">
+	<div class="left" style="width:765px;">
+		<div class="mt30" style="color:#699f00;padding-bottom:6px;border-bottom:2px solid #699f00;">
+			<div class="ff-yh fs28" style="padding-left:20px;background:url(_files/img/video_play.png) left center no-repeat;">
+			<a href="yyl1.jspx" class="a-none" style="color:#699f00;">音乐</a>
+			<a href="yyl1.jspx" class="ff-yh fs14 a-none" style="padding-left:10px;color:#699f00;">更多></a></div>
+		</div>
+		<div class="mt20" id="yinyuediv">
+			<div class="clear"></div>
+		</div>
+	</div>
+	<div class="clear"></div>
+</div>
+
+<div class="w center">
+	<div class="left" style="width:765px;">
+		<div class="mt30" style="color:#699f00;padding-bottom:6px;border-bottom:2px solid #699f00;">
+			<div class="ff-yh fs28" style="padding-left:20px;background:url(_files/img/video_play.png) left center no-repeat;">
+			<a href="xwl1.jspx" class="a-none" style="color:#699f00;">新闻</a>
+			<a href="xwl1.jspx" class="ff-yh fs14 a-none" style="padding-left:10px;color:#699f00;">更多></a></div>
+		</div>
+		<div class="mt20" id="xinwendiv">
+			<div class="clear"></div>
+		</div>
+	</div>
+	<div class="clear"></div>
+</div>
+
+<script type="text/javascript">
+
+$.ajax({    
+    url:'videoall.jspx',// 跳转到 action    
+    data:{    
+             id :112
+    },    
+    type:'post',    
+    cache:false,  
+    async:false,  
+    dataType:'json',    
+    success:function(data) {    
+    	var datalist=data.dsList;
+    	for(var i=0; i<datalist.length; i++){
+    		var title = datalist[i].title;
+    		if(title.length>12){
+    			title = datalist[i].title.substring(0,10)+"...";
+    		}
+        	$("#dianshidiv").append(
+        			'<div class="left mt5" style="margin-right:10px;">'+
+    					'<div class="relative">'+
+    						'<a href="/info_video'+datalist[i].vmid+'.jspx" target="_blank" title="'+title+'">'+
+    							'<img src="'+datalist[i].bigPic+'" width="176" height="99"/>'+
+    						'</a>'+
+    					'</div>'+
+    					'<div style="height:56px;padding:0 4px;background-color:#f2f2f2;">'+
+    					'	<a href="/info_video'+datalist[i].vmid+'.jspx" target="_blank" title="'+title+'" class="vtitle fs14 ff-yh" style="display:block;padding-top:6px;">'+title+'</a>'+
+    					'</div>'+
+    				'</div>'
+        			
+        	);
+    	  }
+    	datalist=data.zyList;
+    	for(var i=0; i<datalist.length; i++){
+    		var title = datalist[i].title;
+    		if(title.length>12){
+    			title = datalist[i].title.substring(0,10)+"...";
+    		}
+        	$("#zongyidiv").append(
+        			'<div class="left mt5" style="margin-right:10px;">'+
+    					'<div class="relative">'+
+    						'<a href="/info_video'+datalist[i].vmid+'.jspx" target="_blank" title="'+title+'">'+
+    							'<img src="'+datalist[i].bigPic+'" width="176" height="99"/>'+
+    						'</a>'+
+    					'</div>'+
+    					'<div style="height:56px;padding:0 4px;background-color:#f2f2f2;">'+
+    					'	<a href="/info_video'+datalist[i].vmid+'.jspx" target="_blank" title="'+title+'" class="vtitle fs14 ff-yh" style="display:block;padding-top:6px;">'+title+'</a>'+
+    					'</div>'+
+    				'</div>'
+        			
+        	);
+    	  }
+    	datalist=data.dmList;
+    	for(var i=0; i<datalist.length; i++){
+    		var title = datalist[i].title;
+    		if(title.length>12){
+    			title = datalist[i].title.substring(0,10)+"...";
+    		}
+        	$("#dongmandiv").append(
+        			'<div class="left mt5" style="margin-right:10px;">'+
+    					'<div class="relative">'+
+    						'<a href="/info_video'+datalist[i].vmid+'.jspx" target="_blank" title="'+title+'">'+
+    							'<img src="'+datalist[i].bigPic+'" width="176" height="99"/>'+
+    						'</a>'+
+    					'</div>'+
+    					'<div style="height:56px;padding:0 4px;background-color:#f2f2f2;">'+
+    					'	<a href="/info_video'+datalist[i].vmid+'.jspx" target="_blank" title="'+title+'" class="vtitle fs14 ff-yh" style="display:block;padding-top:6px;">'+title+'</a>'+
+    					'</div>'+
+    				'</div>'
+        			
+        	);
+    	  }
+    	datalist=data.ylList;
+    	for(var i=0; i<datalist.length; i++){
+    		var title = datalist[i].title;
+    		if(title.length>12){
+    			title = datalist[i].title.substring(0,10)+"...";
+    		}
+        	$("#yulediv").append(
+        			'<div class="left mt5" style="margin-right:10px;">'+
+    					'<div class="relative">'+
+    						'<a href="/info_video'+datalist[i].vmid+'.jspx" target="_blank" title="'+title+'">'+
+    							'<img src="'+datalist[i].bigPic+'" width="176" height="99"/>'+
+    						'</a>'+
+    					'</div>'+
+    					'<div style="height:56px;padding:0 4px;background-color:#f2f2f2;">'+
+    					'	<a href="/info_video'+datalist[i].vmid+'.jspx" target="_blank" title="'+title+'" class="vtitle fs14 ff-yh" style="display:block;padding-top:6px;">'+title+'</a>'+
+    					'</div>'+
+    				'</div>'
+        			
+        	);
+    	  }
+    	datalist=data.yyList;
+    	for(var i=0; i<datalist.length; i++){
+    		var title = datalist[i].title;
+    		if(title.length>12){
+    			title = datalist[i].title.substring(0,10)+"...";
+    		}
+        	$("#yinyuediv").append(
+        			'<div class="left mt5" style="margin-right:10px;">'+
+    					'<div class="relative">'+
+    						'<a href="/info_video'+datalist[i].vmid+'.jspx" target="_blank" title="'+title+'">'+
+    							'<img src="'+datalist[i].bigPic+'" width="176" height="99"/>'+
+    						'</a>'+
+    					'</div>'+
+    					'<div style="height:56px;padding:0 4px;background-color:#f2f2f2;">'+
+    					'	<a href="/info_video'+datalist[i].vmid+'.jspx" target="_blank" title="'+title+'" class="vtitle fs14 ff-yh" style="display:block;padding-top:6px;">'+title+'</a>'+
+    					'</div>'+
+    				'</div>'
+        			
+        	);
+    	  }
+    	datalist=data.xwList;
+    	for(var i=0; i<datalist.length; i++){
+    		var title = datalist[i].title;
+    		if(title.length>12){
+    			title = datalist[i].title.substring(0,10)+"...";
+    		}
+    		
+        	$("#xinwendiv").append(
+        			'<div class="left mt5" style="margin-right:10px;">'+
+    					'<div class="relative">'+
+    						'<a href="/info_video'+datalist[i].vmid+'.jspx" target="_blank" title="'+title+'">'+
+    							'<img src="'+datalist[i].bigPic+'" width="176" height="99"/>'+
+    						'</a>'+
+    					'</div>'+
+    					'<div style="height:56px;padding:0 4px;background-color:#f2f2f2;">'+
+    					'	<a href="/info_video'+datalist[i].vmid+'.jspx" target="_blank" title="'+title+'" class="vtitle fs14 ff-yh" style="display:block;padding-top:6px;">'+title+'</a>'+
+    					'</div>'+
+    				'</div>'
+        			
+        	);
+    	  }
+    	
+    }  ,
+    error : function() { 
+    	//alert(222);
+    }
+}); 
+
+</script>
+[#include 'inc_friendlink.html'/]
+[#include 'inc_footer.html'/]
+</body>
+</html>
+[/#escape]

@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,14 +25,18 @@ import com.jspxcms.common.web.Servlets;
 import com.jspxcms.common.web.Validations;
 import com.jspxcms.core.constant.Constants;
 import com.jspxcms.core.domain.Comment;
+import com.jspxcms.core.domain.CommentTemp;
 import com.jspxcms.core.domain.Info;
 import com.jspxcms.core.domain.MemberGroup;
 import com.jspxcms.core.domain.Site;
 import com.jspxcms.core.domain.SiteComment;
 import com.jspxcms.core.domain.User;
+import com.jspxcms.core.domain.VideoTwo;
+import com.jspxcms.core.domain.VideoTwoComment;
 import com.jspxcms.core.service.CommentService;
 import com.jspxcms.core.service.SensitiveWordService;
 import com.jspxcms.core.service.UserService;
+import com.jspxcms.core.service.VideoTwoService;
 import com.jspxcms.core.service.VoteMarkService;
 import com.jspxcms.core.support.Commentable;
 import com.jspxcms.core.support.Context;
@@ -51,7 +57,7 @@ public class CommentController {
 	public static final String TPL_PREFIX = "sys_comment";
 	public static final String TPL_SUFFIX = ".html";
 	public static final String TEMPLATE = TPL_PREFIX + TPL_SUFFIX;
-
+	private static final Logger logger = LoggerFactory.getLogger(CommentController.class);
 	@RequestMapping("/comment.jspx")
 	public String view(String ftype, Integer fid, Integer page,
 			HttpServletRequest request, HttpServletResponse response,
@@ -205,6 +211,88 @@ public class CommentController {
 		service.save(comment, user.getId(), site.getId(), parentId);
 		return resp.post();
 	}
+	
+	
+	@RequestMapping("/comment_submit_new.jspx")
+	public String comment_submit_new(String fname, String ftype, Integer fid,
+			Integer parentId, String text, String captcha,
+			HttpServletRequest request, HttpServletResponse response,
+			org.springframework.ui.Model modelMap)
+			throws InstantiationException, IllegalAccessException,
+			ClassNotFoundException {
+		return comment_submit_new(null, fname, ftype, fid, parentId, text, captcha,
+				request, response, modelMap);
+	}
+
+	@RequestMapping(Constants.SITE_PREFIX_PATH + "/comment_submit_new.jspx")
+	public String comment_submit_new(@PathVariable String siteNumber, String fname,
+			String ftype, Integer fid, Integer parentId, String text,
+			String captcha, HttpServletRequest request,
+			HttpServletResponse response, org.springframework.ui.Model modelMap)
+			throws InstantiationException, IllegalAccessException,
+			ClassNotFoundException {
+		siteResolver.resolveSite(siteNumber);
+		User user = Context.getCurrentUser();
+		Response resp = new Response(request, response, modelMap);
+		List<String> messages = resp.getMessages();
+		if (StringUtils.isBlank(fname)) {
+			fname = "com.jspxcms.core.domain.InfoComment";
+		}
+		if (StringUtils.isBlank(ftype)) {
+			ftype = Info.COMMENT_TYPE;
+		}
+		if (!Validations.notNull(fid, messages, "id")) {
+			return resp.post(401);
+		}
+		Object bean = service.getEntity(ftype, fid);
+		if (!Validations.exist(bean, messages, fname, fid)) {
+			return resp.post(451);
+		}
+		if (bean instanceof Commentable) {
+			Collection<MemberGroup> groups = Context.getCurrentGroups(request);
+			int commentStatus = ((Commentable) bean).getCommentStatus(user,
+					groups);
+			if (commentStatus == STATUS_OFF) {
+				return resp.post(503, "comment.off");
+			} else if (commentStatus == STATUS_LOGIN) {
+				return resp.post(504, "comment.needLogin");
+			} else if (commentStatus == STATUS_DENIED) {
+				return resp.post(501, "comment.noPermission");
+			}
+		} else {
+			// 不可评论对象
+			return resp.post(502, "comment.notAllow");
+		}
+		Site site = ((Siteable) bean).getSite();
+		SiteComment conf = new SiteComment(site.getCustoms());
+		if (!Validations.notEmpty(text, conf.getMaxLength(), messages, "text")) {
+			resp.post(401);
+		}
+		if (conf.isNeedCaptcha(user)) {
+			if (!Captchas.isValid(captchaService, request, captcha)) {
+				return resp.post(100, "error.captcha");
+			}
+		}
+
+		text = sensitiveWordService.replace(text);
+		Comment comment = (Comment) Class.forName(fname).newInstance();
+		comment.setFid(fid);
+		comment.setText(text);
+		comment.setIp(Servlets.getRemoteAddr(request));
+		if (conf.isAudit(user)) {
+			comment.setStatus(Comment.AUDITED);
+			resp.setStatus(0);
+		} else {
+			comment.setStatus(Comment.SAVED);
+			resp.setStatus(1);
+		}
+		if (user == null) {
+			user = userService.getAnonymous();
+		}
+		service.save(comment, user.getId(), site.getId(), parentId);
+		return resp.post();
+	
+	}
 
 	@RequestMapping("/comment_list.jspx")
 	public String list(String ftype, Integer fid, Integer page,
@@ -228,11 +316,50 @@ public class CommentController {
 		if (bean == null) {
 			// TODO
 		}
+	
 		Anchor anchor = (Anchor) bean;
+		logger.info("anchor.getUrl()---"+anchor.getUrl());
 		// Site site = ((Siteable) bean).getSite();
 		String tpl = Servlets.getParam(request, "tpl");
 		if (StringUtils.isBlank(tpl)) {
 			tpl = "_list";
+		}
+		modelMap.addAttribute("anchor", anchor);
+		Map<String, Object> data = modelMap.asMap();
+		ForeContext.setData(data, request);
+		ForeContext.setPage(data, page);
+		return site.getTemplate(TPL_PREFIX + tpl + TPL_SUFFIX);
+	}
+	
+	@RequestMapping("/comment_list_new.jspx")
+	public String comment_list_new(String ftype, Integer fid, Integer page,
+			HttpServletRequest request, org.springframework.ui.Model modelMap) {
+		return comment_list_new(null, ftype, fid, page, request, modelMap);
+	}
+
+	@RequestMapping(Constants.SITE_PREFIX_PATH + "/comment_list_new.jspx")
+	public String comment_list_new(@PathVariable String siteNumber, String ftype,
+			Integer fid, Integer page, HttpServletRequest request,
+			org.springframework.ui.Model modelMap) {
+		siteResolver.resolveSite(siteNumber);
+		Site site = Context.getCurrentSite();
+		if (StringUtils.isBlank(ftype)) {
+			ftype = "Info";
+		}
+		if (fid == null) {
+			// TODO
+		}
+		Object bean = service.getEntity(ftype, fid);
+		if (bean == null) {
+			// TODO
+		}
+	
+		Anchor anchor = (Anchor) bean;
+		logger.info("anchor.getUrl()---"+anchor.getUrl());
+		// Site site = ((Siteable) bean).getSite();
+		String tpl = Servlets.getParam(request, "tpl");
+		if (StringUtils.isBlank(tpl)) {
+			tpl = "_list_new";
 		}
 		modelMap.addAttribute("anchor", anchor);
 		Map<String, Object> data = modelMap.asMap();
@@ -253,5 +380,7 @@ public class CommentController {
 	private UserService userService;
 	@Autowired
 	private CommentService service;
+	@Autowired
+	private VideoTwoService videoTwoService;
 
 }

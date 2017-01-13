@@ -1,0 +1,56 @@
+[#escape x as (x)!?html]
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<title>${videoTwo.title}_${videoTwo.cname}</title>
+<meta name="keywords" content="${info.keywords}"/>
+<meta name="description" content="${info.description}"/>
+<link href="_files/global.css" rel="stylesheet"/>
+<link href="_files/style.css" rel="stylesheet"/>
+[#include 'inc_js.html'/]
+<script type="text/javascript" src="_files/ckplayer/ckplayer.js"></script>
+<style>
+.a1{color:#333;text-decoration:none;}
+.a1:hover{color:#699f00;}
+</style>
+</head>
+<body>
+[#include 'inc_header_video.html'/]
+<div class="w center">	
+	<h1 class="ff-yh fs24 lh" style="margin:15px 0 0 0;font-weight:normal;">${videoTwo.title}</h1>
+</div>
+<div class="w center" style="margin-top:12px;">
+	<div class="left" style="width:672px;">
+		<img alt="" src="${videoTwo.bigPic}" width="672" height="449">
+		<table class="digg center mt20"><tr><td>
+			
+			<button id="clickplay" style="margin-left: 20px;width: 136px;height: 36px">点击播放</button>
+			<div class="clear"></div>
+		</td></tr></table>
+	
+		
+		<div id="commentDiv" class="mt20"></div>		
+		<script type="text/javascript">
+			$("#commentDiv").load("${dy}/comment_list_new.jspx?fid=${info.id}&url=/info_video${videoTwo.vmid}.jspx&d="+new Date()*1);
+		</script>
+	</div>
+	<div class="right" style="width:308px;">
+	</div>
+	<div class="clear"></div>
+</div>
+<script type="text/javascript">
+$("#clickplay").click(function(){
+	$.post('${ctx}/viewvideo.jspx',{id:${videoTwo.vmid}},
+			function(data) {
+		
+			}
+	);
+	window.open('${videoTwo.videoUrl}');
+});
+</script>
+[#include 'inc_friendlink.html'/]
+[#include 'inc_footer.html'/]
+</body>
+</html>
+[/#escape]

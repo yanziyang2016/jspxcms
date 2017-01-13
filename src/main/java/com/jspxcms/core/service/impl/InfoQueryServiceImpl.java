@@ -31,6 +31,7 @@ import com.jspxcms.core.domain.NodeRole;
 import com.jspxcms.core.domain.Role;
 import com.jspxcms.core.domain.WorkflowProcess;
 import com.jspxcms.core.repository.InfoDao;
+import com.jspxcms.core.repository.InfoDetailDao;
 import com.jspxcms.core.service.InfoQueryService;
 
 /**
@@ -221,6 +222,8 @@ public class InfoQueryServiceImpl implements InfoQueryService {
 	}
 
 	private InfoDao dao;
+	@Autowired
+	private InfoDetailDao infoDetailDao;
 
 	@Autowired
 	public void setDao(InfoDao dao) {
@@ -230,5 +233,19 @@ public class InfoQueryServiceImpl implements InfoQueryService {
 	@Override
 	public Info findOne(Integer id) {
 		return dao.findOne(id);
+	}
+
+	@Override
+	public Info getByVideoId(Integer id) {
+		return dao.getByVideoId(id);
+	}
+
+	@Transactional
+	public Info save(Info info) {
+		if(info.getDetail()!=null){
+			infoDetailDao.save(info.getDetail());
+		}
+		return dao.save(info);
+		
 	}
 }

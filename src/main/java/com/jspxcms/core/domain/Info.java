@@ -1796,6 +1796,8 @@ public class Info implements java.io.Serializable, Anchor, Siteable,
 	private Integer p4;
 	private Integer p5;
 	private Integer p6;
+	
+	private Integer video_id;
 
 	private String highlightTitle;
 	private String highlightText;
@@ -2170,6 +2172,16 @@ public class Info implements java.io.Serializable, Anchor, Siteable,
 
 	public void setP6(Integer p6) {
 		this.p6 = p6;
+	}
+	
+	
+	@Column(name = "video_id")
+	public Integer getVideo_id() {
+		return video_id;
+	}
+
+	public void setVideo_id(Integer video_id) {
+		this.video_id = video_id;
 	}
 
 	@Transient
