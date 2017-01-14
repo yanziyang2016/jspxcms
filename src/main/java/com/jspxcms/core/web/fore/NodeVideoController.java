@@ -59,10 +59,58 @@ import com.jspxcms.core.web.back.VideoResultController;
 @Controller
 public class NodeVideoController {
 	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+	public static VideoMain videoMain = new VideoMain() ;
+	public static Map<String, VideoList> videoListMap = new HashMap<String, VideoList>();
 	//主页工程使用
 	@RequestMapping(value = { "/", "/index.jspx" })
 	public String index(HttpServletRequest request,
 			HttpServletResponse response, org.springframework.ui.Model modelMap) {
+		
+//		VideoMain videoMain =new VideoMain();
+		
+		if(videoMain.getDmList()==null||videoMain.getDmList().size()==0){
+			Pageable pageable = new PageRequest(0, 4,Direction.DESC, "vmid");  
+			Map<String, String[]> params = new HashMap<String, String[]>();
+			String[] ds ={"电视剧"};
+			String[] zy ={"综艺"};
+			String[] yl ={"娱乐"};
+			String[] yy ={"音乐"};
+			String[] xw ={"新闻"};
+			String[] dm ={"动漫"};
+			params.put("CONTAIN_cname", ds);			
+			Page<VideoTwo> pagedList = videoTwoService.findPage( params, pageable);
+			videoMain.setDsList(pagedList.getContent());
+			
+			params.clear();			
+			params.put("CONTAIN_cname", zy);
+			pagedList = videoTwoService.findPage( params, pageable);
+			videoMain.setZyList(pagedList.getContent());
+			
+			params.clear();			
+			params.put("CONTAIN_cname", yl);
+			pagedList = videoTwoService.findPage( params, pageable);
+			videoMain.setYlList(pagedList.getContent());
+			
+			params.clear();			
+			params.put("CONTAIN_cname", yy);
+			pagedList = videoTwoService.findPage( params, pageable);
+			videoMain.setYyList(pagedList.getContent());
+			
+			params.clear();			
+			params.put("CONTAIN_cname", xw);
+			pagedList = videoTwoService.findPage( params, pageable);
+			videoMain.setXwList(pagedList.getContent());
+			
+			params.clear();			
+			params.put("CONTAIN_cname", dm);
+			pagedList = videoTwoService.findPage( params, pageable);
+			videoMain.setDmList(pagedList.getContent());
+			
+			
+		}
+		
+		
+		
 		logger.info("NodeVideoController---index1---");
 		return index(null, request, response, modelMap);
 	}
@@ -71,6 +119,95 @@ public class NodeVideoController {
 	public String index(@PathVariable String siteNumber,
 			HttpServletRequest request, HttpServletResponse response,
 			org.springframework.ui.Model modelMap) {
+		if(!videoListMap.containsKey("电视剧")){
+			Pageable pageable = new PageRequest(0, 20,Direction.DESC, "vmid");  
+			Map<String, String[]> params = new HashMap<String, String[]>();
+			params.put("CONTAIN_cname", new String[]{"电视剧"});	
+			Page<VideoTwo> pagedList = videoTwoService.findPage( params, pageable);
+			VideoList videoListDs = new VideoList();
+			videoListDs.setCurrpage(0);
+			videoListDs.setIsfirst(1);
+			if(pagedList.getTotalPages()<2){
+				videoListDs.setIslast(1);
+			}else{
+				videoListDs.setIslast(0);
+			}
+			videoListDs.setTotalcount(pagedList.getTotalElements());
+			videoListDs.setTotalpage(pagedList.getTotalPages());
+			videoListDs.setVideoList(pagedList.getContent());
+			videoListMap.put("电视剧", videoListDs);
+			
+			VideoList videoListYl = new VideoList();
+			params.clear();
+			params.put("CONTAIN_cname", new String[]{"娱乐"});	
+			pagedList = videoTwoService.findPage( params, pageable);
+			if(pagedList.getTotalPages()<2){
+				videoListYl.setIslast(1);
+			}else{
+				videoListYl.setIslast(0);
+			}
+			videoListYl.setTotalcount(pagedList.getTotalElements());
+			videoListYl.setTotalpage(pagedList.getTotalPages());
+			videoListYl.setVideoList(pagedList.getContent());
+			videoListMap.put("娱乐", videoListYl);
+			
+			VideoList videoListXw = new VideoList();
+			params.clear();
+			params.put("CONTAIN_cname", new String[]{"新闻"});	
+			pagedList = videoTwoService.findPage( params, pageable);
+			if(pagedList.getTotalPages()<2){
+				videoListXw.setIslast(1);
+			}else{
+				videoListXw.setIslast(0);
+			}
+			videoListXw.setTotalcount(pagedList.getTotalElements());
+			videoListXw.setTotalpage(pagedList.getTotalPages());
+			videoListXw.setVideoList(pagedList.getContent());
+			videoListMap.put("新闻", videoListXw);
+			
+			VideoList videoListYy = new VideoList();
+			params.clear();
+			params.put("CONTAIN_cname", new String[]{"音乐"});	
+			pagedList = videoTwoService.findPage( params, pageable);
+			if(pagedList.getTotalPages()<2){
+				videoListYy.setIslast(1);
+			}else{
+				videoListYy.setIslast(0);
+			}
+			videoListYy.setTotalcount(pagedList.getTotalElements());
+			videoListYy.setTotalpage(pagedList.getTotalPages());
+			videoListYy.setVideoList(pagedList.getContent());
+			videoListMap.put("音乐", videoListYy);
+			
+			VideoList videoListDm= new VideoList();
+			params.clear();
+			params.put("CONTAIN_cname", new String[]{"动漫"});	
+			pagedList = videoTwoService.findPage( params, pageable);
+			if(pagedList.getTotalPages()<2){
+				videoListDm.setIslast(1);
+			}else{
+				videoListDm.setIslast(0);
+			}
+			videoListDm.setTotalcount(pagedList.getTotalElements());
+			videoListDm.setTotalpage(pagedList.getTotalPages());
+			videoListDm.setVideoList(pagedList.getContent());
+			videoListMap.put("动漫", videoListDm);
+			
+			VideoList videoListZy= new VideoList();
+			params.clear();
+			params.put("CONTAIN_cname", new String[]{"综艺"});	
+			pagedList = videoTwoService.findPage( params, pageable);
+			if(pagedList.getTotalPages()<2){
+				videoListZy.setIslast(1);
+			}else{
+				videoListZy.setIslast(0);
+			}
+			videoListZy.setTotalcount(pagedList.getTotalElements());
+			videoListZy.setTotalpage(pagedList.getTotalPages());
+			videoListZy.setVideoList(pagedList.getContent());
+			videoListMap.put("综艺", videoListZy);
+		}
+		
 		logger.info("NodeVideoController---index2---");
 		siteResolver.resolveSite(siteNumber);
 		Site site = Context.getCurrentSite();
@@ -359,43 +496,7 @@ public class NodeVideoController {
 		
 		try {
 			logger.info("videoAll------"+id);
-			VideoMain videoMain =new VideoMain();
-			Pageable pageable = new PageRequest(0, 4,Direction.DESC, "vmid");  
-			Map<String, String[]> params = new HashMap<String, String[]>();
-			String[] ds ={"电视剧"};
-			String[] zy ={"综艺"};
-			String[] yl ={"娱乐"};
-			String[] yy ={"音乐"};
-			String[] xw ={"新闻"};
-			String[] dm ={"动漫"};
-			params.put("CONTAIN_cname", ds);			
-			Page<VideoTwo> pagedList = videoTwoService.findPage( params, pageable);
-			videoMain.setDsList(pagedList.getContent());
-			
-			params.clear();			
-			params.put("CONTAIN_cname", zy);
-			pagedList = videoTwoService.findPage( params, pageable);
-			videoMain.setZyList(pagedList.getContent());
-			
-			params.clear();			
-			params.put("CONTAIN_cname", yl);
-			pagedList = videoTwoService.findPage( params, pageable);
-			videoMain.setYlList(pagedList.getContent());
-			
-			params.clear();			
-			params.put("CONTAIN_cname", yy);
-			pagedList = videoTwoService.findPage( params, pageable);
-			videoMain.setYyList(pagedList.getContent());
-			
-			params.clear();			
-			params.put("CONTAIN_cname", xw);
-			pagedList = videoTwoService.findPage( params, pageable);
-			videoMain.setXwList(pagedList.getContent());
-			
-			params.clear();			
-			params.put("CONTAIN_cname", dm);
-			pagedList = videoTwoService.findPage( params, pageable);
-			videoMain.setDmList(pagedList.getContent());
+		
 			
 			return VideoResultController.toJson(videoMain);
 		} catch (Exception e) {
@@ -407,58 +508,68 @@ public class NodeVideoController {
 	@RequestMapping(value = "/videolist.jspx",produces = "text/html;charset=UTF-8")
 	@ResponseBody
 	public String videoList(@RequestParam String type,@RequestParam String area,@RequestParam String year,@RequestParam String title,@RequestParam int page) {
-		Pageable pageable = new PageRequest(page, 20,Direction.DESC, "vmid");  
-		Map<String, String[]> params = new HashMap<String, String[]>();
-		if(type!=null&&type.length()>0){
-			params.put("CONTAIN_cname", new String[]{type});	
-		}
-		if(area!=null&&area.length()>0&&!area.equals("全部")){
-			params.put("CONTAIN_area", new String[]{area});	
-		}
-		if(title!=null&&title.length()>0){
-			params.put("CONTAIN_title", new String[]{title});	
-		}
-//		EQ, LIKE, CONTAIN, STARTWITH, ENDWITH, GT, LT, GTE, LTE, IN
-		if(year!=null&&year.length()>0&&!year.equals("全部")){
-			if(year.equals("2017")){
-				params.put("EQ_year", new String[]{"2017"});	
-			}else if(year.equals("2016")){
-				params.put("EQ_year", new String[]{"2016"});
-			}else if(year.equals("2015-2010")){
-				params.put("LTE_year", new String[]{"2015"});
-				params.put("GTE_year", new String[]{"2010"});
-			}else if(year.equals("00年代")){
-				params.put("LTE_year", new String[]{"2009"});
-				params.put("GTE_year", new String[]{"2000"});
-			}else if(year.equals("90年代")){
-				params.put("LTE_year", new String[]{"1999"});
-				params.put("GTE_year", new String[]{"1990"});
-			}else if(year.equals("80年代")){
-				params.put("LTE_year", new String[]{"1989"});
-				params.put("GTE_year", new String[]{"1980"});
-			}else if(year.equals("更早")){
-				params.put("LTE_year", new String[]{"1979"});
-			}
-		}
-		Page<VideoTwo> pagedList = videoTwoService.findPage( params, pageable);
 		VideoList videoList = new VideoList();
-		videoList.setCurrpage(page);
-		if(page==0||pagedList.getTotalPages()<2){
-			videoList.setIsfirst(1);
+		logger.info("type-----------------"+type);
+		if(area.equals("全部")&&year.equals("全部")&&(title==null||title.length()==0)&&page==0){
+			videoList = videoListMap.get(type);
+			logger.info("contains-----------------"+type+"--"+videoListMap.containsKey(type));
+			
 		}else{
-			videoList.setIsfirst(0);
+			Pageable pageable = new PageRequest(page, 20,Direction.DESC, "vmid");  
+			Map<String, String[]> params = new HashMap<String, String[]>();
+			if(type!=null&&type.length()>0){
+				params.put("CONTAIN_cname", new String[]{type});	
+			}
+			if(area!=null&&area.length()>0&&!area.equals("全部")){
+				params.put("CONTAIN_area", new String[]{area});	
+			}
+			if(title!=null&&title.length()>0){
+				params.put("CONTAIN_title", new String[]{title});	
+			}
+//			EQ, LIKE, CONTAIN, STARTWITH, ENDWITH, GT, LT, GTE, LTE, IN
+			if(year!=null&&year.length()>0&&!year.equals("全部")){
+				if(year.equals("2017")){
+					params.put("EQ_year", new String[]{"2017"});	
+				}else if(year.equals("2016")){
+					params.put("EQ_year", new String[]{"2016"});
+				}else if(year.equals("2015-2010")){
+					params.put("LTE_year", new String[]{"2015"});
+					params.put("GTE_year", new String[]{"2010"});
+				}else if(year.equals("00年代")){
+					params.put("LTE_year", new String[]{"2009"});
+					params.put("GTE_year", new String[]{"2000"});
+				}else if(year.equals("90年代")){
+					params.put("LTE_year", new String[]{"1999"});
+					params.put("GTE_year", new String[]{"1990"});
+				}else if(year.equals("80年代")){
+					params.put("LTE_year", new String[]{"1989"});
+					params.put("GTE_year", new String[]{"1980"});
+				}else if(year.equals("更早")){
+					params.put("LTE_year", new String[]{"1979"});
+				}
+			}
+			Page<VideoTwo> pagedList = videoTwoService.findPage( params, pageable);
+			
+			videoList.setCurrpage(page);
+			if(page==0||pagedList.getTotalPages()<2){
+				videoList.setIsfirst(1);
+			}else{
+				videoList.setIsfirst(0);
+			}
+			if(page+1==pagedList.getTotalPages()||pagedList.getTotalPages()<2){
+				videoList.setIslast(1);
+			}else{
+				videoList.setIslast(0);
+			}
+			videoList.setTotalcount(pagedList.getTotalElements());
+			videoList.setTotalpage(pagedList.getTotalPages());
+			videoList.setVideoList(pagedList.getContent());
+			logger.info("videolist------page---"+page);
+			logger.info("videolist------pagedList.getTotalPages()---"+pagedList.getTotalPages());
+			logger.info("videolist------pagedList.getTotalElements()---"+pagedList.getTotalElements());
 		}
-		if(page+1==pagedList.getTotalPages()||pagedList.getTotalPages()<2){
-			videoList.setIslast(1);
-		}else{
-			videoList.setIslast(0);
-		}
-		videoList.setTotalcount(pagedList.getTotalElements());
-		videoList.setTotalpage(pagedList.getTotalPages());
-		videoList.setVideoList(pagedList.getContent());
-		logger.info("videolist------page---"+page);
-		logger.info("videolist------pagedList.getTotalPages()---"+pagedList.getTotalPages());
-		logger.info("videolist------pagedList.getTotalElements()---"+pagedList.getTotalElements());
+		
+	
 		return VideoResultController.toJson(videoList);
 	}
 	
