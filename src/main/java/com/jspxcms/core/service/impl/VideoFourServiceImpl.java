@@ -86,7 +86,7 @@ public class VideoFourServiceImpl implements VideoFourService{
 	}
 
 	@Override
-	public VideoFour getbyvid(String vid) {
+	public List<VideoFour> getbyvid(String vid) {
 		return dao.getbyvid(vid);
 	}
 

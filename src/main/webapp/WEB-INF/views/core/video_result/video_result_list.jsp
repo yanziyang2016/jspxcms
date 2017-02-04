@@ -73,7 +73,8 @@ function optDelete(form) {
 </div>
 	<fieldset class="c-fieldset">
     <legend>采集</legend>
-	  	  <label class="c-lab"><button id="videocollect" >视频采集</button></label>
+	  	  <label class="c-lab" ><button id="videocollect" >视频采集</button></label>
+	  	  <label class="c-lab"><button id="videorefresh" >缓存刷新</button></label>
   </fieldset>
 <form method="post">
 <tags:search_params/>
@@ -110,12 +111,14 @@ function optDelete(form) {
 </form>
 <script type="text/javascript">
 $("#videocollect").click(function(){
+	$("#videocollect").css("backgroundColor","red");
+	alert("开始采集");
 	$.ajax({    
 	    url:'videocollect.do',// 跳转到 action    
 	    data:{    
-	             id :6,
-	             s:20,
-	             istart:1
+	             id :1,
+	             s:8000,
+	             istart:63
 	    },    
 	    type:'post',    
 	    cache:false,  
@@ -124,6 +127,7 @@ $("#videocollect").click(function(){
 	    success:function(data) {    
 		    
 		    if(data=="success"){
+		    	$("#videocollect").css("backgroundColor","white");
 		    	alert("采集成功");
 		    }else if(data=="fail"){
 		    	alert("采集失败");
@@ -135,6 +139,11 @@ $("#videocollect").click(function(){
 	    	//alert(222);
 	    }
 	}); 
+});
+
+
+$("#videorefresh").click(function(){
+	window.open("http://v.uliketu.com/videorefresh.jspx?id=1");
 });
 </script>
 </body>

@@ -7,8 +7,7 @@ import static com.jspxcms.core.constant.Constants.MESSAGE;
 import static com.jspxcms.core.constant.Constants.OPRT;
 import static com.jspxcms.core.constant.Constants.SAVE_SUCCESS;
 
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,17 +16,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.jspxcms.common.web.Servlets;
 import com.jspxcms.core.constant.Constants;
+import com.jspxcms.core.domain.VideoClassify;
 import com.jspxcms.core.domain.VideoTwo;
+import com.jspxcms.core.service.VideoClassifyService;
 import com.jspxcms.core.service.VideoTwoService;
 
 /**
@@ -48,6 +52,19 @@ public class VideoTwoController {
 		Map<String, String[]> params = Servlets.getParamValuesMap(request, Constants.SEARCH_PREFIX);
 		logger.info("VideoTwo --- params"+params.toString());
 		Page<VideoTwo> pagedList = service.findPage( params, pageable);
+		for(VideoTwo videoTwo: pagedList.getContent()){
+			if(videoTwo.getOneClassifyId()==null||videoTwo.getOneClassifyId()==-1){
+				videoTwo.setOneClassifyName("未设置");
+			}else{
+				videoTwo.setOneClassifyName(videoClassifyService.get(videoTwo.getOneClassifyId()).getVideoClassifyName());	
+			}
+			
+			if(videoTwo.getTwoClassifyId()==null||videoTwo.getTwoClassifyId()==-1){
+				videoTwo.setTwoClassifyName("未设置");
+			}else{
+				videoTwo.setTwoClassifyName(videoClassifyService.get(videoTwo.getTwoClassifyId()).getVideoClassifyName());
+			}
+		}
 		modelMap.addAttribute("pagedList", pagedList);
 		return "core/video_two/video_two_list";
 	}
@@ -61,6 +78,8 @@ public class VideoTwoController {
 		VideoTwo bean = service.get(id);
 		logger.info(new Date()+"-order:edit-"+id);
 		modelMap.addAttribute("bean", bean);
+		modelMap.addAttribute("oneClassifyId", bean.getOneClassifyId()==null?-1:bean.getOneClassifyId());
+		modelMap.addAttribute("twoClassifyId", bean.getTwoClassifyId()==null?-1:bean.getTwoClassifyId());
 		modelMap.addAttribute(OPRT, EDIT);
 		return "core/video_two/video_two_form";
 	}
@@ -74,6 +93,8 @@ public class VideoTwoController {
 			VideoTwo bean = service.get(id);
 			modelMap.addAttribute("bean", bean);
 		}
+		modelMap.addAttribute("oneClassifyId", -1);
+		modelMap.addAttribute("twoClassifyId", -1);
 		modelMap.addAttribute(OPRT, CREATE);
 		return "core/video_two/video_two_form";
 	}
@@ -106,6 +127,8 @@ public class VideoTwoController {
 		temp.setmA(bean.getmA());
 		temp.setDesc(bean.getDesc());
 		temp.setBigPic(bean.getBigPic());
+		temp.setOneClassifyId(bean.getOneClassifyId());
+		temp.setTwoClassifyId(bean.getTwoClassifyId());
 		service.update(temp);
 		ra.addFlashAttribute(MESSAGE, SAVE_SUCCESS);
 		if (Constants.REDIRECT_LIST.equals(redirect)) {
@@ -127,11 +150,34 @@ public class VideoTwoController {
 		return "redirect:list.do";
 	}
 
+	@RequestMapping(value = "oneClassifyList",produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String oneClassifyList(@RequestParam int id) {
+		Pageable temp = new PageRequest(0, 20);  
+		Map<String, String[]> params = new HashMap<String, String[]>();
+		params.put("EQ_sourceId", new String[]{"1"});			
+		Page<VideoClassify> videoClassifyPage= videoClassifyService.findPage(params, temp);
+		return VideoResultController.toJson(videoClassifyPage.getContent());
+	}
+	
+	@RequestMapping(value = "twoClassifyList",produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String twoClassifyList(@RequestParam int id) {
+		Pageable temp = new PageRequest(0, 20);  
+		Map<String, String[]> params = new HashMap<String, String[]>();
+		params.put("EQ_sourceClassifyId", new String[]{""+id});			
+		Page<VideoClassify> videoClassifyPage= videoClassifyService.findPage(params, temp);
+		return VideoResultController.toJson(videoClassifyPage.getContent());
+	}
+
 
 
 
 	@Autowired
 	private VideoTwoService service;
+	
+	@Autowired
+	private VideoClassifyService videoClassifyService;
 	
 	
 }

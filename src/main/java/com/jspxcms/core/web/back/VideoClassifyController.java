@@ -8,6 +8,7 @@ import static com.jspxcms.core.constant.Constants.OPRT;
 import static com.jspxcms.core.constant.Constants.SAVE_SUCCESS;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
@@ -59,6 +61,12 @@ public class VideoClassifyController {
 			org.springframework.ui.Model modelMap) {
 		logger.info(new Date()+"-order:edit-"+id);
 		VideoClassify bean = service.get(id);
+		Pageable temp = new PageRequest(0, 20);  
+		Map<String, String[]> params = new HashMap<String, String[]>();
+		params.put("EQ_sourceId", new String[]{"1"});			
+		Page<VideoClassify> videoClassifyPage= service.findPage(params, temp);
+		logger.info("-VideoClassify-"+videoClassifyPage.getContent().size());
+		modelMap.addAttribute("videoClassifyList", videoClassifyPage.getContent());
 		modelMap.addAttribute("bean", bean);
 		modelMap.addAttribute(OPRT, EDIT);
 		return "core/video_classify/video_classify_form";
@@ -73,6 +81,12 @@ public class VideoClassifyController {
 			VideoClassify bean = service.get(id);
 			modelMap.addAttribute("bean", bean);
 		}
+		Pageable temp = new PageRequest(0, 20);  
+		Map<String, String[]> params = new HashMap<String, String[]>();
+		params.put("EQ_sourceId", new String[]{"1"});			
+		Page<VideoClassify> videoClassifyPage= service.findPage(params, temp);
+		logger.info("-VideoClassify-"+videoClassifyPage.getContent().size());
+		modelMap.addAttribute("videoClassifyList", videoClassifyPage.getContent());
 		modelMap.addAttribute(OPRT, CREATE);
 		return "core/video_classify/video_classify_form";
 	}
@@ -81,7 +95,12 @@ public class VideoClassifyController {
 	@RequestMapping("save.do")
 	public String save(VideoClassify bean,String redirect,HttpServletRequest request, RedirectAttributes ra) {
 	
-	
+		if(bean.getSourceClassifyId()==0){
+			bean.setBeforeClassifyName("视频");
+		}else{
+			VideoClassify beanBefore = service.get(bean.getSourceClassifyId());
+			bean.setBeforeClassifyName(beanBefore.getVideoClassifyName());
+		}
 		service.save(bean);
 
 		ra.addFlashAttribute(MESSAGE, SAVE_SUCCESS);
@@ -98,6 +117,12 @@ public class VideoClassifyController {
 	@RequestMapping("update.do")
 	public String update(@ModelAttribute("bean") VideoClassify bean,String redirect, HttpServletRequest request, RedirectAttributes ra) {
 		logger.info(new Date()+"-order:update-"+bean.getId());
+		if(bean.getSourceClassifyId()==0){
+			bean.setBeforeClassifyName("视频");
+		}else{
+			VideoClassify beanBefore = service.get(bean.getSourceClassifyId());
+			bean.setBeforeClassifyName(beanBefore.getVideoClassifyName());
+		}
 		service.update(bean);
 		ra.addFlashAttribute(MESSAGE, SAVE_SUCCESS);
 		if (Constants.REDIRECT_LIST.equals(redirect)) {

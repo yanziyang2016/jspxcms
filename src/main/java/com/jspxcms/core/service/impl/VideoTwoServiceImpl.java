@@ -86,7 +86,7 @@ public class VideoTwoServiceImpl implements VideoTwoService{
 	}
 
 	@Override
-	public VideoTwo getbyid(String id) {
+	public List<VideoTwo> getbyid(String id) {
 		return  dao.getbyid(id);
 	}
 

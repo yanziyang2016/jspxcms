@@ -24,7 +24,7 @@ function confirmDelete() {
 <div class="c-bar margin-top5">
   <span class="c-position"><s:message code="video.classify"/> - <s:message code="${oprt=='edit' ? 'edit' : 'create'}"/></span>
 </div>
-<form id="validForm" action="${oprt=='edit' ? 'update' : 'save'}.do" method="post">
+<form id="validForm" action="${oprt=='edit' ? 'update' : 'save'}.do" method="post" onsubmit="return toVaild()">
 <tags:search_params/>
 <f:hidden name="oid" value="${bean.id}"/>
 <f:hidden name="position" value="${position}"/>
@@ -48,14 +48,26 @@ function confirmDelete() {
   <tr>
     <td class="in-lab" width="15%">分类名称:</td>
     <td class="in-ctt" width="35%"><f:text name="videoClassifyName" value="${oprt=='edit' ? (bean.videoClassifyName) : ''}" style="width:180px;"/></td>
-    <td class="in-lab" width="15%">分类ID:</td>
-    <td class="in-ctt" width="35%"><f:text name="sourceClassifyId" value="${bean.sourceClassifyId}" maxlength="100" style="width:180px;"/></td>
+    <td class="in-lab" width="15%">上级分类:</td>
+    <td class="in-ctt" width="35%">
+    
+    
+    
+     <select name="sourceClassifyId" id="sourceClassifyId">
+        <f:option value="0" selected="0" >视频</f:option>
+        <c:forEach var="videoClassify" items="${videoClassifyList}">
+        <f:option value="${videoClassify.id}" selected="${bean.sourceClassifyId}" >${videoClassify.videoClassifyName}</f:option>
+        </c:forEach>
+      </select>
+    
+    </td>
   </tr>
   <tr>
-    <td class="in-lab" width="15%">视频源:</td>
+    <td class="in-lab" width="15%">视频等级:</td>
     <td class="in-ctt" width="85%" colspan="3">
-    	<select id="type" name="sourceId" >
-    		<f:option value="1" selected="${bean.sourceId}" default="1">搜狐</f:option>
+    	<select id="sourceId" name="sourceId" >
+    		<f:option value="1" selected="${bean.sourceId}" >一级</f:option>
+    		<f:option value="2" selected="${bean.sourceId}" >二级</f:option>
     	</select> &nbsp;
     	<input type="hidden" name="id" value="${bean.id}" />
     </td>
@@ -69,6 +81,20 @@ function confirmDelete() {
     </td>
   </tr>
 </table>
+<script >
+function toVaild(){
+	if($("#sourceId").val()=='1'&&$("#sourceClassifyId").val()!='0'){
+		alert("上级分类选择错误");
+		return false;
+	}else	if($("#sourceId").val()=='2'&&$("#sourceClassifyId").val()=='0'){
+		alert("上级分类选择错误");
+		return false;
+	}else{
+		return true;
+	}
+	
+}
+</script>
 </form>
 </body>
 </html>

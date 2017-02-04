@@ -84,10 +84,12 @@ function optDeletePassword(form) {
 	<fieldset class="c-fieldset">
     <legend><s:message code="search"/></legend>
 	  <label class="c-lab">分类名称: <input type="text" name="search_CONTAIN_videoClassifyName" value="${search_CONTAIN_videoClassifyName[0]}" style="width:120px;"/></label>
-	  <label class="c-lab">视频源:
+	   <label class="c-lab">上级分类名称: <input type="text" name="search_CONTAIN_beforeClassifyName" value="${search_CONTAIN_beforeClassifyName[0]}" style="width:120px;"/></label>
+	  <label class="c-lab">视频等级:
       <select name="search_EQ_sourceId">
         <option value=""><s:message code="allSelect"/></option>
-        <option value="1"<c:if test="${'1' eq search_EQ_sourceId[0]}"> selected="selected"</c:if>>搜狐</option>
+        <option value="1"<c:if test="${'1' eq search_EQ_sourceId[0]}"> selected="selected"</c:if>>一级</option>
+        <option value="2"<c:if test="${'2' eq search_EQ_sourceId[0]}"> selected="selected"</c:if>>二级</option>
       </select>
     </label>
 	  <label class="c-lab"><input type="submit" value="<s:message code="search"/>"/></label>
@@ -112,8 +114,8 @@ function optDeletePassword(form) {
     <th width="25"><input type="checkbox" onclick="Cms.check('ids',this.checked);"/></th>
     <th width="130"><s:message code="operate"/></th>
     <th width="30" class="ls-th-sort"><span class="ls-sort" pagesort="id">ID</span></th>
-    <th class="ls-th-sort"><span class="ls-sort" pagesort="sourceId">视频源</span></th>
-    <th class="ls-th-sort"><span class="ls-sort" pagesort="sourceClassifyId">分类ID</span></th>
+    <th class="ls-th-sort"><span class="ls-sort" pagesort="sourceId">视频等级</span></th>
+    <th class="ls-th-sort"><span class="ls-sort" pagesort="beforeClassifyName">上级分类</span></th>
     <th class="ls-th-sort"><span class="ls-sort" pagesort="videoClassifyName">分类名称</span></th>
   </tr>
   </thead>
@@ -131,9 +133,9 @@ function optDeletePassword(form) {
      </td>
     <td>${bean.id}</td>
     <td align="center">
-    <c:if test="${bean.sourceId==1}">搜狐</c:if>
+    <c:if test="${bean.sourceId==1}">一级</c:if><c:if test="${bean.sourceId==2}">二级</c:if>
     </td>
-    <td align="center">${bean.sourceClassifyId}</td>
+    <td align="center">${bean.beforeClassifyName}</td>
     <td align="center">${bean.videoClassifyName}</td>
   </tr>
   </c:forEach>

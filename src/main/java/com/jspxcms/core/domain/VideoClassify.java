@@ -33,9 +33,9 @@ public class VideoClassify implements java.io.Serializable {
 
 	private Integer id;
 	private String videoClassifyName;//分类名称
-	private Integer sourceClassifyId;//视频来源分类id
-	private Integer sourceId;//视频来源id
-
+	private Integer sourceClassifyId;//上级分类id
+	private Integer sourceId;//分类等级
+	private String beforeClassifyName;//上级分类名称
 
 
 	@Id
@@ -73,6 +73,15 @@ public class VideoClassify implements java.io.Serializable {
 
 	public void setSourceId(Integer sourceId) {
 		this.sourceId = sourceId;
+	}
+	@Length(max = 64)
+	@Column(name = "f_before_classify_name", length = 64)
+	public String getBeforeClassifyName() {
+		return beforeClassifyName;
+	}
+
+	public void setBeforeClassifyName(String beforeClassifyName) {
+		this.beforeClassifyName = beforeClassifyName;
 	}
 	
 	

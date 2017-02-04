@@ -50,6 +50,12 @@ public class VideoTwo implements java.io.Serializable  {
 	private String 	videoTvType;
 	private String 	videoUrl;
 	
+	private Integer oneClassifyId;//一级分类id
+	private Integer twoClassifyId;//二级分类id
+	
+	private String oneClassifyName;//一级分类
+	private String twoClassifyName;//二级分类
+	
 	@Id
 	@Column(name = "f_v_m_id", unique = true, nullable = false)
 	@TableGenerator(name = "tg_cms_v_m", pkColumnValue = "cms_v_m", table = "t_id_table", pkColumnName = "f_table", valueColumnName = "f_id_value", initialValue = 1, allocationSize = 1)
@@ -109,6 +115,21 @@ public class VideoTwo implements java.io.Serializable  {
 	}
 	public void setVideos(List<VideoThree> videos) {
 		this.videos = videos;
+	}
+	
+	@Transient
+	public String getOneClassifyName() {
+		return oneClassifyName;
+	}
+	public void setOneClassifyName(String oneClassifyName) {
+		this.oneClassifyName = oneClassifyName;
+	}
+	@Transient
+	public String getTwoClassifyName() {
+		return twoClassifyName;
+	}
+	public void setTwoClassifyName(String twoClassifyName) {
+		this.twoClassifyName = twoClassifyName;
 	}
 	@Length(max = 50)
 	@Column(name = "year", length = 50)
@@ -349,6 +370,20 @@ public class VideoTwo implements java.io.Serializable  {
 	}
 	public void setVideoUrl(String videoUrl) {
 		this.videoUrl = videoUrl;
+	}
+	@Column(name = "oneClassifyId")
+	public Integer getOneClassifyId() {
+		return oneClassifyId;
+	}
+	public void setOneClassifyId(Integer oneClassifyId) {
+		this.oneClassifyId = oneClassifyId;
+	}
+	@Column(name = "twoClassifyId")
+	public Integer getTwoClassifyId() {
+		return twoClassifyId;
+	}
+	public void setTwoClassifyId(Integer twoClassifyId) {
+		this.twoClassifyId = twoClassifyId;
 	}
 
 

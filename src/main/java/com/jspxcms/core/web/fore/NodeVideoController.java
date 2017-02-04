@@ -66,50 +66,9 @@ public class NodeVideoController {
 	public String index(HttpServletRequest request,
 			HttpServletResponse response, org.springframework.ui.Model modelMap) {
 		
-//		VideoMain videoMain =new VideoMain();
-		
-		if(videoMain.getDmList()==null||videoMain.getDmList().size()==0){
-			Pageable pageable = new PageRequest(0, 4,Direction.DESC, "vmid");  
-			Map<String, String[]> params = new HashMap<String, String[]>();
-			String[] ds ={"电视剧"};
-			String[] zy ={"综艺"};
-			String[] yl ={"娱乐"};
-			String[] yy ={"音乐"};
-			String[] xw ={"新闻"};
-			String[] dm ={"动漫"};
-			params.put("CONTAIN_cname", ds);			
-			Page<VideoTwo> pagedList = videoTwoService.findPage( params, pageable);
-			videoMain.setDsList(pagedList.getContent());
-			
-			params.clear();			
-			params.put("CONTAIN_cname", zy);
-			pagedList = videoTwoService.findPage( params, pageable);
-			videoMain.setZyList(pagedList.getContent());
-			
-			params.clear();			
-			params.put("CONTAIN_cname", yl);
-			pagedList = videoTwoService.findPage( params, pageable);
-			videoMain.setYlList(pagedList.getContent());
-			
-			params.clear();			
-			params.put("CONTAIN_cname", yy);
-			pagedList = videoTwoService.findPage( params, pageable);
-			videoMain.setYyList(pagedList.getContent());
-			
-			params.clear();			
-			params.put("CONTAIN_cname", xw);
-			pagedList = videoTwoService.findPage( params, pageable);
-			videoMain.setXwList(pagedList.getContent());
-			
-			params.clear();			
-			params.put("CONTAIN_cname", dm);
-			pagedList = videoTwoService.findPage( params, pageable);
-			videoMain.setDmList(pagedList.getContent());
-			
-			
+		if(videoMain.getDmList()==null||videoMain.getDmList().size()==0){			
+			videoMain();			
 		}
-		
-		
 		
 		logger.info("NodeVideoController---index1---");
 		return index(null, request, response, modelMap);
@@ -120,92 +79,7 @@ public class NodeVideoController {
 			HttpServletRequest request, HttpServletResponse response,
 			org.springframework.ui.Model modelMap) {
 		if(!videoListMap.containsKey("电视剧")){
-			Pageable pageable = new PageRequest(0, 20,Direction.DESC, "vmid");  
-			Map<String, String[]> params = new HashMap<String, String[]>();
-			params.put("CONTAIN_cname", new String[]{"电视剧"});	
-			Page<VideoTwo> pagedList = videoTwoService.findPage( params, pageable);
-			VideoList videoListDs = new VideoList();
-			videoListDs.setCurrpage(0);
-			videoListDs.setIsfirst(1);
-			if(pagedList.getTotalPages()<2){
-				videoListDs.setIslast(1);
-			}else{
-				videoListDs.setIslast(0);
-			}
-			videoListDs.setTotalcount(pagedList.getTotalElements());
-			videoListDs.setTotalpage(pagedList.getTotalPages());
-			videoListDs.setVideoList(pagedList.getContent());
-			videoListMap.put("电视剧", videoListDs);
-			
-			VideoList videoListYl = new VideoList();
-			params.clear();
-			params.put("CONTAIN_cname", new String[]{"娱乐"});	
-			pagedList = videoTwoService.findPage( params, pageable);
-			if(pagedList.getTotalPages()<2){
-				videoListYl.setIslast(1);
-			}else{
-				videoListYl.setIslast(0);
-			}
-			videoListYl.setTotalcount(pagedList.getTotalElements());
-			videoListYl.setTotalpage(pagedList.getTotalPages());
-			videoListYl.setVideoList(pagedList.getContent());
-			videoListMap.put("娱乐", videoListYl);
-			
-			VideoList videoListXw = new VideoList();
-			params.clear();
-			params.put("CONTAIN_cname", new String[]{"新闻"});	
-			pagedList = videoTwoService.findPage( params, pageable);
-			if(pagedList.getTotalPages()<2){
-				videoListXw.setIslast(1);
-			}else{
-				videoListXw.setIslast(0);
-			}
-			videoListXw.setTotalcount(pagedList.getTotalElements());
-			videoListXw.setTotalpage(pagedList.getTotalPages());
-			videoListXw.setVideoList(pagedList.getContent());
-			videoListMap.put("新闻", videoListXw);
-			
-			VideoList videoListYy = new VideoList();
-			params.clear();
-			params.put("CONTAIN_cname", new String[]{"音乐"});	
-			pagedList = videoTwoService.findPage( params, pageable);
-			if(pagedList.getTotalPages()<2){
-				videoListYy.setIslast(1);
-			}else{
-				videoListYy.setIslast(0);
-			}
-			videoListYy.setTotalcount(pagedList.getTotalElements());
-			videoListYy.setTotalpage(pagedList.getTotalPages());
-			videoListYy.setVideoList(pagedList.getContent());
-			videoListMap.put("音乐", videoListYy);
-			
-			VideoList videoListDm= new VideoList();
-			params.clear();
-			params.put("CONTAIN_cname", new String[]{"动漫"});	
-			pagedList = videoTwoService.findPage( params, pageable);
-			if(pagedList.getTotalPages()<2){
-				videoListDm.setIslast(1);
-			}else{
-				videoListDm.setIslast(0);
-			}
-			videoListDm.setTotalcount(pagedList.getTotalElements());
-			videoListDm.setTotalpage(pagedList.getTotalPages());
-			videoListDm.setVideoList(pagedList.getContent());
-			videoListMap.put("动漫", videoListDm);
-			
-			VideoList videoListZy= new VideoList();
-			params.clear();
-			params.put("CONTAIN_cname", new String[]{"综艺"});	
-			pagedList = videoTwoService.findPage( params, pageable);
-			if(pagedList.getTotalPages()<2){
-				videoListZy.setIslast(1);
-			}else{
-				videoListZy.setIslast(0);
-			}
-			videoListZy.setTotalcount(pagedList.getTotalElements());
-			videoListZy.setTotalpage(pagedList.getTotalPages());
-			videoListZy.setVideoList(pagedList.getContent());
-			videoListMap.put("综艺", videoListZy);
+			videoList();
 		}
 		
 		logger.info("NodeVideoController---index2---");
@@ -395,8 +269,7 @@ public class NodeVideoController {
 				detail.setEm(false);
 				infoDetailService.save(detail,info);
 			}
-			
-			if(videoTwo.getAid()!=null&&videoTwo.getAid().length()>0){
+			if(videoTwo.getAid()!=null&&videoTwo.getAid().length()>0&&videoFourService.findAllByAid(videoTwo.getAid()).size()>0){
 				modelMap.addAttribute("isaid", 1);
 			}else{
 				modelMap.addAttribute("isaid", 0);
@@ -580,6 +453,146 @@ public class NodeVideoController {
 		return VideoResultController.toJson(videoFourList);
 	}
 	
+	@RequestMapping(value = "/videorefresh.jspx",produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String videorefresh(@RequestParam String id) {
+		videoMain();
+		videoList();
+		return VideoResultController.toJson("ok");
+	}
+	
+	public  void videoMain(){
+		Pageable pageable = new PageRequest(0, 4,Direction.DESC, "vmid");  
+		Map<String, String[]> params = new HashMap<String, String[]>();
+		String[] ds ={"电视剧"};
+		String[] zy ={"综艺"};
+		String[] yl ={"娱乐"};
+		String[] yy ={"音乐"};
+		String[] xw ={"新闻"};
+		String[] dm ={"动漫"};
+		params.put("CONTAIN_cname", ds);			
+		Page<VideoTwo> pagedList = videoTwoService.findPage( params, pageable);
+		videoMain.setDsList(pagedList.getContent());
+		
+		params.clear();			
+		params.put("CONTAIN_cname", zy);
+		pagedList = videoTwoService.findPage( params, pageable);
+		videoMain.setZyList(pagedList.getContent());
+		
+		params.clear();			
+		params.put("CONTAIN_cname", yl);
+		pagedList = videoTwoService.findPage( params, pageable);
+		videoMain.setYlList(pagedList.getContent());
+		
+		params.clear();			
+		params.put("CONTAIN_cname", yy);
+		pagedList = videoTwoService.findPage( params, pageable);
+		videoMain.setYyList(pagedList.getContent());
+		
+		params.clear();			
+		params.put("CONTAIN_cname", xw);
+		pagedList = videoTwoService.findPage( params, pageable);
+		videoMain.setXwList(pagedList.getContent());
+		
+		params.clear();			
+		params.put("CONTAIN_cname", dm);
+		pagedList = videoTwoService.findPage( params, pageable);
+		videoMain.setDmList(pagedList.getContent());
+		
+	}
+	
+	public  void videoList(){
+		
+		
+		Pageable pageable = new PageRequest(0, 20,Direction.DESC, "vmid");  
+		Map<String, String[]> params = new HashMap<String, String[]>();
+		params.put("CONTAIN_cname", new String[]{"电视剧"});	
+		Page<VideoTwo> pagedList = videoTwoService.findPage( params, pageable);
+		VideoList videoListDs = new VideoList();
+		videoListDs.setCurrpage(0);
+		videoListDs.setIsfirst(1);
+		if(pagedList.getTotalPages()<2){
+			videoListDs.setIslast(1);
+		}else{
+			videoListDs.setIslast(0);
+		}
+		videoListDs.setTotalcount(pagedList.getTotalElements());
+		videoListDs.setTotalpage(pagedList.getTotalPages());
+		videoListDs.setVideoList(pagedList.getContent());
+		videoListMap.put("电视剧", videoListDs);
+		
+		VideoList videoListYl = new VideoList();
+		params.clear();
+		params.put("CONTAIN_cname", new String[]{"娱乐"});	
+		pagedList = videoTwoService.findPage( params, pageable);
+		if(pagedList.getTotalPages()<2){
+			videoListYl.setIslast(1);
+		}else{
+			videoListYl.setIslast(0);
+		}
+		videoListYl.setTotalcount(pagedList.getTotalElements());
+		videoListYl.setTotalpage(pagedList.getTotalPages());
+		videoListYl.setVideoList(pagedList.getContent());
+		videoListMap.put("娱乐", videoListYl);
+		
+		VideoList videoListXw = new VideoList();
+		params.clear();
+		params.put("CONTAIN_cname", new String[]{"新闻"});	
+		pagedList = videoTwoService.findPage( params, pageable);
+		if(pagedList.getTotalPages()<2){
+			videoListXw.setIslast(1);
+		}else{
+			videoListXw.setIslast(0);
+		}
+		videoListXw.setTotalcount(pagedList.getTotalElements());
+		videoListXw.setTotalpage(pagedList.getTotalPages());
+		videoListXw.setVideoList(pagedList.getContent());
+		videoListMap.put("新闻", videoListXw);
+		
+		VideoList videoListYy = new VideoList();
+		params.clear();
+		params.put("CONTAIN_cname", new String[]{"音乐"});	
+		pagedList = videoTwoService.findPage( params, pageable);
+		if(pagedList.getTotalPages()<2){
+			videoListYy.setIslast(1);
+		}else{
+			videoListYy.setIslast(0);
+		}
+		videoListYy.setTotalcount(pagedList.getTotalElements());
+		videoListYy.setTotalpage(pagedList.getTotalPages());
+		videoListYy.setVideoList(pagedList.getContent());
+		videoListMap.put("音乐", videoListYy);
+		
+		VideoList videoListDm= new VideoList();
+		params.clear();
+		params.put("CONTAIN_cname", new String[]{"动漫"});	
+		pagedList = videoTwoService.findPage( params, pageable);
+		if(pagedList.getTotalPages()<2){
+			videoListDm.setIslast(1);
+		}else{
+			videoListDm.setIslast(0);
+		}
+		videoListDm.setTotalcount(pagedList.getTotalElements());
+		videoListDm.setTotalpage(pagedList.getTotalPages());
+		videoListDm.setVideoList(pagedList.getContent());
+		videoListMap.put("动漫", videoListDm);
+		
+		VideoList videoListZy= new VideoList();
+		params.clear();
+		params.put("CONTAIN_cname", new String[]{"综艺"});	
+		pagedList = videoTwoService.findPage( params, pageable);
+		if(pagedList.getTotalPages()<2){
+			videoListZy.setIslast(1);
+		}else{
+			videoListZy.setIslast(0);
+		}
+		videoListZy.setTotalcount(pagedList.getTotalElements());
+		videoListZy.setTotalpage(pagedList.getTotalPages());
+		videoListZy.setVideoList(pagedList.getContent());
+		videoListMap.put("综艺", videoListZy);
+		
+	}
+	
 
 	@Autowired
 	private SiteResolver siteResolver;
@@ -589,12 +602,18 @@ public class NodeVideoController {
 	private NodeBufferService bufferService;
 	@Autowired
 	private NodeQueryService query;
-	@Autowired
-	private VideoTwoService videoTwoService;
+	
 	@Autowired
 	private VideoFourService videoFourService;
 	@Autowired
 	private InfoQueryService infoQueryService;
 	@Autowired
 	private InfoDetailService infoDetailService;
+	@Autowired
+	private  VideoTwoService videoTwoService;
+
+	
+	
+	
+	
 }

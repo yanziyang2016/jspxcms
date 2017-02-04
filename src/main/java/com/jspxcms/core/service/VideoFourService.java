@@ -28,7 +28,7 @@ public interface VideoFourService {
 	public void delete(Integer id);
 
 
-	public VideoFour getbyvid(String vid);
+	public List<VideoFour> getbyvid(String vid);
 
 
 	public List<VideoFour> findAllByAid(String aid);

@@ -22,6 +22,6 @@ public interface VideoTwoDao extends Repository<VideoTwo, Integer> , VideoTwoDao
 	public VideoTwo findOne(Integer id);
 	public void delete(VideoTwo bean);
 	@Query(" from VideoTwo bean where bean.id=?1")
-	public VideoTwo getbyid(String id);
+	public List<VideoTwo> getbyid(String id);
 
 }

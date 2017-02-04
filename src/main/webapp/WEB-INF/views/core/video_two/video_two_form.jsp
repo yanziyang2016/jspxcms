@@ -53,10 +53,24 @@ function confirmDelete() {
     <td class="in-ctt" width="35%"><f:text name="year" value="${bean.year}" maxlength="100" style="width:180px;"/></td>
   </tr>
   <tr>
- 	 <td class="in-lab" width="15%">视频分类:</td>
+ 	 <td class="in-lab" width="15%">视频源分类:</td>
     <td class="in-ctt" width="35%"><f:text name="cname" value="${bean.cname}" maxlength="100" style="width:180px;"/></td>
     <td class="in-lab" width="15%">评分:</td>
     <td class="in-ctt" width="35%"><f:text name="score" value="${bean.score}" style="width:180px;"/></td>
+  </tr>
+  <tr>
+ 	 <td class="in-lab" width="15%">本站一级分类:</td>
+    <td class="in-ctt" width="35%">
+	    <select id="oneClassifyId" name="oneClassifyId">
+	   		 <option value="-1"></option>
+	    </select>
+    </td>
+    <td class="in-lab" width="15%">本站二级分类:</td>
+    <td class="in-ctt" width="35%">
+	    <select id="twoClassifyId" name="twoClassifyId">
+	   		 <option value="-1"></option>
+	    </select>
+    </td>
   </tr>
    <tr>
     <td class="in-lab" width="15%">导演:</td>
@@ -89,5 +103,78 @@ function confirmDelete() {
   </tr>
 </table>
 </form>
+<script  type="text/javascript">
+var oneClassifyId=${oneClassifyId};
+var twoClassifyId=${twoClassifyId};
+$.ajax({    
+    url:'oneClassifyList',  
+    data:{    
+             id :1
+    },    
+    type:'post',    
+    cache:false,  
+    async:false,  
+    dataType:'json',    
+    success:function(data) {   
+    	if(data.length>0){
+    		for(var i=0;i<data.length;i++){
+    			$("#oneClassifyId").append('<option value="'+data[i].id+'">'+data[i].videoClassifyName+'</option>');
+    	    }
+    		$("#oneClassifyId").val(oneClassifyId);
+    	}
+	    
+    }  ,
+    error : function() { 
+    	//alert(222);
+    }
+}); 
+$.ajax({    
+    url:'twoClassifyList',  
+    data:{    
+             id :oneClassifyId
+    },    
+    type:'post',    
+    cache:false,  
+    async:false,  
+    dataType:'json',    
+    success:function(data) {   
+    	if(data.length>0){
+    		for(var i=0;i<data.length;i++){
+    			$("#twoClassifyId").append('<option value="'+data[i].id+'">'+data[i].videoClassifyName+'</option>');
+    	    }
+    		$("#twoClassifyId").val(twoClassifyId);
+    	}
+    }  ,
+    error : function() { 
+    	//alert(222);
+    }
+});
+$("#oneClassifyId").change(function(){
+	$.ajax({    
+	    url:'twoClassifyList',  
+	    data:{    
+	             id :$("#oneClassifyId").val()
+	    },    
+	    type:'post',    
+	    cache:false,  
+	    async:false,  
+	    dataType:'json',    
+	    success:function(data) { 
+	    	$("#twoClassifyId").empty();
+	    	if(data.length>0){
+	    		for(var i=0;i<data.length;i++){
+	    			$("#twoClassifyId").append('<option value="'+data[i].id+'">'+data[i].videoClassifyName+'</option>');
+	    	    }
+	    		$("#twoClassifyId").val(twoClassifyId);
+	    	}else{
+	    		$("#twoClassifyId").append('<option value="-1"></option>');
+	    	}
+	    }  ,
+	    error : function() { 
+	    	//alert(222);
+	    }
+	});
+});
+</script>
 </body>
 </html>

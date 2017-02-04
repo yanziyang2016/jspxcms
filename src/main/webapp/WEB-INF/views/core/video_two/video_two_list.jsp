@@ -83,12 +83,22 @@ function optDeletePassword(form) {
 <form action="list.do" method="get">
 	<fieldset class="c-fieldset">
     <legend><s:message code="search"/></legend>
-	  <label class="c-lab">分类名称: <input type="text" name="search_CONTAIN_cname" value="${search_CONTAIN_cname[0]}" style="width:120px;"/></label>
+	  <label class="c-lab">视频源分类名称: <input type="text" name="search_CONTAIN_cname" value="${search_CONTAIN_cname[0]}" style="width:120px;"/></label>
 	  <label class="c-lab">视频名称: <input type="text" name="search_CONTAIN_title" value="${search_CONTAIN_title[0]}" style="width:120px;"/></label>
 	  <label class="c-lab">视频源:
       <select name="search_EQ_sc">
         <option value=""><s:message code="allSelect"/></option>
         <option value="sohu"<c:if test="${'sohu' eq search_EQ_sc[0]}"> selected="selected"</c:if>>搜狐</option>
+      </select>
+      <label class="c-lab">本站一级分类:
+      <select id="oneClassifyId" name="search_EQ_oneClassifyId">
+        <option value=""><s:message code="allSelect"/></option>
+        <option value="-1">未设置</option>
+      </select>
+      <label class="c-lab">本站二级分类:
+      <select id="twoClassifyId" name="search_EQ_twoClassifyId">
+        <option value=""><s:message code="allSelect"/></option>
+        <option value="-1">未设置</option>
       </select>
     </label>
 	  <label class="c-lab"><input type="submit" value="<s:message code="search"/>"/></label>
@@ -111,7 +121,9 @@ function optDeletePassword(form) {
     <th width="30" class="ls-th-sort"><span class="ls-sort" pagesort="id">ID</span></th>
     <th class="ls-th-sort"><span class="ls-sort" pagesort="sc">视频源</span></th>
     <th class="ls-th-sort"><span class="ls-sort" pagesort="title">视频名称</span></th>
-    <th class="ls-th-sort"><span class="ls-sort" pagesort="cname">分类</span></th>
+    <th class="ls-th-sort"><span class="ls-sort" pagesort="cname">视频源分类</span></th>
+    <th class="ls-th-sort"><span class="ls-sort" pagesort="oneClassifyId">本站一级分类</span></th>
+    <th class="ls-th-sort"><span class="ls-sort" pagesort="twoClassifyId">本站二级分类</span></th>
   </tr>
   </thead>
   <tbody>
@@ -132,6 +144,8 @@ function optDeletePassword(form) {
     </td>
     <td align="center">${bean.title}</td>
     <td align="center">${bean.cname}</td>
+    <td align="center">${bean.oneClassifyName}</td>
+    <td align="center">${bean.twoClassifyName}</td>
   </tr>
   </c:forEach>
   </tbody>
@@ -144,5 +158,90 @@ function optDeletePassword(form) {
 	<tags:search_params excludePage="true"/>
   <tags:pagination pagedList="${pagedList}"/>
 </form>
+<script type="text/javascript">
+//""<option value="sohu"<c:if test="${'sohu' eq search_EQ_sc[0]}"> selected="selected"</c:if>>搜狐</option>
+
+var oneClassifyId=${search_EQ_oneClassifyId[0]}+"";
+var twoClassifyId=${search_EQ_twoClassifyId[0]}+"";
+$.ajax({    
+    url:'oneClassifyList',  
+    data:{    
+             id :1
+    },    
+    type:'post',    
+    cache:false,  
+    async:false,  
+    dataType:'json',    
+    success:function(data) {   
+    	if(data.length>0){
+    		for(var i=0;i<data.length;i++){
+    			$("#oneClassifyId").append('<option value="'+data[i].id+'">'+data[i].videoClassifyName+'</option>');
+    	    }
+    		$("#oneClassifyId").val(typeof(oneClassifyId.length)=='undefined'?"":oneClassifyId);
+    	}
+	    
+    }  ,
+    error : function() { 
+    	//alert(222);
+    }
+}); 
+if(typeof(oneClassifyId.length)!='undefined'){
+	$.ajax({    
+	    url:'twoClassifyList',  
+	    data:{    
+	             id :oneClassifyId
+	    },    
+	    type:'post',    
+	    cache:false,  
+	    async:false,  
+	    dataType:'json',    
+	    success:function(data) {   
+	    	if(data.length>0){
+	    		for(var i=0;i<data.length;i++){
+	    			$("#twoClassifyId").append('<option value="'+data[i].id+'">'+data[i].videoClassifyName+'</option>');
+	    	    }
+	    		$("#twoClassifyId").val(typeof(twoClassifyId.length)=='undefined'?"":twoClassifyId);
+	    	}
+	    	
+	    	if(twoClassifyId==-1){
+	    		$("#twoClassifyId").val(-1);
+	    	}
+	    }  ,
+	    error : function() { 
+	    	//alert(222);
+	    }
+	});
+}
+
+$("#oneClassifyId").change(function(){
+	$("#twoClassifyId").empty();
+	$("#twoClassifyId").append('<option value=""><s:message code="allSelect"/></option>');
+	$("#twoClassifyId").append('<option value="-1">未设置</option>');
+	if($("#oneClassifyId").val().length>0){
+		$.ajax({    
+		    url:'twoClassifyList',  
+		    data:{    
+		             id :$("#oneClassifyId").val()
+		    },    
+		    type:'post',    
+		    cache:false,  
+		    async:false,  
+		    dataType:'json',    
+		    success:function(data) { 
+		    	if(data.length>0){
+		    		for(var i=0;i<data.length;i++){
+		    			$("#twoClassifyId").append('<option value="'+data[i].id+'">'+data[i].videoClassifyName+'</option>');
+		    	    }
+		    	}
+		    }  ,
+		    error : function() { 
+		    	//alert(222);
+		    }
+		});
+	}
+});
+
+
+</script>
 </body>
 </html>

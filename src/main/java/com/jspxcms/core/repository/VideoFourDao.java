@@ -22,7 +22,7 @@ public interface VideoFourDao extends Repository<VideoFour, Integer> , VideoFour
 	public VideoFour findOne(Integer id);
 	public void delete(VideoFour bean);
 	@Query(" from VideoFour bean where bean.vid=?1")
-	public VideoFour getbyvid(String vid);
+	public List<VideoFour> getbyvid(String vid);
 	@Query(" from VideoFour bean where bean.aid=?1")
 	public List<VideoFour> findAllByAid(String aid);
 }
