@@ -28,7 +28,7 @@ public interface VideoTwoService {
 	public void delete(Integer id);
 
 
-	public List<VideoTwo> getbyid(String id);
+	public List<VideoTwo> getbyAid(String aid);
 
 
 

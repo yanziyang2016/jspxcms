@@ -87,13 +87,18 @@ public class VideoResultController {
 					if(videoOne!=null){
 						c  = c + Integer.valueOf(videoOne.getC());
 						for(VideoTwo videoTwo:videoOne.getR()){
-							if(videoTwoService.getbyid(videoTwo.getId()).size()>0){
-								videoTwo.setOneClassifyId(-1);
-								videoTwo.setTwoClassifyId(-1);
-								videoTwoService.save(videoTwo);
+							if(videoTwo.getCname().equals("电视剧")||videoTwo.getCname().equals("综艺")||videoTwo.getCname().equals("动漫")){
+								if(videoTwoService.getbyAid(videoTwo.getAid()).size()>0){
+									videoTwo.setOneClassifyId(-1);
+									videoTwo.setTwoClassifyId(-1);
+									videoTwoService.save(videoTwo);
+								}else{
+									c--;
+								}
 							}else{
-								c--;
+								videoTwoService.save(videoTwo);
 							}
+							
 							if(videoTwo.getVideos()!=null&&videoTwo.getVideos().size()>0){
 								for(VideoThree videoThree:videoTwo.getVideos()){
 									for(VideoFour videoFour:videoThree.getUrls()){
