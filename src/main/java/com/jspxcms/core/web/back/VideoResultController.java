@@ -89,21 +89,27 @@ public class VideoResultController {
 						for(VideoTwo videoTwo:videoOne.getR()){
 							if(videoTwo.getCname().equals("电视剧")||videoTwo.getCname().equals("综艺")||videoTwo.getCname().equals("动漫")){
 								if(videoTwoService.getbyAid(videoTwo.getAid()).size()>0){
+									c--;
+								}else{
 									videoTwo.setOneClassifyId(-1);
 									videoTwo.setTwoClassifyId(-1);
 									videoTwoService.save(videoTwo);
-								}else{
-									c--;
 								}
 							}else{
-								videoTwoService.save(videoTwo);
+								if(videoTwoService.getbyTitle(videoTwo.getTitle()).size()>0){
+									c--;
+								}else{
+									videoTwo.setOneClassifyId(-1);
+									videoTwo.setTwoClassifyId(-1);
+									videoTwoService.save(videoTwo);
+								}
 							}
 							
 							if(videoTwo.getVideos()!=null&&videoTwo.getVideos().size()>0){
 								for(VideoThree videoThree:videoTwo.getVideos()){
 									for(VideoFour videoFour:videoThree.getUrls()){
 										if(videoFour.getName().length()<4){
-											if(videoFourService.getbyvid(videoFour.getVid()).size()>0){
+											if(videoFourService.getbyvid(videoFour.getVid()).size()==0){
 												videoFourService.save(videoFour);	
 											}
 											
@@ -116,6 +122,80 @@ public class VideoResultController {
 					}					
 					
 				}
+				
+//				videoMain();
+//				videoList();
+
+				VideoResult videoResult = new VideoResult();
+				videoResult.setCount(c);
+				videoResult.setResult(1);
+				videoResult.setImportDate(new Date());
+				service.save(videoResult);
+				return toJson("success");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return toJson("fail");
+		}
+	}
+	
+	@RequestMapping("videolocaltest.do")
+	@ResponseBody
+	public String videolocaltest(@RequestParam int id) {
+		
+		try {
+			 String videoData = "";
+			    videoData= 	GetLocalFile.readTxtFileNoSpace(id+".txt");
+				Map<String, Class> classMap = new HashMap<String, Class>();  
+				  
+				classMap.put("r", VideoTwo.class);  
+				classMap.put("videos", VideoThree.class);
+				classMap.put("urls", VideoFour.class);
+//				String[] videoURLArr=new String[6];
+//				videoURLArr[0] = "http://info.lm.tv.sohu.com/a.do?qd=12441&c=101&p=1&s=2000&inc=1";
+//				videoURLArr[1] = "http://info.lm.tv.sohu.com/a.do?qd=12441&c=115&p=1&s=2000&inc=1";
+//				videoURLArr[2] = "http://info.lm.tv.sohu.com/a.do?qd=12441&c=106&p=1&s=2000&inc=1";
+//				videoURLArr[3] = "http://info.lm.tv.sohu.com/a.do?qd=12441&c=121&p=1&s=2000&inc=1";
+//				videoURLArr[4] = "http://info.lm.tv.sohu.com/a.do?qd=12441&c=122&p=1&s=2000&inc=1";
+//				videoURLArr[5] = "http://info.lm.tv.sohu.com/a.do?qd=12441&c=112&p=1&s=2000&inc=1";
+				int c = 0;
+				    JSONObject videoOnejsonObj = JSONObject.fromObject(videoData);
+//					JSONObject videoOnejsonObj = JSONObject.fromObject(videoData);
+					VideoOne videoOne =(VideoOne)videoOnejsonObj.toBean(videoOnejsonObj,VideoOne.class,classMap);//指定转换的类型，但仍需要强制转化-成功
+					if(videoOne!=null){
+						c  = c + Integer.valueOf(videoOne.getC());
+						for(VideoTwo videoTwo:videoOne.getR()){
+							logger.info("videoTwo.getCname()-------"+videoTwo.getCname());
+							logger.info("videoTwo.getAid()-------"+videoTwo.getAid());
+							logger.info("videoTwoService.getbyAid(videoTwo.getAid()).size()-------"+videoTwoService.getbyAid(videoTwo.getAid()).size());
+							
+							if(videoTwo.getCname().equals("电视剧")||videoTwo.getCname().equals("综艺")||videoTwo.getCname().equals("动漫")){
+								if(videoTwoService.getbyAid(videoTwo.getAid()).size()>0){
+									c--;
+								}else{
+									videoTwo.setOneClassifyId(-1);
+									videoTwo.setTwoClassifyId(-1);
+									videoTwoService.save(videoTwo);
+								}
+							}else{
+								videoTwoService.save(videoTwo);
+							}
+							
+							if(videoTwo.getVideos()!=null&&videoTwo.getVideos().size()>0){
+								for(VideoThree videoThree:videoTwo.getVideos()){
+									for(VideoFour videoFour:videoThree.getUrls()){
+										if(videoFour.getName().length()<4){
+											if(videoFourService.getbyvid(videoFour.getVid()).size()==0){
+												videoFourService.save(videoFour);	
+											}
+											
+										}
+										
+									}
+								}
+							}
+						}
+					}					
+					
 				
 //				videoMain();
 //				videoList();

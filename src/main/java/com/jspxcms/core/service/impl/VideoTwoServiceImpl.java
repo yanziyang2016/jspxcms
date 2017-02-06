@@ -89,6 +89,11 @@ public class VideoTwoServiceImpl implements VideoTwoService{
 	public List<VideoTwo> getbyAid(String aid) {
 		return  dao.getbyAid(aid);
 	}
+	
+	@Override
+	public List<VideoTwo> getbyTitle(String title) {
+		return  dao.getbyTitle(title);
+	}
 
 
 

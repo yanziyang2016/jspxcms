@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 
 import com.jspxcms.core.domain.VideoTwo;
 
@@ -29,6 +30,9 @@ public interface VideoTwoService {
 
 
 	public List<VideoTwo> getbyAid(String aid);
+
+
+	public List<VideoTwo> getbyTitle(String title);
 
 
 
