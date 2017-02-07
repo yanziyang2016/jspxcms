@@ -216,8 +216,12 @@ public class InfoController {
 					userRecordService.save(userRecord);
 					userfore.setYuanBao(userfore.getYuanBao()+4);
 					userService.updateUserOnly(userfore);
+					Servlets.writeHtml(response,"领取成功!" );
+				}else{
+					Servlets.writeHtml(response,"您已经进行领取，请不要重复领取!" );
 				}
-				
+			}else{
+				Servlets.writeHtml(response,"请登陆后进行领取!" );
 			}
 		} catch (Exception e) {
 			logger.error("viewvideo----------"+e.toString());

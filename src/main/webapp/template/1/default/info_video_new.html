@@ -131,7 +131,7 @@ $("#clickplayshow").hide();
 $("#clickplayshow").click(function(){
 	$.post('${ctx}/viewvideo.jspx',{id:$(this).attr("vid"),type:cname},
 		function(data) {
-		alert("已获得该视频的奖励元宝，每天奖励一次，重复点击无效!");
+			alert(data);
 		}
 	);
 });
