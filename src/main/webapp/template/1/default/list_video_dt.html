@@ -1,0 +1,219 @@
+[#escape x as (x)!?html]
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<title>${type}作品列表</title>
+<meta name="keywords" content="${node.keywords}"/>
+<meta name="description" content="${node.description}"/>
+<link href="_files/global.css" rel="stylesheet"/>
+<link href="_files/style.css" rel="stylesheet"/>
+[#include 'inc_js.html'/]
+<style>
+a.ap{color:#333;text-decoration:none;}
+a.ap:hover{color:#699f00;}
+a.ap-curr{color:#fff;background-color:#699f00;text-decoration:none;}
+
+.boxchk{color:#333;text-decoration:none;}
+.boxchk:hover{color:#699f00;}
+.boxchk .box{display:inline-block;padding:1px;width:9px;height:9px;border-radius:1px;border:1px solid #ccc;}
+.boxchk .box-inner{display:none;width:9px;height:9px;position:absolute;background-color:#fff;}
+.boxchk .box-text{margin-left:4px;}
+.boxchk-curr{color:#699f00;text-decoration:none;}
+.boxchk-curr .box{position:relative;display:inline-block;line-height:0;padding:1px;width:9px;height:9px;border-radius:1px;border:1px solid #699f00;}
+.boxchk-curr .box-inner{display:block;width:9px;height:9px;position:absolute;background-color:#699f00;}
+.boxchk-curr .box-text{margin-left:4px;}
+
+.photo-item{border:1px solid transparent;}
+.photo-item:hover{border:1px solid #e4e4e4;}
+.photo-item-inner{border:1px solid #e4e4e4;}
+.photo-item-inner:hover{border:1px solid #bfbfbf;}
+</style>
+</head>
+<body>
+[#include 'inc_header_video.html'/]
+<div class="w center">	
+	<div class="ff-yh mt30" style="border:1px solid #e0e0e0;padding:0 20px;">
+		<div style="padding-bottom:5px;border-top:1px dotted #d5d5d5;">
+			<div class="left c-999 fs12" style="width:70px;padding-top:10px;">视频名称：</div>
+			<div class="left fs14" style="width:888px;">
+						<input type="text" class="left search-input" style="width:380px;" id="title">
+						<button id="searchVideo" class="left" style="width:86px;height:34px;background:url(_files/img/search.png);border:0;"></button>
+			</div>
+			<div class="clear"></div>
+		</div>
+		<div style="padding-bottom:5px;border-top:1px dotted #d5d5d5;">
+			<div class="left c-999 fs12" style="width:70px;padding-top:10px;">地区：</div>
+			<div class="left fs14" style="width:888px;" id="areadiv">
+				<a  class="ap-curr  mt5" style="display:inline-block;padding:2px 8px;margin-right:15px;">全部</a>
+				<a  class="ap mt5" style="margin-right:15px;display:inline-block;padding:2px 8px;">内地</a>
+				<a  class="ap mt5" style="margin-right:15px;display:inline-block;padding:2px 8px;">香港</a>
+				<a  class="ap mt5" style="margin-right:15px;display:inline-block;padding:2px 8px;">台湾</a>
+				<a  class="ap mt5" style="margin-right:15px;display:inline-block;padding:2px 8px;">美国</a>
+				<a  class="ap mt5" style="margin-right:15px;display:inline-block;padding:2px 8px;">法国</a>
+				<a  class="ap mt5" style="margin-right:15px;display:inline-block;padding:2px 8px;">英国</a>
+				<a  class="ap mt5" style="margin-right:15px;display:inline-block;padding:2px 8px;">韩国</a>
+				<a  class="ap mt5" style="margin-right:15px;display:inline-block;padding:2px 8px;">日本</a>
+				<a  class="ap mt5" style="margin-right:15px;display:inline-block;padding:2px 8px;">泰国</a>
+				<a  class="ap mt5" style="margin-right:15px;display:inline-block;padding:2px 8px;">加拿大</a>
+				<a  class="ap mt5" style="margin-right:15px;display:inline-block;padding:2px 8px;">新加坡</a>
+			</div>
+			<div class="clear"></div>
+		</div>
+		<div style="padding-bottom:5px;border-top:1px dotted #d5d5d5;">
+			<div class="left c-999 fs12" style="width:70px;padding-top:10px;">年代：</div>
+			<div class="left fs14" style="width:888px;" id="yeardiv">
+				<a  class="ap-curr mt5" style="display:inline-block;padding:2px 8px;margin-right:15px;">全部</a>
+				<a  class="ap mt5" style="margin-right:15px;display:inline-block;padding:2px 8px;">2017</a>
+				<a  class="ap mt5" style="margin-right:15px;display:inline-block;padding:2px 8px;">2016</a>
+				<a  class="ap mt5" style="margin-right:15px;display:inline-block;padding:2px 8px;">2015-2010</a>
+				<a  class="ap mt5" style="margin-right:15px;display:inline-block;padding:2px 8px;">00年代</a>
+				<a  class="ap mt5" style="margin-right:15px;display:inline-block;padding:2px 8px;">90年代</a>
+				<a  class="ap mt5" style="margin-right:15px;display:inline-block;padding:2px 8px;">80年代</a>
+				<a  class="ap mt5" style="display:inline-block;padding:2px 8px;">更早</a>
+			</div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	<div class="mt30 c-999" style="border-bottom:1px solid #e0e0e0;line-height:1;padding-bottom:10px;">
+		<div class="right" style="width:40%;text-align:right;">共<span style="padding:0 5px;" id="totalcount">0</span>个筛选结果</div>
+		<div class="clear"></div>
+	</div>
+	<ul class="list-unstyled lh ff-yh fs14" id="videolistul">
+		<li class="clear"></li>
+	</ul>
+	<table class="center mt20">
+		<tbody>
+			<tr>
+				<td>
+					<div class="pager">
+						<a class="page" id="gofirstpage">首页</a>
+						<a class="page" id="gobackpage">上一页</a>
+						 <a class="page-curr" id="currpage">1</a> 
+						 <a class="page" id="gotopage">下一页</a>
+						 <a class="page" id="golastpage">末页</a>
+						<div style="clear: both;"></div>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	</div>
+[#include 'inc_friendlink.html'/]
+[#include 'inc_footer.html'/]
+<script type="text/javascript">
+//alert($("#yeardiv").find(".ap-curr").html());
+var type='${type}';
+var totalpage = 1;
+function videolist(area,year,title,page){
+	$.ajax({    
+	    url:'videolistdt.jspx',// 跳转到 action    
+	    data:{    
+	    	type:type,
+	    	area:area,
+	    	year:year,
+	    	title:title,
+	    	page:page
+	    },    
+	    type:'post',    
+	    cache:false,  
+	    async:false,  
+	    dataType:'json',    
+	    success:function(data) {
+	    	totalpage = data.totalpage;
+	    	if(data.isfirst==1){
+	    		$("#gobackpage").hide();
+	    	}else if(data.isfirst==0){
+	    		$("#gobackpage").show();
+	    	}
+	    	if(data.islast==1){
+	    		$("#gotopage").hide();
+	    	}else if(data.islast==0){
+	    		$("#gotopage").show();
+	    	}
+	    	$("#totalcount").html(data.totalcount);
+	    	$("#currpage").html(data.currpage+1);
+	    	$("#videolistul").empty();
+	    	var videoList=data.videoList;
+	    	for(var i=0;i<videoList.length;i++){
+	    		var title = videoList[i].title;
+	    		if(title.length>12){
+	    			title = videoList[i].title.substring(0,10)+"...";
+	    		}
+	    		$("#videolistul").append(
+	        			
+	  				'<li class="left mt20" style="margin-left:10px;">'+
+		  				'<div><a href="/info_video'+videoList[i].vmid+'.jspx" target="_blank">'+
+		  					'<img src="'+videoList[i].bigPic+'" width="192" height="108">'+
+		  				'</a></div>'+
+		  				'<div class="mt5">'+
+		  					'<a href="/info_video'+videoList[i].vmid+'.jspx" class="ap" target="_blank" title="">'+title+'</a>'+
+		  				'</div>'+
+	   				'</li>'	
+	    		    	
+	        	);    		
+	    	}
+	    	$("#videolistul").append('<li class="clear"></li>');
+	    } ,
+	    error : function() { 
+	    	//alert(222);
+	    }
+	}); 
+}
+
+$("#yeardiv .mt5").click(function(){
+	$("#yeardiv").find(".ap-curr").addClass("ap");
+	$("#yeardiv").find(".ap-curr").removeClass("ap-curr");
+	$(this).addClass("ap-curr");
+});
+$("#areadiv .mt5").click(function(){
+	$("#areadiv").find(".ap-curr").addClass("ap");
+	$("#areadiv").find(".ap-curr").removeClass("ap-curr");
+	$(this).addClass("ap-curr");
+});
+videolist("全部","全部","",0);
+
+$("#gofirstpage").click(function(){//第一页
+	var area = $("#areadiv").find(".ap-curr").html();
+	var year = $("#yeardiv").find(".ap-curr").html();
+	var title = $("#title").val();
+	var page = 0;
+	videolist(area,year,title,page);
+});
+$("#golastpage").click(function(){//尾页
+	var area = $("#areadiv").find(".ap-curr").html();
+	var year = $("#yeardiv").find(".ap-curr").html();
+	var title = $("#title").val();
+	var page = totalpage-1;
+	if(page>-1){
+		videolist(area,year,title,page);	
+	}
+	
+});
+$("#gobackpage").click(function(){//上一页
+	var area = $("#areadiv").find(".ap-curr").html();
+	var year = $("#yeardiv").find(".ap-curr").html();
+	var title = $("#title").val();
+	var page = parseInt($("#currpage").html())-2;
+	videolist(area,year,title,page);
+});
+$("#gotopage").click(function(){//下一页
+	var area = $("#areadiv").find(".ap-curr").html();
+	var year = $("#yeardiv").find(".ap-curr").html();
+	var title = $("#title").val();
+	var page = parseInt($("#currpage").html());
+	videolist(area,year,title,page);
+});
+$("#searchVideo").click(function(){//下一页
+	var area = $("#areadiv").find(".ap-curr").html();
+	var year = $("#yeardiv").find(".ap-curr").html();
+	var title = $("#title").val();
+	var page = 0;
+	videolist(area,year,title,page);
+});
+
+
+</script>
+</body>
+</html>
+[/#escape]

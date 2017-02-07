@@ -13,11 +13,12 @@
 <style>
 .a1{color:#333;text-decoration:none;}
 .a1:hover{color:#699f00;}
+#dt a{color:#000;text-decoration:underline;}
+#mA a{color:#000;text-decoration:underline;}
 </style>
 </head>
 <body>
 [#include 'inc_header_video.html'/]
-
 <div class="w center">	
 	<h1 class="ff-yh fs24 lh" style="margin:15px 0 0 0;font-weight:normal;">${videoTwo.title}</h1>
 </div>
@@ -27,8 +28,8 @@
 		<table class="digg center mt20">
 		
 		<tr><td>
-			<p id="dt"><span>导演：</span><span>${videoTwo.dt}</span></p>
-			<p id="mA"><span>主演：</span><span>${videoTwo.mA}</span></p>
+			<p id="dt"><span>导演：</span><span id="dtSpan"></span></p>
+			<p id="mA"><span>主演：</span><span id="mASpan"></span></p>
 			<p id="area"><span>地区：</span><span>${videoTwo.area}</span></p>
 			<p id="year"><span>年代：</span><span>${videoTwo.year}</span></p>
 			<p id="desc"><span>详情：</span><span>${videoTwo.desc}</span></p>
@@ -36,6 +37,11 @@
 		</td></tr>
 		<tr><td id="clicktd">
 			<button class="clickplay" style="margin-left: 20px;width: 136px;height: 36px" url="${videoTwo.videoUrl}" id="${videoTwo.vmid}">点击播放</button>
+			<div class="clear"></div>
+		</td>
+		<td >
+			<button id="clickplayhide" style="margin-left: 20px;width: 136px;height: 36px" disabled="disabled" >获得元宝</button>
+			<button id="clickplayshow" style="margin-left: 20px;width: 136px;height: 36px"  vid="${videoTwo.vmid}">获得元宝</button>
 			<div class="clear"></div>
 		</td></tr>
 		
@@ -59,9 +65,19 @@ var desc='${videoTwo.desc}';
 var cname='${videoTwo.cname}';
 if(dt.length==0){
 	$("#dt").hide();
+}else{
+	var dtArr = dt.split(",");
+	for(var i=0;i<dtArr.length;i++){
+		$("#dtSpan").append('<a href="/dt.jspx?p='+encodeURIComponent(encodeURIComponent(dtArr[i]))+'">'+dtArr[i]+'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+	}
 }
 if(mA.length==0){
 	$("#mA").hide();
+}else{
+	var mAArr = mA.split(";");
+	for(var i=0;i<mAArr.length;i++){
+		$("#mASpan").append('<a href="/ma.jspx?p='+encodeURIComponent(encodeURIComponent(mAArr[i]))+'">'+mAArr[i]+'</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+	}
 }
 if(area.length==0){
 	$("#area").hide();
@@ -101,12 +117,25 @@ if(isaid==1){
 }
 
 $(".clickplay").click(function(){
-	$.post('${ctx}/viewvideo.jspx',{id:$(this).attr("id"),type:cname},
-		function(data) {
-		}
-	);
+	if(cname=='新闻'){
+		setTimeout('$("#clickplayshow").show();',60000);//延时60秒 
+		setTimeout('$("#clickplayhide").hide();',60000);//延时60秒
+	}else{
+		setTimeout('$("#clickplayshow").show();',300000);//延时300秒 
+		setTimeout('$("#clickplayhide").hide();',300000);//延时300秒
+	}
 	window.open($(this).attr("url"));
 });
+$("#clickplayhide").show();
+$("#clickplayshow").hide();
+$("#clickplayshow").click(function(){
+	$.post('${ctx}/viewvideo.jspx',{id:$(this).attr("vid"),type:cname},
+		function(data) {
+		alert("已获得该视频的奖励元宝，每天奖励一次，重复点击无效!");
+		}
+	);
+});
+ 
 </script>
 [#include 'inc_friendlink.html'/]
 [#include 'inc_footer.html'/]

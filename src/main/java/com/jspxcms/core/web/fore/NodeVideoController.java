@@ -1,5 +1,7 @@
 package com.jspxcms.core.web.fore;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -219,6 +221,58 @@ public class NodeVideoController {
 			modelMap.addAttribute("type", "新闻");
 			ForeContext.setData(modelMap.asMap(), request);
 			return "/1/default/list_video_new.html";
+		}
+		
+		@RequestMapping(value = { "/dt.jspx" })
+		public String dtlist(HttpServletRequest request,@RequestParam String p,
+				HttpServletResponse response, org.springframework.ui.Model modelMap) {
+			logger.info("NodeVideoController---dtlist1---"+p);
+			return dtlist(null, p,request, response, modelMap);
+		}
+		@RequestMapping(value = Constants.SITE_PREFIX_PATH + "/dt.jspx")
+		public String dtlist(@PathVariable String siteNumber,@RequestParam String p,
+				HttpServletRequest request, HttpServletResponse response,
+				org.springframework.ui.Model modelMap) {
+			try {
+				p = URLDecoder.decode(p,"UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			logger.info("NodeVideoController---dtlist2---"+p);
+			siteResolver.resolveSite(siteNumber);
+			Site site = Context.getCurrentSite();
+			Node node = query.findRoot(site.getId());
+			modelMap.addAttribute("node", node);
+			modelMap.addAttribute("text", node.getText());
+			modelMap.addAttribute("type", p);
+			ForeContext.setData(modelMap.asMap(), request);
+			return "/1/default/list_video_dt.html";
+		}
+		
+		@RequestMapping(value = { "/ma.jspx" })
+		public String malist(HttpServletRequest request,@RequestParam String p,
+				HttpServletResponse response, org.springframework.ui.Model modelMap) {
+			logger.info("NodeVideoController---dtlist1---"+p);
+			return malist(null, p,request, response, modelMap);
+		}
+		@RequestMapping(value = Constants.SITE_PREFIX_PATH + "/ma.jspx")
+		public String malist(@PathVariable String siteNumber,@RequestParam String p,
+				HttpServletRequest request, HttpServletResponse response,
+				org.springframework.ui.Model modelMap) {
+			try {
+				p = URLDecoder.decode(p,"UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			logger.info("NodeVideoController---dtlist2---"+p);
+			siteResolver.resolveSite(siteNumber);
+			Site site = Context.getCurrentSite();
+			Node node = query.findRoot(site.getId());
+			modelMap.addAttribute("node", node);
+			modelMap.addAttribute("text", node.getText());
+			modelMap.addAttribute("type", p);
+			ForeContext.setData(modelMap.asMap(), request);
+			return "/1/default/list_video_ma.html";
 		}
 		
 		@RequestMapping(value = { "/info_video{id:[0-9]+}.jspx" })
@@ -441,6 +495,142 @@ public class NodeVideoController {
 			logger.info("videolist------pagedList.getTotalPages()---"+pagedList.getTotalPages());
 			logger.info("videolist------pagedList.getTotalElements()---"+pagedList.getTotalElements());
 		}
+		
+	
+		return VideoResultController.toJson(videoList);
+	}
+	
+	@RequestMapping(value = "/videolistdt.jspx",produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String videolistdt(@RequestParam String type,@RequestParam String area,@RequestParam String year,@RequestParam String title,@RequestParam int page) {
+		VideoList videoList = new VideoList();
+		logger.info("type--------before---------"+type);
+		try {
+			type = URLDecoder.decode(type,"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		logger.info("type--------after---------"+type);
+		Pageable pageable = new PageRequest(page, 20,Direction.DESC, "vmid");  
+		Map<String, String[]> params = new HashMap<String, String[]>();
+		if(type!=null&&type.length()>0){
+			params.put("CONTAIN_dt", new String[]{type});	
+		}
+		if(area!=null&&area.length()>0&&!area.equals("全部")){
+			params.put("CONTAIN_area", new String[]{area});	
+		}
+		if(title!=null&&title.length()>0){
+			params.put("CONTAIN_title", new String[]{title});	
+		}
+//			EQ, LIKE, CONTAIN, STARTWITH, ENDWITH, GT, LT, GTE, LTE, IN
+		if(year!=null&&year.length()>0&&!year.equals("全部")){
+			if(year.equals("2017")){
+				params.put("EQ_year", new String[]{"2017"});	
+			}else if(year.equals("2016")){
+				params.put("EQ_year", new String[]{"2016"});
+			}else if(year.equals("2015-2010")){
+				params.put("LTE_year", new String[]{"2015"});
+				params.put("GTE_year", new String[]{"2010"});
+			}else if(year.equals("00年代")){
+				params.put("LTE_year", new String[]{"2009"});
+				params.put("GTE_year", new String[]{"2000"});
+			}else if(year.equals("90年代")){
+				params.put("LTE_year", new String[]{"1999"});
+				params.put("GTE_year", new String[]{"1990"});
+			}else if(year.equals("80年代")){
+				params.put("LTE_year", new String[]{"1989"});
+				params.put("GTE_year", new String[]{"1980"});
+			}else if(year.equals("更早")){
+				params.put("LTE_year", new String[]{"1979"});
+			}
+		}
+		Page<VideoTwo> pagedList = videoTwoService.findPage( params, pageable);
+		
+		videoList.setCurrpage(page);
+		if(page==0||pagedList.getTotalPages()<2){
+			videoList.setIsfirst(1);
+		}else{
+			videoList.setIsfirst(0);
+		}
+		if(page+1==pagedList.getTotalPages()||pagedList.getTotalPages()<2){
+			videoList.setIslast(1);
+		}else{
+			videoList.setIslast(0);
+		}
+		videoList.setTotalcount(pagedList.getTotalElements());
+		videoList.setTotalpage(pagedList.getTotalPages());
+		videoList.setVideoList(pagedList.getContent());
+		logger.info("videolist------page---"+page);
+		logger.info("videolist------pagedList.getTotalPages()---"+pagedList.getTotalPages());
+		logger.info("videolist------pagedList.getTotalElements()---"+pagedList.getTotalElements());
+		
+	
+		return VideoResultController.toJson(videoList);
+	}
+	
+	@RequestMapping(value = "/videolistma.jspx",produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String videolistma(@RequestParam String type,@RequestParam String area,@RequestParam String year,@RequestParam String title,@RequestParam int page) {
+		VideoList videoList = new VideoList();
+		logger.info("type--------before---------"+type);
+		try {
+			type = URLDecoder.decode(type,"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		logger.info("type--------after---------"+type);
+		Pageable pageable = new PageRequest(page, 20,Direction.DESC, "vmid");  
+		Map<String, String[]> params = new HashMap<String, String[]>();
+		if(type!=null&&type.length()>0){
+			params.put("CONTAIN_mA", new String[]{type});	
+		}
+		if(area!=null&&area.length()>0&&!area.equals("全部")){
+			params.put("CONTAIN_area", new String[]{area});	
+		}
+		if(title!=null&&title.length()>0){
+			params.put("CONTAIN_title", new String[]{title});	
+		}
+//			EQ, LIKE, CONTAIN, STARTWITH, ENDWITH, GT, LT, GTE, LTE, IN
+		if(year!=null&&year.length()>0&&!year.equals("全部")){
+			if(year.equals("2017")){
+				params.put("EQ_year", new String[]{"2017"});	
+			}else if(year.equals("2016")){
+				params.put("EQ_year", new String[]{"2016"});
+			}else if(year.equals("2015-2010")){
+				params.put("LTE_year", new String[]{"2015"});
+				params.put("GTE_year", new String[]{"2010"});
+			}else if(year.equals("00年代")){
+				params.put("LTE_year", new String[]{"2009"});
+				params.put("GTE_year", new String[]{"2000"});
+			}else if(year.equals("90年代")){
+				params.put("LTE_year", new String[]{"1999"});
+				params.put("GTE_year", new String[]{"1990"});
+			}else if(year.equals("80年代")){
+				params.put("LTE_year", new String[]{"1989"});
+				params.put("GTE_year", new String[]{"1980"});
+			}else if(year.equals("更早")){
+				params.put("LTE_year", new String[]{"1979"});
+			}
+		}
+		Page<VideoTwo> pagedList = videoTwoService.findPage( params, pageable);
+		
+		videoList.setCurrpage(page);
+		if(page==0||pagedList.getTotalPages()<2){
+			videoList.setIsfirst(1);
+		}else{
+			videoList.setIsfirst(0);
+		}
+		if(page+1==pagedList.getTotalPages()||pagedList.getTotalPages()<2){
+			videoList.setIslast(1);
+		}else{
+			videoList.setIslast(0);
+		}
+		videoList.setTotalcount(pagedList.getTotalElements());
+		videoList.setTotalpage(pagedList.getTotalPages());
+		videoList.setVideoList(pagedList.getContent());
+		logger.info("videolist------page---"+page);
+		logger.info("videolist------pagedList.getTotalPages()---"+pagedList.getTotalPages());
+		logger.info("videolist------pagedList.getTotalElements()---"+pagedList.getTotalElements());
 		
 	
 		return VideoResultController.toJson(videoList);

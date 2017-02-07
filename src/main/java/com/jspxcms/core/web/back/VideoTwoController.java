@@ -47,7 +47,7 @@ public class VideoTwoController {
 
 	@RequiresPermissions("core:video_two:list")
 	@RequestMapping("list.do")
-	public String list(@PageableDefault(sort = "id", direction = Direction.DESC) Pageable pageable,
+	public String list(@PageableDefault(sort = "vmid", direction = Direction.DESC) Pageable pageable,
 			HttpServletRequest request, org.springframework.ui.Model modelMap) {
 		Map<String, String[]> params = Servlets.getParamValuesMap(request, Constants.SEARCH_PREFIX);
 		logger.info("VideoTwo --- params"+params.toString());
@@ -72,7 +72,7 @@ public class VideoTwoController {
 	@RequiresPermissions("core:video_two:edit")
 	@RequestMapping("edit.do")
 	public String edit(Integer id, Integer position,
-			@PageableDefault(sort = "id", direction = Direction.DESC) Pageable pageable, HttpServletRequest request,
+			@PageableDefault(sort = "vmid", direction = Direction.DESC) Pageable pageable, HttpServletRequest request,
 			org.springframework.ui.Model modelMap) {
 		logger.info(new Date()+"-order:edit-"+id);
 		VideoTwo bean = service.get(id);
@@ -87,7 +87,7 @@ public class VideoTwoController {
 	@RequiresPermissions("core:video_two:create")
 	@RequestMapping("create.do")
 	public String create(Integer id, Integer position,
-			@PageableDefault(sort = "id", direction = Direction.DESC) Pageable pageable, HttpServletRequest request,
+			@PageableDefault(sort = "vmid", direction = Direction.DESC) Pageable pageable, HttpServletRequest request,
 			org.springframework.ui.Model modelMap) {
 		if (id != null) {
 			VideoTwo bean = service.get(id);
