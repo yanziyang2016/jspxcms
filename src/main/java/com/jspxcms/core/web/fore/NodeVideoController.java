@@ -328,6 +328,7 @@ public class NodeVideoController {
 			}else{
 				modelMap.addAttribute("isaid", 0);
 			}
+			videoTwo.setDesc(videoTwo.getDesc().replaceAll("\r|\n", ""));
 			modelMap.addAttribute("info", info);
 			modelMap.addAttribute("videoTwo", videoTwo);
 			ForeContext.setData(modelMap.asMap(), request);
