@@ -77,25 +77,19 @@ function optDeletePassword(form) {
 <body class="c-body">
 <jsp:include page="/WEB-INF/views/commons/show_message.jsp"/>
 <div class="c-bar margin-top5">
-  <span class="c-position"><s:message code="video.manage"/> - <s:message code="list"/></span>
+  <span class="c-position"><s:message code="product.manage"/> - <s:message code="list"/></span>
 	<span class="c-total">(<s:message code="totalElements" arguments="${pagedList.totalElements}"/>)</span>
 </div>
 <form action="list.do" method="get">
 	<fieldset class="c-fieldset">
     <legend><s:message code="search"/></legend>
-	  <label class="c-lab">视频源分类名称: <input type="text" name="search_CONTAIN_cname" value="${search_CONTAIN_cname[0]}" style="width:120px;"/></label>
-	  <label class="c-lab">视频名称: <input type="text" name="search_CONTAIN_title" value="${search_CONTAIN_title[0]}" style="width:120px;"/></label>
-	  <label class="c-lab">视频源:
-      <select name="search_EQ_sc">
-        <option value=""><s:message code="allSelect"/></option>
-        <option value="sohu"<c:if test="${'sohu' eq search_EQ_sc[0]}"> selected="selected"</c:if>>搜狐</option>
-      </select>
-      <label class="c-lab">本站一级分类:
+	  <label class="c-lab">商品名称: <input type="text" name="search_CONTAIN_title" value="${search_CONTAIN_title[0]}" style="width:120px;"/></label>
+      <label class="c-lab">商品一级分类:
       <select id="oneClassifyId" name="search_EQ_oneClassifyId">
         <option value=""><s:message code="allSelect"/></option>
         <option value="-1">未设置</option>
       </select>
-      <label class="c-lab">本站二级分类:
+      <label class="c-lab">商品二级分类:
       <select id="twoClassifyId" name="search_EQ_twoClassifyId">
         <option value=""><s:message code="allSelect"/></option>
         <option value="-1">未设置</option>
@@ -107,7 +101,11 @@ function optDeletePassword(form) {
 <form method="post">
 <tags:search_params/>
 <div class="ls-bc-opt">
-	<shiro:hasPermission name="core:video_two:edit">
+	<shiro:hasPermission name="core:product:create">
+	<div class="ls-btn"><input type="button" value="<s:message code="create"/>" onclick="location.href='create.do?${searchstring}';"/></div>
+	<div class="ls-btn"></div>
+	</shiro:hasPermission>
+	<shiro:hasPermission name="core:product:edit">
 	<div class="ls-btn"><input type="button" value="<s:message code="edit"/>" onclick="return optSingle('#edit_opt_');"/></div>
 	</shiro:hasPermission>
 	<div class="ls-btn"><input type="button" value="<s:message code="delete"/>" onclick="return optDelete(this.form);"/></div>
@@ -119,31 +117,33 @@ function optDeletePassword(form) {
     <th width="25"><input type="checkbox" onclick="Cms.check('ids',this.checked);"/></th>
     <th width="130"><s:message code="operate"/></th>
     <th width="30" class="ls-th-sort"><span class="ls-sort" pagesort="id">ID</span></th>
-    <th class="ls-th-sort"><span class="ls-sort" pagesort="sc">视频源</span></th>
-    <th class="ls-th-sort"><span class="ls-sort" pagesort="title">视频名称</span></th>
-    <th class="ls-th-sort"><span class="ls-sort" pagesort="cname">视频源分类</span></th>
-    <th class="ls-th-sort"><span class="ls-sort" pagesort="oneClassifyId">本站一级分类</span></th>
-    <th class="ls-th-sort"><span class="ls-sort" pagesort="twoClassifyId">本站二级分类</span></th>
+    <th class="ls-th-sort"><span class="ls-sort" pagesort="title">商品名称</span></th>
+    <th class="ls-th-sort"><span class="ls-sort" pagesort="productpro">商品性质</span></th>
+    <th class="ls-th-sort"><span class="ls-sort" pagesort="stock">商品库存</span></th>
+    <th class="ls-th-sort"><span class="ls-sort" pagesort="periodCount">每期申请数</span></th>
+    <th class="ls-th-sort"><span class="ls-sort" pagesort="status">商品状态</span></th>
+    <th class="ls-th-sort"><span class="ls-sort" pagesort="oneClassifyId">商品一级分类</span></th>
+    <th class="ls-th-sort"><span class="ls-sort" pagesort="twoClassifyId">商品二级分类</span></th>
   </tr>
   </thead>
   <tbody>
   <c:forEach var="bean" varStatus="status" items="${pagedList.content}">
-  <tr<shiro:hasPermission name="core:video_classify:edit"> ondblclick="location.href=$('#edit_opt_${bean.vmid}').attr('href');"</shiro:hasPermission>>
-    <td><input type="checkbox" name="ids" value="${bean.vmid}"/></td>
+  <tr<shiro:hasPermission name="core:product_classify:edit"> ondblclick="location.href=$('#edit_opt_${bean.id}').attr('href');"</shiro:hasPermission>>
+    <td><input type="checkbox" name="ids" value="${bean.id}"/></td>
     <td align="center">
-		<shiro:hasPermission name="core:video_classify:edit">
-		      <a id="edit_opt_${bean.vmid}" href="edit.do?id=${bean.vmid}&position=${pagedList.number*pagedList.size+status.index}&${searchstring}" class="ls-opt"><s:message code="edit"/></a>
+		<shiro:hasPermission name="core:product_classify:edit">
+		      <a id="edit_opt_${bean.id}" href="edit.do?id=${bean.id}&position=${pagedList.number*pagedList.size+status.index}&${searchstring}" class="ls-opt"><s:message code="edit"/></a>
 		</shiro:hasPermission>
-		<shiro:hasPermission name="core:video_classify:delete">
-			<a href="delete.do?ids=${bean.vmid}&${searchstring}" onclick="return confirmDelete();" class="ls-opt"><s:message code="delete"/></a>
+		<shiro:hasPermission name="core:product_classify:delete">
+			<a href="delete.do?ids=${bean.id}&${searchstring}" onclick="return confirmDelete();" class="ls-opt"><s:message code="delete"/></a>
  		</shiro:hasPermission>
      </td>
-    <td>${bean.vmid}</td>
-    <td align="center">
-   	 搜狐
-    </td>
+    <td>${bean.id}</td>
     <td align="center">${bean.title}</td>
-    <td align="center">${bean.cname}</td>
+     <td align="center">${bean.productproName}</td>
+      <td align="center">${bean.stock}</td>
+       <td align="center">${bean.periodCount}</td>
+        <td align="center">${bean.statusName}</td>
     <td align="center">${bean.oneClassifyName}</td>
     <td align="center">${bean.twoClassifyName}</td>
   </tr>
@@ -175,7 +175,7 @@ $.ajax({
     success:function(data) {   
     	if(data.length>0){
     		for(var i=0;i<data.length;i++){
-    			$("#oneClassifyId").append('<option value="'+data[i].id+'">'+data[i].videoClassifyName+'</option>');
+    			$("#oneClassifyId").append('<option value="'+data[i].id+'">'+data[i].classifyName+'</option>');
     	    }
     		$("#oneClassifyId").val(typeof(oneClassifyId.length)=='undefined'?"":oneClassifyId);
     	}
@@ -198,7 +198,7 @@ if(typeof(oneClassifyId.length)!='undefined'){
 	    success:function(data) {   
 	    	if(data.length>0){
 	    		for(var i=0;i<data.length;i++){
-	    			$("#twoClassifyId").append('<option value="'+data[i].id+'">'+data[i].videoClassifyName+'</option>');
+	    			$("#twoClassifyId").append('<option value="'+data[i].id+'">'+data[i].classifyName+'</option>');
 	    	    }
 	    		$("#twoClassifyId").val(typeof(twoClassifyId.length)=='undefined'?"":twoClassifyId);
 	    	}
@@ -216,7 +216,6 @@ if(typeof(oneClassifyId.length)!='undefined'){
 $("#oneClassifyId").change(function(){
 	$("#twoClassifyId").empty();
 	$("#twoClassifyId").append('<option value=""><s:message code="allSelect"/></option>');
-	$("#twoClassifyId").append('<option value="-1">未设置</option>');
 	if($("#oneClassifyId").val().length>0){
 		$.ajax({    
 		    url:'twoClassifyList',  
@@ -230,7 +229,7 @@ $("#oneClassifyId").change(function(){
 		    success:function(data) { 
 		    	if(data.length>0){
 		    		for(var i=0;i<data.length;i++){
-		    			$("#twoClassifyId").append('<option value="'+data[i].id+'">'+data[i].videoClassifyName+'</option>');
+		    			$("#twoClassifyId").append('<option value="'+data[i].id+'">'+data[i].classifyName+'</option>');
 		    	    }
 		    	}
 		    }  ,

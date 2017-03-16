@@ -47,9 +47,11 @@ public class Product implements java.io.Serializable {
 	private String services;	//售后服务
 	private Integer oneClassifyId;//一级分类id
 	private Integer twoClassifyId;//二级分类id
+	private Integer status;	//商品状态 0：下架；1：上架
 	private String oneClassifyName;//一级分类
 	private String twoClassifyName;//二级分类
-
+	private String statusName;//状态名
+	private String productproName;//商品性质分类
 
 
 	@Id
@@ -197,6 +199,15 @@ public class Product implements java.io.Serializable {
 	public void setTwoClassifyId(Integer twoClassifyId) {
 		this.twoClassifyId = twoClassifyId;
 	}
+	@Column(name = "status", nullable = false)
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
 	@Transient
 	public String getOneClassifyName() {
 		return oneClassifyName;
@@ -210,6 +221,22 @@ public class Product implements java.io.Serializable {
 	}
 	public void setTwoClassifyName(String twoClassifyName) {
 		this.twoClassifyName = twoClassifyName;
+	}
+	@Transient
+	public String getStatusName() {
+		return statusName;
+	}
+
+	public void setStatusName(String statusName) {
+		this.statusName = statusName;
+	}
+	@Transient
+	public String getProductproName() {
+		return productproName;
+	}
+
+	public void setProductproName(String productproName) {
+		this.productproName = productproName;
 	}
 	
 

@@ -31,6 +31,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.jspxcms.common.web.Servlets;
 import com.jspxcms.core.constant.Constants;
+import com.jspxcms.core.domain.ModelField;
 import com.jspxcms.core.domain.Product;
 import com.jspxcms.core.domain.ProductClassify;
 import com.jspxcms.core.service.ProductClassifyService;
@@ -49,23 +50,16 @@ public class ProductController {
 
 	@RequiresPermissions("core:product:list")
 	@RequestMapping("list.do")
-	public String list(@PageableDefault(sort = "vmid", direction = Direction.DESC) Pageable pageable,
+	public String list(@PageableDefault(sort = "id", direction = Direction.DESC) Pageable pageable,
 			HttpServletRequest request, org.springframework.ui.Model modelMap) {
 		Map<String, String[]> params = Servlets.getParamValuesMap(request, Constants.SEARCH_PREFIX);
 		logger.info("Product --- params"+params.toString());
 		Page<Product> pagedList = service.findPage( params, pageable);
 		for(Product Product: pagedList.getContent()){
-			if(Product.getOneClassifyId()==null||Product.getOneClassifyId()==-1){
-				Product.setOneClassifyName("未设置");
-			}else{
 				Product.setOneClassifyName(productClassifyService.get(Product.getOneClassifyId()).getClassifyName());	
-			}
-			
-			if(Product.getTwoClassifyId()==null||Product.getTwoClassifyId()==-1){
-				Product.setTwoClassifyName("未设置");
-			}else{
+				Product.setStatusName(Product.getStatus()==0?"下架":"上架");
+				Product.setProductproName(Product.getProductpro()==1?"虚拟商品":"实物商品");
 				Product.setTwoClassifyName(productClassifyService.get(Product.getTwoClassifyId()).getClassifyName());
-			}
 		}
 		modelMap.addAttribute("pagedList", pagedList);
 		return "core/product/product_list";
@@ -74,12 +68,14 @@ public class ProductController {
 	@RequiresPermissions("core:product:edit")
 	@RequestMapping("edit.do")
 	public String edit(Integer id, Integer position,
-			@PageableDefault(sort = "vmid", direction = Direction.DESC) Pageable pageable, HttpServletRequest request,
+			@PageableDefault(sort = "id", direction = Direction.DESC) Pageable pageable, HttpServletRequest request,
 			org.springframework.ui.Model modelMap) {
 		logger.info(new Date()+"-order:edit-"+id);
 		Product bean = service.get(id);
+		ModelField field = null;
 		logger.info(new Date()+"-order:edit-"+id);
 		modelMap.addAttribute("bean", bean);
+		modelMap.addAttribute("field", field);
 		modelMap.addAttribute("oneClassifyId", bean.getOneClassifyId()==null?-1:bean.getOneClassifyId());
 		modelMap.addAttribute("twoClassifyId", bean.getTwoClassifyId()==null?-1:bean.getTwoClassifyId());
 		modelMap.addAttribute(OPRT, EDIT);
@@ -89,7 +85,7 @@ public class ProductController {
 	@RequiresPermissions("core:product:create")
 	@RequestMapping("create.do")
 	public String create(Integer id, Integer position,
-			@PageableDefault(sort = "vmid", direction = Direction.DESC) Pageable pageable, HttpServletRequest request,
+			@PageableDefault(sort = "id", direction = Direction.DESC) Pageable pageable, HttpServletRequest request,
 			org.springframework.ui.Model modelMap) {
 		if (id != null) {
 			Product bean = service.get(id);
@@ -104,6 +100,10 @@ public class ProductController {
 	@RequiresPermissions("core:product:save")
 	@RequestMapping("save.do")
 	public String save(Product bean,String redirect,HttpServletRequest request, RedirectAttributes ra) {
+		logger.info(new Date()+"-:update PeriodCount -"+bean.getPeriodCount());
+		logger.info(new Date()+"-:update stock -"+bean.getStock());
+		logger.info(new Date()+"-:update-"+bean.getId());
+		bean.setPublishDate(new Date());
 		service.save(bean);
 		ra.addFlashAttribute(MESSAGE, SAVE_SUCCESS);
 			ra.addAttribute("id", bean.getId());
@@ -118,10 +118,9 @@ public class ProductController {
 	@RequiresPermissions("core:product:update")
 	@RequestMapping("update.do")
 	public String update(@ModelAttribute("bean") Product bean,String redirect, HttpServletRequest request, RedirectAttributes ra) {
-		logger.info(new Date()+"-order:update-"+bean.getId());
-		Product temp = service.get(Integer.valueOf(bean.getId()));
-		temp.setTitle(bean.getTitle());
-		service.update(temp);
+		logger.info(new Date()+"-:update-"+bean.getId());
+		bean.setPublishDate(new Date());
+		service.update(bean);
 		ra.addFlashAttribute(MESSAGE, SAVE_SUCCESS);
 		if (Constants.REDIRECT_LIST.equals(redirect)) {
 			return "redirect:list.do";
@@ -157,7 +156,7 @@ public class ProductController {
 	public String twoClassifyList(@RequestParam int id) {
 		Pageable temp = new PageRequest(0, 20);  
 		Map<String, String[]> params = new HashMap<String, String[]>();
-		params.put("EQ_sourceClassifyId", new String[]{""+id});			
+		params.put("EQ_beforeClassifyId", new String[]{""+id});			
 		Page<ProductClassify> ProductClassifyPage= productClassifyService.findPage(params, temp);
 		return VideoResultController.toJson(ProductClassifyPage.getContent());
 	}
