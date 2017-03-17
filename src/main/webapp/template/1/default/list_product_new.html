@@ -1,0 +1,73 @@
+[#escape x as (x)!?html]
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<title>${productClassify.classifyName}</title>
+<meta name="keywords" content="${node.keywords}"/>
+<meta name="description" content="${node.description}"/>
+<link href="_files/global.css" rel="stylesheet"/>
+<link href="_files/style.css" rel="stylesheet"/>
+[#include 'inc_js.html'/]
+<style>
+a.ap{color:#005aa0;text-decoration:none}
+a.ap:hover{color:#e4393c;}
+a.ap-curr{background-color:#e4393c;color:#fff;text-decoration:none;}
+a.sort{background-color:#fff;color:#333;border:1px solid #ccc;text-decoration:none;}
+a.sort:hover{color:#e4393c;border:1px solid #e4393c;}
+a.sort-curr{background-color:#e4393c;color:#fff;border:1px solid #e4393c;text-decoration:none}
+</style>
+</head>
+<body>
+[#include 'inc_header_product.html'/]
+<div class="w center">
+	<div class="mt20">
+		<div class="fs14 c-666" style="font-size:14px;font-weight:700;line-height:36px;padding-left:10px;background-color:#f1f1f1;border-bottom:1px solid #ddd;border-top:1px solid #ddd;">
+			商品筛选<span style="margin-left:20px;font-size:12px;font-weight:normal;">共  个商品</span>
+		</div>
+		<div style="padding:0 0 8px 10px;border-bottom:1px solid #ddd;">
+			<div class="left c-666 fs12" style="width:100px;padding-top:10px;">商品分类：</div>
+			<div class="left fs12" style="width:880px;">
+				[#list productClassifylistOne as n]
+				<a href="${n.url}" class="[#if node.id==n.id]ap-curr[#else]ap[/#if]" style="[#if n_has_next]margin-right:15px;[/#if]display:inline-block;line-height:23px;padding:0 10px;margin-top:8px;">${n.classifyName}</a>
+				[/#list]
+			</div>
+			<div class="clear"></div>
+		</div>
+		<div style="padding:0 0 8px 10px;border-bottom:1px solid #ddd;">
+			<div class="left c-666 fs12" style="width:100px;padding-top:10px;">商品子类：</div>
+			<div class="left fs12" style="width:880px;">
+				[#list productClassifylistTwo as n]
+				<a href="${n.url}" class="[#if node.id==n.id]ap-curr[#else]ap[/#if]" style="[#if n_has_next]margin-right:15px;[/#if]display:inline-block;line-height:23px;padding:0 10px;margin-top:8px;">${n.classifyName}</a>
+				[/#list]
+			</div>
+			<div class="clear"></div>
+		</div>
+		
+	</div>
+	<div class="mt20" id="videolistul">
+		
+	</div>
+	<table class="center mt20">
+		<tbody>
+			<tr>
+				<td>
+					<div class="pager">
+						<a class="page" id="gofirstpage">首页</a>
+						<a class="page" id="gobackpage">上一页</a>
+						 <a class="page-curr" id="currpage">1</a> 
+						 <a class="page" id="gotopage">下一页</a>
+						 <a class="page" id="golastpage">末页</a>
+						<div style="clear: both;"></div>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+[#include 'inc_friendlink.html'/]
+[#include 'inc_footer.html'/]
+
+</body>
+</html>
+[/#escape]

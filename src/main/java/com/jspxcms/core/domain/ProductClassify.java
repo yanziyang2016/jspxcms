@@ -1,6 +1,6 @@
 package com.jspxcms.core.domain;
 
-import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,8 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.validator.constraints.Length;
@@ -36,6 +34,8 @@ public class ProductClassify implements java.io.Serializable {
 	private Integer beforeClassifyId;//上级分类id
 	private Integer sourceId;//分类等级
 	private String beforeClassifyName;//上级分类名称
+	
+	private List<Product> productList;//商品列表
 
 
 	@Id
@@ -83,6 +83,16 @@ public class ProductClassify implements java.io.Serializable {
 	public void setBeforeClassifyId(Integer beforeClassifyId) {
 		this.beforeClassifyId = beforeClassifyId;
 	}
+	@Transient
+	public List<Product> getProductList() {
+		return productList;
+	}
+
+	public void setProductList(List<Product> productList) {
+		this.productList = productList;
+	}
+	
+	
 	
 	
 

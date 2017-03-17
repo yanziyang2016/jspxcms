@@ -104,7 +104,7 @@ function confirmDelete() {
   </tr>
   <tr>
     <td colspan="4" class="in-opt">
-	    <div>规格参数：</div>
+	    <div>商品介绍：</div>
 		<div>
 		 <tags:feild_introduce bean="${bean.introduce}" field="introduce"/>
 		</div>
