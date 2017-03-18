@@ -46,6 +46,12 @@ function confirmDelete() {
     <td class="in-ctt" width="85%" colspan="3"><f:text name="title" value="${bean.title}" style="width:730px;"/></td>
     
   </tr>
+   <tr>
+    <td class="in-lab" width="15%">供货价格:</td>
+    <td class="in-ctt" width="35%"><f:text name="price" value="${bean.price}" style="width:180px;"/></td>
+    <td class="in-lab" width="15%">销售价格:</td>
+    <td class="in-ctt" width="35%"><f:text name="marketPrice" value="${bean.marketPrice}" maxlength="100" style="width:180px;"/></td>
+  </tr>
   
   <tr>
     <td class="in-lab" width="15%">标题图:</td>

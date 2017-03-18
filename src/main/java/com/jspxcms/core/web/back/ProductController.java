@@ -55,11 +55,16 @@ public class ProductController {
 		Map<String, String[]> params = Servlets.getParamValuesMap(request, Constants.SEARCH_PREFIX);
 		logger.info("Product --- params"+params.toString());
 		Page<Product> pagedList = service.findPage( params, pageable);
-		for(Product Product: pagedList.getContent()){
-				Product.setOneClassifyName(productClassifyService.get(Product.getOneClassifyId()).getClassifyName());	
-				Product.setStatusName(Product.getStatus()==0?"下架":"上架");
-				Product.setProductproName(Product.getProductpro()==1?"虚拟商品":"实物商品");
-				Product.setTwoClassifyName(productClassifyService.get(Product.getTwoClassifyId()).getClassifyName());
+		for(Product product: pagedList.getContent()){
+				product.setOneClassifyName(productClassifyService.get(product.getOneClassifyId()).getClassifyName());	
+				product.setStatusName(product.getStatus()==0?"下架":"上架");
+				product.setProductproName(product.getProductpro()==1?"虚拟商品":"实物商品");
+				if(product.getTwoClassifyId()==-1){
+					product.setTwoClassifyName("无");
+				}else{
+					product.setTwoClassifyName(productClassifyService.get(product.getTwoClassifyId()).getClassifyName());
+				}
+				
 		}
 		modelMap.addAttribute("pagedList", pagedList);
 		return "core/product/product_list";

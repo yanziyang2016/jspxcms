@@ -119,6 +119,8 @@ function optDeletePassword(form) {
     <th width="30" class="ls-th-sort"><span class="ls-sort" pagesort="id">ID</span></th>
     <th class="ls-th-sort"><span class="ls-sort" pagesort="title">商品名称</span></th>
     <th class="ls-th-sort"><span class="ls-sort" pagesort="productpro">商品性质</span></th>
+    <th class="ls-th-sort"><span class="ls-sort" pagesort="price">供货价格</span></th>
+    <th class="ls-th-sort"><span class="ls-sort" pagesort="marketPrice">销售价格</span></th>
     <th class="ls-th-sort"><span class="ls-sort" pagesort="stock">商品库存</span></th>
     <th class="ls-th-sort"><span class="ls-sort" pagesort="periodCount">每期申请数</span></th>
     <th class="ls-th-sort"><span class="ls-sort" pagesort="status">商品状态</span></th>
@@ -141,6 +143,8 @@ function optDeletePassword(form) {
     <td>${bean.id}</td>
     <td align="center">${bean.title}</td>
      <td align="center">${bean.productproName}</td>
+     <td align="center">${bean.price}</td>
+     <td align="center">${bean.marketPrice}</td>
       <td align="center">${bean.stock}</td>
        <td align="center">${bean.periodCount}</td>
         <td align="center">${bean.statusName}</td>
