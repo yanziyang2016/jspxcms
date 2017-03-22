@@ -158,6 +158,10 @@ function imgCrop(name) {
 
 var oneClassifyId=${oneClassifyId};
 var twoClassifyId=${twoClassifyId};
+var productpro=${productpro};
+var status=${status};
+$("#productpro").val(productpro);
+$("#status").val(status);
 $.ajax({    
     url:'oneClassifyList',  
     data:{    

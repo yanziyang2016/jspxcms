@@ -34,6 +34,7 @@ import com.jspxcms.core.domain.Node;
 import com.jspxcms.core.domain.Org;
 import com.jspxcms.core.domain.Product;
 import com.jspxcms.core.domain.ProductClassify;
+import com.jspxcms.core.domain.ProductList;
 import com.jspxcms.core.domain.Site;
 import com.jspxcms.core.domain.User;
 import com.jspxcms.core.domain.VideoFour;
@@ -318,71 +319,48 @@ public class NodeProductController {
 		}
 	}
 	
-	@RequestMapping(value = "/videolist.jspx",produces = "text/html;charset=UTF-8")
+	@RequestMapping(value = "/productlist.jspx",produces = "text/html;charset=UTF-8")
 	@ResponseBody
-	public String videoList(@RequestParam String type,@RequestParam String area,@RequestParam String year,@RequestParam String title,@RequestParam int page) {
-		VideoList videoList = new VideoList();
-		logger.info("type-----------------"+type);
-		if(area.equals("全部")&&year.equals("全部")&&(title==null||title.length()==0)&&page==0){
-			
-		}else{
-			Pageable pageable = new PageRequest(page, 20,Direction.DESC, "vmid");  
+	public String videoList(@RequestParam String oneClassifyId,@RequestParam String twoClassifyId,@RequestParam String title,@RequestParam int page) {
+		ProductList productList = new ProductList();
+		logger.info("oneClassifyId-----------------"+oneClassifyId);
+		{
+			Pageable pageable = new PageRequest(page, 8,Direction.DESC, "id");  
 			Map<String, String[]> params = new HashMap<String, String[]>();
-			if(type!=null&&type.length()>0){
-				params.put("CONTAIN_cname", new String[]{type});	
-			}
-			if(area!=null&&area.length()>0&&!area.equals("全部")){
-				params.put("CONTAIN_area", new String[]{area});	
+				params.put("EQ_oneClassifyId", new String[]{oneClassifyId});	
+			if(Integer.valueOf(twoClassifyId)>0){
+				params.put("EQ_twoClassifyId", new String[]{twoClassifyId});		
 			}
 			if(title!=null&&title.length()>0){
 				params.put("CONTAIN_title", new String[]{title});	
 			}
 //			EQ, LIKE, CONTAIN, STARTWITH, ENDWITH, GT, LT, GTE, LTE, IN
-			if(year!=null&&year.length()>0&&!year.equals("全部")){
-				if(year.equals("2017")){
-					params.put("EQ_year", new String[]{"2017"});	
-				}else if(year.equals("2016")){
-					params.put("EQ_year", new String[]{"2016"});
-				}else if(year.equals("2015-2010")){
-					params.put("LTE_year", new String[]{"2015"});
-					params.put("GTE_year", new String[]{"2010"});
-				}else if(year.equals("00年代")){
-					params.put("LTE_year", new String[]{"2009"});
-					params.put("GTE_year", new String[]{"2000"});
-				}else if(year.equals("90年代")){
-					params.put("LTE_year", new String[]{"1999"});
-					params.put("GTE_year", new String[]{"1990"});
-				}else if(year.equals("80年代")){
-					params.put("LTE_year", new String[]{"1989"});
-					params.put("GTE_year", new String[]{"1980"});
-				}else if(year.equals("更早")){
-					params.put("LTE_year", new String[]{"1979"});
-				}
-			}
-			Page<VideoTwo> pagedList = videoTwoService.findPage( params, pageable);
+			Page<Product> pagedList = productService.findPage( params,pageable);;
 			
-			videoList.setCurrpage(page);
+			productList.setCurrpage(page);
 			if(page==0||pagedList.getTotalPages()<2){
-				videoList.setIsfirst(1);
+				productList.setIsfirst(1);
 			}else{
-				videoList.setIsfirst(0);
+				productList.setIsfirst(0);
 			}
 			if(page+1==pagedList.getTotalPages()||pagedList.getTotalPages()<2){
-				videoList.setIslast(1);
+				productList.setIslast(1);
 			}else{
-				videoList.setIslast(0);
+				productList.setIslast(0);
 			}
-			videoList.setTotalcount(pagedList.getTotalElements());
-			videoList.setTotalpage(pagedList.getTotalPages());
-			videoList.setVideoList(pagedList.getContent());
-			logger.info("videolist------page---"+page);
-			logger.info("videolist------pagedList.getTotalPages()---"+pagedList.getTotalPages());
-			logger.info("videolist------pagedList.getTotalElements()---"+pagedList.getTotalElements());
+			productList.setTotalcount(pagedList.getTotalElements());
+			productList.setTotalpage(pagedList.getTotalPages());
+			productList.setProductList(pagedList.getContent());
+			logger.info("productList------page---"+page);
+			logger.info("productList------pagedList.getTotalPages()---"+pagedList.getTotalPages());
+			logger.info("productList------pagedList.getTotalElements()---"+pagedList.getTotalElements());
 		}
 		
 	
-		return VideoResultController.toJson(videoList);
+		return VideoResultController.toJson(productList);
 	}
+	
+	
 	
 	@RequestMapping(value = "/videolistdt.jspx",produces = "text/html;charset=UTF-8")
 	@ResponseBody

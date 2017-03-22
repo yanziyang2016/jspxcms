@@ -23,22 +23,31 @@ a.sort-curr{background-color:#e4393c;color:#fff;border:1px solid #e4393c;text-de
 <div class="w center">
 	<div class="mt20">
 		<div class="fs14 c-666" style="font-size:14px;font-weight:700;line-height:36px;padding-left:10px;background-color:#f1f1f1;border-bottom:1px solid #ddd;border-top:1px solid #ddd;">
-			商品筛选<span style="margin-left:20px;font-size:12px;font-weight:normal;">共  个商品</span>
+			商品筛选<span style="margin-left:20px;font-size:12px;font-weight:normal;">共 <span id="totalcount"></span> 个商品</span>
 		</div>
-		<div style="padding:0 0 8px 10px;border-bottom:1px solid #ddd;">
+		<div style="padding:0 0 8px 10px;border-bottom:1px solid #ddd;" >
+			<div class="left c-666 fs12" style="width:100px;padding-top:10px;">商品名称：</div>
+			<div class="left fs14" style="width:888px;">
+						<input type="text" class="left search-input" style="width:380px;" id="title">
+						<button id="searchButton" class="left" style="width:86px;height:34px;background:url(_files/img/search.png);border:0;"></button>
+			</div>
+			<div class="clear"></div>
+		</div>
+		<div style="padding:0 0 8px 10px;border-bottom:1px solid #ddd;" >
 			<div class="left c-666 fs12" style="width:100px;padding-top:10px;">商品分类：</div>
 			<div class="left fs12" style="width:880px;">
 				[#list productClassifylistOne as n]
-				<a href="${n.url}" class="[#if node.id==n.id]ap-curr[#else]ap[/#if]" style="[#if n_has_next]margin-right:15px;[/#if]display:inline-block;line-height:23px;padding:0 10px;margin-top:8px;">${n.classifyName}</a>
+				<a href="/list_product${n.id}.jspx"  class="[#if productClassify.id==n.id]ap-curr[#else]ap[/#if]" style="[#if n_has_next]margin-right:15px;[/#if]display:inline-block;line-height:23px;padding:0 10px;margin-top:8px;">${n.classifyName}</a>
 				[/#list]
 			</div>
 			<div class="clear"></div>
 		</div>
-		<div style="padding:0 0 8px 10px;border-bottom:1px solid #ddd;">
+		<div style="padding:0 0 8px 10px;border-bottom:1px solid #ddd;" id="classifyTwoDiv">
 			<div class="left c-666 fs12" style="width:100px;padding-top:10px;">商品子类：</div>
 			<div class="left fs12" style="width:880px;">
+			    <a  class="ap-curr" id=0 style="margin-right:15px;display:inline-block;line-height:23px;padding:0 10px;margin-top:8px;">全部</a>
 				[#list productClassifylistTwo as n]
-				<a href="${n.url}" class="[#if node.id==n.id]ap-curr[#else]ap[/#if]" style="[#if n_has_next]margin-right:15px;[/#if]display:inline-block;line-height:23px;padding:0 10px;margin-top:8px;">${n.classifyName}</a>
+				<a  class="ap" id="${n.id}" style="[#if n_has_next]margin-right:15px;[/#if]display:inline-block;line-height:23px;padding:0 10px;margin-top:8px;">${n.classifyName}</a>
 				[/#list]
 			</div>
 			<div class="clear"></div>
@@ -67,7 +76,107 @@ a.sort-curr{background-color:#e4393c;color:#fff;border:1px solid #e4393c;text-de
 </div>
 [#include 'inc_friendlink.html'/]
 [#include 'inc_footer.html'/]
+<script type="text/javascript">
+//alert($("#yeardiv").find(".ap-curr").html());
+var oneClassifyId='${productClassify.id}';
+var totalpage = 1;
+function videolist(oneClassifyId,twoClassifyId,title,page){
+	$.ajax({    
+	    url:'productlist.jspx',// 跳转到 action    
+	    data:{    
+	    	oneClassifyId:oneClassifyId,
+	    	twoClassifyId:twoClassifyId,
+	    	title:title,
+	    	page:page
+	    },    
+	    type:'post',    
+	    cache:false,  
+	    async:false,  
+	    dataType:'json',    
+	    success:function(data) {
+	    	totalpage = data.totalpage;
+	    	if(data.isfirst==1){
+	    		$("#gobackpage").hide();
+	    	}else if(data.isfirst==0){
+	    		$("#gobackpage").show();
+	    	}
+	    	if(data.islast==1){
+	    		$("#gotopage").hide();
+	    	}else if(data.islast==0){
+	    		$("#gotopage").show();
+	    	}
+	    	$("#totalcount").html(data.totalcount);
+	    	$("#currpage").html(data.currpage+1);
+	    	$("#videolistul").empty();
+	    	var videoList=data.productList;
+	    	for(var i=0;i<videoList.length;i++){
+	    		$("#videolistul").append(
+		'<div class="left mt5" style="width:184px;margin-left:20px;">'+
+			'<a href="/info_product'+videoList[i].id+'.jspx" target="_blank" >'+
+				'<img src="'+videoList[i].smallImage+'" width="184" height="184"/>'+
+			'</a>'+
+			'<div class="fs20 lh mt10" style="color:#C00;font-family:arial;"><span class="b fs12">￥</span>'+videoList[i].marketPrice+'</div>'+
+			'<div class="ff-yh fs12 mt5" style="line-height:18px;height:36px;overflow:hidden;"><a href="/info_product'+videoList[i].id+'.jspx"  class="a"  target="_blank">'+videoList[i].title+'</a></div>'+
+		'</div>'
+	    		    	
+	        	);    		
+	    	}
+	    	$("#videolistul").append('<li class="clear"></li>');
+	    } ,
+	    error : function() { 
+	    	//alert(222);
+	    }
+	}); 
+}
 
+$("#classifyTwoDiv a").click(function(){
+	$("#classifyTwoDiv").find(".ap-curr").addClass("ap");
+	$("#classifyTwoDiv").find(".ap-curr").removeClass("ap-curr");
+	$(this).addClass("ap-curr");
+	var twoClassifyId = $("#classifyTwoDiv").find(".ap-curr").attr("id");
+	var title = $("#title").val();
+	var page = 0;
+	videolist(oneClassifyId,twoClassifyId,title,page)
+});
+
+videolist(oneClassifyId,0,"",0);
+
+$("#gofirstpage").click(function(){//第一页
+	var twoClassifyId = $("#classifyTwoDiv").find(".ap-curr").attr("id");
+	var title = $("#title").val();
+	var page = 0;
+	videolist(oneClassifyId,twoClassifyId,title,page)
+});
+$("#golastpage").click(function(){//尾页
+	var twoClassifyId = $("#classifyTwoDiv").find(".ap-curr").attr("id");
+	var title = $("#title").val();
+	var page = totalpage-1;
+	if(page>-1){
+		videolist(oneClassifyId,twoClassifyId,title,page)	
+	}
+	
+});
+$("#gobackpage").click(function(){//上一页
+	var twoClassifyId = $("#classifyTwoDiv").find(".ap-curr").attr("id");
+	var title = $("#title").val();
+	var page = parseInt($("#currpage").html())-2;
+	videolist(oneClassifyId,twoClassifyId,title,page)
+});
+$("#gotopage").click(function(){//下一页
+	var twoClassifyId = $("#classifyTwoDiv").find(".ap-curr").attr("id");
+	var title = $("#title").val();
+	var page = parseInt($("#currpage").html());
+	videolist(oneClassifyId,twoClassifyId,title,page);
+});
+$("#searchButton").click(function(){//下一页
+	var twoClassifyId = $("#classifyTwoDiv").find(".ap-curr").attr("id");
+	var title = $("#title").val();
+	var page = 0;
+	videolist(oneClassifyId,twoClassifyId,title,page);
+});
+
+
+</script>
 </body>
 </html>
 [/#escape]

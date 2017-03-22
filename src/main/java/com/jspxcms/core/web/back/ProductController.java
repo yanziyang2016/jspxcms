@@ -83,6 +83,8 @@ public class ProductController {
 		modelMap.addAttribute("field", field);
 		modelMap.addAttribute("oneClassifyId", bean.getOneClassifyId()==null?-1:bean.getOneClassifyId());
 		modelMap.addAttribute("twoClassifyId", bean.getTwoClassifyId()==null?-1:bean.getTwoClassifyId());
+		modelMap.addAttribute("productpro", bean.getProductpro());
+		modelMap.addAttribute("status", bean.getStatus());
 		modelMap.addAttribute(OPRT, EDIT);
 		return "core/product/product_form";
 	}
@@ -98,6 +100,8 @@ public class ProductController {
 		}
 		modelMap.addAttribute("oneClassifyId", -1);
 		modelMap.addAttribute("twoClassifyId", -1);
+		modelMap.addAttribute("productpro", -1);
+		modelMap.addAttribute("status", -1);
 		modelMap.addAttribute(OPRT, CREATE);
 		return "core/product/product_form";
 	}
