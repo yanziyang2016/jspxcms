@@ -1798,6 +1798,8 @@ public class Info implements java.io.Serializable, Anchor, Siteable,
 	private Integer p6;
 	
 	private Integer video_id;
+	
+	private Integer product_id;
 
 	private String highlightTitle;
 	private String highlightText;
@@ -2182,6 +2184,16 @@ public class Info implements java.io.Serializable, Anchor, Siteable,
 
 	public void setVideo_id(Integer video_id) {
 		this.video_id = video_id;
+	}
+	
+	
+	@Column(name = "product_id")
+	public Integer getProduct_id() {
+		return product_id;
+	}
+
+	public void setProduct_id(Integer product_id) {
+		this.product_id = product_id;
 	}
 
 	@Transient

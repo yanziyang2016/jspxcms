@@ -19,9 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jspxcms.common.orm.SearchFilter;
 import com.jspxcms.core.domain.Info;
 import com.jspxcms.core.domain.Order;
+import com.jspxcms.core.domain.Product;
 import com.jspxcms.core.domain.User;
 import com.jspxcms.core.repository.InfoDao;
 import com.jspxcms.core.repository.OrderDao;
+import com.jspxcms.core.repository.ProductDao;
 import com.jspxcms.core.repository.UserDao;
 import com.jspxcms.core.service.OrderService;
 
@@ -42,12 +44,13 @@ public class OrderServiceImpl implements OrderService{
 		if(orderPage.getContent().size()>0){
 			for(int i=0;i<orderPage.getContent().size();i++){
 				User usertemp = userdao.findOne(orderPage.getContent().get(i).getUserId());
-				Info infotemp = infodao.findOne(orderPage.getContent().get(i).getInfoId());
+//				Info infotemp = infodao.findOne(orderPage.getContent().get(i).getInfoId());
+				Product product = productDao.findOne(orderPage.getContent().get(i).getInfoId());
 				orderPage.getContent().get(i).setUserAddress(usertemp.getHomeAddress());
 				orderPage.getContent().get(i).setUserName(usertemp.getRealName());
 				orderPage.getContent().get(i).setMobile(usertemp.getMobile());
-				orderPage.getContent().get(i).setInfoName(infotemp.getTitle());
-				orderPage.getContent().get(i).setProductPro(infotemp.getCustomsValue("productpro"));
+				orderPage.getContent().get(i).setInfoName(product.getTitle());
+				orderPage.getContent().get(i).setProductPro(product.getProductpro()==1?"虚拟":"实物");
 			}
 			
 		}
@@ -77,12 +80,13 @@ public class OrderServiceImpl implements OrderService{
 		if(orderPage.getContent().size()>0){
 			for(int i=0;i<orderPage.getContent().size();i++){
 				User usertemp = userdao.findOne(orderPage.getContent().get(i).getUserId());
-				Info infotemp = infodao.findOne(orderPage.getContent().get(i).getInfoId());
+				Product product = productDao.findOne(orderPage.getContent().get(i).getInfoId());
 				orderPage.getContent().get(i).setUserAddress(usertemp.getHomeAddress());
 				orderPage.getContent().get(i).setUserName(usertemp.getRealName());
 				orderPage.getContent().get(i).setMobile(usertemp.getMobile());
-				orderPage.getContent().get(i).setInfoName(infotemp.getTitle());
-				orderPage.getContent().get(i).setProductPro(infotemp.getCustomsValue("productpro"));
+				orderPage.getContent().get(i).setInfoName(product.getTitle());
+				orderPage.getContent().get(i).setProductPro(product.getProductpro()==1?"虚拟":"实物");
+				
 			}
 			
 		}
@@ -113,12 +117,14 @@ public class OrderServiceImpl implements OrderService{
 		if(orderPage.getContent().size()>0){
 			for(int i=0;i<orderPage.getContent().size();i++){
 				User usertemp = userdao.findOne(orderPage.getContent().get(i).getUserId());
-				Info infotemp = infodao.findOne(orderPage.getContent().get(i).getInfoId());
+//				Info infotemp = infodao.findOne(orderPage.getContent().get(i).getInfoId());
+				Product product = productDao.findOne(orderPage.getContent().get(i).getInfoId());
+				orderPage.getContent().get(i).setInfoName(product.getTitle());
+				orderPage.getContent().get(i).setProductPro(product.getProductpro()==1?"虚拟":"实物");
 				orderPage.getContent().get(i).setUserAddress(usertemp.getHomeAddress());
 				orderPage.getContent().get(i).setUserName(usertemp.getRealName());
 				orderPage.getContent().get(i).setMobile(usertemp.getMobile());
-				orderPage.getContent().get(i).setInfoName(infotemp.getTitle());
-				orderPage.getContent().get(i).setProductPro(infotemp.getCustomsValue("productpro"));
+			
 			}
 			
 		}
@@ -150,11 +156,9 @@ public class OrderServiceImpl implements OrderService{
 		this.userdao = userdao;
 	}
 	
-	private InfoDao infodao;
+
 	@Autowired
-	public void setInfodao(InfoDao infodao) {
-		this.infodao = infodao;
-	}
+	private ProductDao productDao;
 
 	private OrderDao dao;
 	@Autowired
@@ -170,12 +174,13 @@ public class OrderServiceImpl implements OrderService{
 	public Order get(Integer id) {
 		Order order = dao.findOne(id);
 		User usertemp = userdao.findOne(order.getUserId());
-		Info infotemp = infodao.findOne(order.getInfoId());
+//		Info infotemp = infodao.findOne(order.getInfoId());
+		Product product = productDao.findOne(order.getInfoId());
 		order.setUserAddress(usertemp.getHomeAddress());
 		order.setUserName(usertemp.getRealName());
 		order.setMobile(usertemp.getMobile());
-		order.setInfoName(infotemp.getTitle());
-		order.setProductPro(infotemp.getCustomsValue("productpro"));
+		order.setInfoName(product.getTitle());
+		order.setProductPro(product.getProductpro()==1?"虚拟":"实物");
 		return order;
 	}
 

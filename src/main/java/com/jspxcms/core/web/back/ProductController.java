@@ -2,6 +2,7 @@ package com.jspxcms.core.web.back;
 
 import static com.jspxcms.core.constant.Constants.CREATE;
 import static com.jspxcms.core.constant.Constants.DELETE_SUCCESS;
+import static com.jspxcms.core.constant.Constants.OPERATION_SUCCESS;
 import static com.jspxcms.core.constant.Constants.EDIT;
 import static com.jspxcms.core.constant.Constants.MESSAGE;
 import static com.jspxcms.core.constant.Constants.OPRT;
@@ -147,6 +148,28 @@ public class ProductController {
 			service.delete(id);
 		}
 		ra.addFlashAttribute(MESSAGE, DELETE_SUCCESS);
+		return "redirect:list.do";
+	}
+	
+	@RequiresPermissions("core:product:shangjia")
+	@RequestMapping("shangjia.do")
+	public String shangjia(Integer[] ids, HttpServletRequest request, RedirectAttributes ra) {
+		for(Integer id:ids){
+			logger.info(new Date()+"-product:shangjia-"+id);
+			service.upOrDown(1,id);
+		}
+		ra.addFlashAttribute(MESSAGE, OPERATION_SUCCESS);
+		return "redirect:list.do";
+	}
+	
+	@RequiresPermissions("core:product:xiajia")
+	@RequestMapping("xiajia.do")
+	public String xiajia(Integer[] ids, HttpServletRequest request, RedirectAttributes ra) {
+		for(Integer id:ids){
+			logger.info(new Date()+"-product:xiajia-"+id);
+			service.upOrDown(0,id);
+		}
+		ra.addFlashAttribute(MESSAGE, OPERATION_SUCCESS);
 		return "redirect:list.do";
 	}
 

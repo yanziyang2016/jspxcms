@@ -28,6 +28,9 @@ public interface ProductService {
 	public void delete(Integer id);
 
 
+	public void upOrDown(Integer status, Integer id);
+
+
 
 
 

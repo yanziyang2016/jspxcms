@@ -66,4 +66,6 @@ public interface InfoQueryService {
 	public Info getByVideoId(Integer id);
 
 	public Info save(Info info);
+
+	public Info getByProductId(Integer id);
 }

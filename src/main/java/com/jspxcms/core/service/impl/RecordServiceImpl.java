@@ -20,14 +20,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jspxcms.common.orm.SearchFilter;
 import com.jspxcms.core.domain.Info;
+import com.jspxcms.core.domain.Product;
 //import com.jspxcms.core.domain.Order;
 import com.jspxcms.core.domain.ProductRecord;
 import com.jspxcms.core.domain.User;
 import com.jspxcms.core.repository.InfoDao;
+import com.jspxcms.core.repository.ProductDao;
 import com.jspxcms.core.repository.RecordDao;
 import com.jspxcms.core.repository.UserDao;
 import com.jspxcms.core.service.RecordService;
-import com.jspxcms.core.web.fore.InfoController;
 
 /**
  * UserServiceImpl
@@ -111,7 +112,9 @@ public class RecordServiceImpl implements RecordService{
 	public void setInfodao(InfoDao infodao) {
 		this.infodao = infodao;
 	}
-
+	@Autowired
+	private ProductDao productdao;
+	
 	private RecordDao dao;
 	@Autowired
 	public void setDao(RecordDao dao) {
@@ -136,15 +139,9 @@ public class RecordServiceImpl implements RecordService{
 		user.setYuanBao(user.getYuanBao()-100);
 		user.setMemStatus(5);
 		userdao.save(user);
-		Info info = infodao.findOne(bean.getInfoId());
-		Map<String, String> customs = info.getCustoms();
-		logger.info("stock--before--"+info.getCustomsValueNew("stock"));
-		String stock = String.valueOf((Integer.valueOf(info.getCustomsValueNew("stock"))-1));
-		customs.remove("stock");
-		logger.info("stock--after--"+stock);
-		customs.put("stock", stock);
-		info.setCustoms(customs);
-		infodao.save(info);
+		Product product = productdao.findOne(bean.getInfoId());
+		product.setStock(product.getStock()-1);
+		productdao.save(product);
 		return dao.save(bean);
 		
 	}

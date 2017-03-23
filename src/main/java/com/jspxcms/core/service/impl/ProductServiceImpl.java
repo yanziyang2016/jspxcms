@@ -84,6 +84,12 @@ public class ProductServiceImpl implements ProductService{
 		dao.delete(bean);
 	}
 
+	@Transactional
+	public void upOrDown(Integer status, Integer id) {
+		dao.upOrDown(status,id);
+		
+	}
+
 
 
 

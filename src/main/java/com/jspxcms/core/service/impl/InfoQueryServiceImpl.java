@@ -248,4 +248,9 @@ public class InfoQueryServiceImpl implements InfoQueryService {
 		return dao.save(info);
 		
 	}
+
+	@Override
+	public Info getByProductId(Integer id) {
+		return dao.getByProductId(id);
+	}
 }

@@ -30,7 +30,7 @@ a.a1:hover{color:#B79768;text-decoration:none;}
 		<div id="focusContent" class="absolute">
 			[#list productlist as info]
 			<div>
-				<a href="" target="_blank" title=""><img src="${info.smallImage}" width="770" height="190"/></a>
+				<a href="/info_product${info.id}.jspx" target="_blank" title=""><img src="${info.largeImage}" width="770" height="190"/></a>
 			</div>
 			[/#list]
 		</div>
@@ -95,11 +95,11 @@ a.a1:hover{color:#B79768;text-decoration:none;}
 	<div class="mt20">
 		[#list n.productList as info]
 		<div class="left mt5" style="width:184px;[#if (info_index)%5 != 0]margin-left:20px;[/#if]">
-			<a href="" target="_blank" title="${info.title}">
+			<a href="/info_product${info.id}.jspx" target="_blank" title="${info.title}">
 				<img src="${info.smallImage}" width="184" height="184"/>
 			</a>
 			<div class="fs20 lh mt10" style="color:#C00;font-family:arial;"><span class="b fs12">￥</span>${info.price}</div>
-			<div class="ff-yh fs12 mt5" style="line-height:18px;height:36px;overflow:hidden;"><a href="" class="a" title="${info.title}" target="_blank">${info.title}</a></div>
+			<div class="ff-yh fs12 mt5" style="line-height:18px;height:36px;overflow:hidden;"><a href="/info_product${info.id}.jspx"class="a" title="${info.title}" target="_blank">${info.title}</a></div>
 		</div>
 		[/#list]
 		<div class="clear"></div>

@@ -37,6 +37,7 @@ import com.jspxcms.core.domain.ProductClassify;
 import com.jspxcms.core.domain.ProductList;
 import com.jspxcms.core.domain.Site;
 import com.jspxcms.core.domain.User;
+import com.jspxcms.core.domain.UserRecord;
 import com.jspxcms.core.domain.VideoFour;
 import com.jspxcms.core.domain.VideoList;
 import com.jspxcms.core.domain.VideoTwo;
@@ -46,6 +47,7 @@ import com.jspxcms.core.service.NodeBufferService;
 import com.jspxcms.core.service.NodeQueryService;
 import com.jspxcms.core.service.ProductClassifyService;
 import com.jspxcms.core.service.ProductService;
+import com.jspxcms.core.service.RecordService;
 import com.jspxcms.core.service.SiteService;
 import com.jspxcms.core.service.VideoFourService;
 import com.jspxcms.core.service.VideoTwoService;
@@ -103,6 +105,7 @@ public class NodeProductController {
 			Pageable pageableTemp = new PageRequest(0, 5,Direction.DESC, "id");  
 			Map<String, String[]> paramsTemp = new HashMap<String, String[]>();
 			paramsTemp.put("EQ_oneClassifyId", new String[]{""+productClassify.getId()});	
+			paramsTemp.put("EQ_status", new String[]{"1"});
 			Page<Product> pageProductlist = productService.findPage( paramsTemp, pageableTemp);
 			List<Product> productList = pageProductlist.getContent();
 			if(productList.size()>0){
@@ -120,6 +123,34 @@ public class NodeProductController {
 
 		ForeContext.setData(modelMap.asMap(), request);
 		return "/1/default/index_product.html";
+	}
+	
+	/**
+	 * 商品本期申请记录
+	 * @param request
+	 * @param id
+	 * @param response
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping("/product_apply{id:[0-9]+}.jspx")
+	public String product_apply(HttpServletRequest request,@PathVariable Integer id,
+			HttpServletResponse response, org.springframework.ui.Model modelMap) {
+		return product_apply(null, id,request, response, modelMap);
+	}
+
+	@RequestMapping(Constants.SITE_PREFIX_PATH + "/product_apply{id:[0-9]+}.jspx")
+	public String product_apply(@PathVariable String siteNumber,@PathVariable Integer id,
+			HttpServletRequest request, HttpServletResponse response,
+			org.springframework.ui.Model modelMap) {
+	
+		String infoPeriod = (String) request.getParameter("infoPeriod");
+		logger.info("infoPeriod------------"+infoPeriod);
+		Product product = productService.get(id);
+		modelMap.addAttribute("infoPeriod", infoPeriod);
+		modelMap.addAttribute("product", product);
+		ForeContext.setData(modelMap.asMap(), request);
+		return "/1/default/product_apply.html";
 	}
 	
 	@RequestMapping(value = { "/list_product{id:[0-9]+}.jspx" })
@@ -161,28 +192,59 @@ public class NodeProductController {
 	}
 		
 		
-		@RequestMapping(value = { "/info_video{id:[0-9]+}.jspx" })
-		public String info_video(HttpServletRequest request,@PathVariable Integer id,
+		@RequestMapping(value = { "/info_product{id:[0-9]+}.jspx" })
+		public String info_product(HttpServletRequest request,@PathVariable Integer id,
 				HttpServletResponse response, org.springframework.ui.Model modelMap) {
-			logger.info("NodeProductController---info_video---"+id);
-			return info_video(null, id,request, response, modelMap);
+			logger.info("NodeProductController---info_product---"+id);
+			return info_product(null, id,request, response, modelMap);
 		}
-		@RequestMapping(value = Constants.SITE_PREFIX_PATH + "/info_video{p:[0-9]+}.jspx")
-		public String info_video(@PathVariable String siteNumber,@PathVariable Integer id,
+		@RequestMapping(value = Constants.SITE_PREFIX_PATH + "/info_product{p:[0-9]+}.jspx")
+		public String info_product(@PathVariable String siteNumber,@PathVariable Integer id,
 				HttpServletRequest request, HttpServletResponse response,
 				org.springframework.ui.Model modelMap) {
-			logger.info("NodeProductController---info_video---"+id);
+			logger.info("NodeProductController---info_product---"+id);
+			Product product = productService.get(id);
+			User userfore = Context.getCurrentUser();
+			
+			if(userfore==null){
+				User temp = new User();
+				temp.setId(-1);
+				temp.setYuanBao(0);
+				temp.setMemStatus(1);
+				modelMap.addAttribute("userfore", temp);
+			}else{
+				modelMap.addAttribute("userfore", userfore);
+			}
+			
+			int infoPeriod = 1;
+			//商品申请记录数
+			int recordCount = recordService.findCountByInfoId(product.getId());
+			logger.info("recordCount------"+recordCount);	
+			if(recordCount>0){
+				//当前期
+				infoPeriod = recordService.findPeriodByInfoId(product.getId());
+				int  stock = Integer.valueOf(product.getStock());//库存
+				if(stock>0){
+					int  periodCount = Integer.valueOf(product.getPeriodCount());//每期申请数
+					int crecordCount = recordService.findCountByInfoIdAndPeriod(id,infoPeriod);//当期申请数
+					if(crecordCount==periodCount){//当期已经申请满
+						infoPeriod = infoPeriod + 1;
+					}
+				}
+				logger.info("infoPeriod------"+infoPeriod);	
+			}
+			modelMap.addAttribute("infoPeriod", infoPeriod);
 			siteResolver.resolveSite(siteNumber);
 			Site site = Context.getCurrentSite();
 			Node node = query.findRoot(site.getId());
 			modelMap.addAttribute("node", node);
 			modelMap.addAttribute("text", node.getText());
-			VideoTwo videoTwo= videoTwoService.get(id);
-			Info info = infoQueryService.getByVideoId(id);
+			
+			Info info = infoQueryService.getByProductId(id);
 			logger.info("NodeProductController---info is null---"+(info==null));
 			if(info==null){
 				info = new Info();
-				info.setVideo_id(id);
+				info.setProduct_id(id);
 				Org org = new Org();
 				org.setId(1);
 				info.setOrg(org);
@@ -204,21 +266,16 @@ public class NodeProductController {
 				info = infoQueryService.save(info);
 				logger.info("info---id--"+info.getId());
 				InfoDetail detail = new InfoDetail();
-				detail.setTitle(videoTwo.getTitle());
+				detail.setTitle(product.getTitle());
 				detail.setStrong(false);
 				detail.setEm(false);
 				infoDetailService.save(detail,info);
 			}
-			if(videoTwo.getAid()!=null&&videoTwo.getAid().length()>0&&videoFourService.findAllByAid(videoTwo.getAid()).size()>0){
-				modelMap.addAttribute("isaid", 1);
-			}else{
-				modelMap.addAttribute("isaid", 0);
-			}
-			videoTwo.setDesc(videoTwo.getDesc().replaceAll("\r|\n", ""));
+			logger.info("info---id buttom--"+info.getId());
 			modelMap.addAttribute("info", info);
-			modelMap.addAttribute("videoTwo", videoTwo);
+			modelMap.addAttribute("product", product);
 			ForeContext.setData(modelMap.asMap(), request);
-			return "/1/default/info_video_new.html";
+			return "/1/default/info_product_new.html";
 		}
 
 	@RequestMapping("/node/{id:[0-9]+}.jspx")
@@ -334,6 +391,7 @@ public class NodeProductController {
 			if(title!=null&&title.length()>0){
 				params.put("CONTAIN_title", new String[]{title});	
 			}
+			params.put("EQ_status", new String[]{"1"});
 //			EQ, LIKE, CONTAIN, STARTWITH, ENDWITH, GT, LT, GTE, LTE, IN
 			Page<Product> pagedList = productService.findPage( params,pageable);;
 			
@@ -527,6 +585,8 @@ public class NodeProductController {
 	
 	@Autowired
 	private ProductService productService;
+	@Autowired
+	private RecordService recordService;
 
 	@Autowired
 	private ProductClassifyService productClassifyService;

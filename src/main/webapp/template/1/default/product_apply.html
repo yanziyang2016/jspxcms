@@ -1,0 +1,78 @@
+[#escape x as (x)!?html]
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<title>商品申请记录</title>
+<meta name="keywords" content="${anchor.title}"/>
+<meta name="description" content="${anchor.title}"/>
+<link href="_files/global.css" rel="stylesheet"/>
+<link href="_files/style.css" rel="stylesheet"/>
+[#include 'inc_js.html'/]
+</head>
+<body>
+
+
+		
+[#include 'inc_header_product.html'/]
+<div class="w center oh">
+	<div class="left w2">
+		<h1 class="info-title" style="border-top:2px solid #458fce;">${product.title}</h1>		
+		
+		
+		<div>
+			<div class="mt10" style="border-bottom:1px solid #ddd;">
+				<span class="fs16 ff-yh" style="padding-bottom:5px;display:inline-block;border-bottom:3px solid #379be9;">申请记录${infoPeriod}</span>
+			</div>
+			
+			<table class="table-list">
+				<thead>
+					<tr>
+						<th width="200px">申请用户</th>
+						<th width="200px">申请期数</th>
+						<th width="300px">申请时间</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td align="center">111</td>
+						<td align="center">第1期</td>
+						<td align="center">
+							1111
+						</td>
+						
+					</tr>
+				</tbody>
+			</table>
+			
+			<h1>该商品暂无申请领取记录！</h1>
+			<div class="mt20">
+				<table class="center mt20">
+					<tbody>
+						<tr>
+							<td>
+								<div class="pager">
+									<a class="page" id="gofirstpage">首页</a>
+									<a class="page" id="gobackpage">上一页</a>
+									 <a class="page-curr" id="currpage">1</a> 
+									 <a class="page" id="gotopage">下一页</a>
+									 <a class="page" id="golastpage">末页</a>
+									<div style="clear: both;"></div>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		
+		</div>
+	</div>
+	<div class="right w1">
+		[#include 'inc_news_right.html'/]
+	</div>
+</div>
+[#include 'inc_friendlink.html'/]
+[#include 'inc_footer.html'/]
+</body>
+</html>
+[/#escape]

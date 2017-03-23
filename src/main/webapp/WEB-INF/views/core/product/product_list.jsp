@@ -60,6 +60,30 @@ function optDelete(form) {
 	form.submit();
 	return true;
 }
+function optShangjia(form) {
+	if(Cms.checkeds("ids")==0) {
+		alert("<s:message code='pleaseSelectRecord'/>");
+		return false;
+	}
+	if(!confirm("全部选中商品上架？")) {
+		return false;
+	}
+	form.action='shangjia.do';
+	form.submit();
+	return true;
+}
+function optXiajia(form) {
+	if(Cms.checkeds("ids")==0) {
+		alert("<s:message code='pleaseSelectRecord'/>");
+		return false;
+	}
+	if(!confirm("全部选中商品下架？")) {
+		return false;
+	}
+	form.action='xiajia.do';
+	form.submit();
+	return true;
+}
 function optDeletePassword(form) {
 	if(Cms.checkeds("ids")==0) {
 		alert("<s:message code='pleaseSelectRecord'/>");
@@ -109,6 +133,8 @@ function optDeletePassword(form) {
 	<div class="ls-btn"><input type="button" value="<s:message code="edit"/>" onclick="return optSingle('#edit_opt_');"/></div>
 	</shiro:hasPermission>
 	<div class="ls-btn"><input type="button" value="<s:message code="delete"/>" onclick="return optDelete(this.form);"/></div>
+	<div class="ls-btn"><input type="button" value="上架" onclick="return optShangjia(this.form);"/></div>
+	<div class="ls-btn"><input type="button" value="下架" onclick="return optXiajia(this.form);"/></div>
 	<div style="clear:both"></div>
 </div>
 <table id="pagedTable" border="0" cellpadding="0" cellspacing="0" class="ls-tb margin-top5">

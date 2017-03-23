@@ -72,7 +72,7 @@ public class GotProductController {
 		List<String> messages = resp.getMessages();
 		Site site = Context.getCurrentSite();
 		if (StringUtils.isBlank(ftype)) {
-			ftype = "Info";
+			ftype = "Product";
 		}
 //		if (!Validations.notNull(fid, messages, "fid")) {
 //			return resp.post(401);
@@ -104,7 +104,7 @@ public class GotProductController {
 		List<String> messages = resp.getMessages();
 		Site site = Context.getCurrentSite();
 		if (StringUtils.isBlank(ftype)) {
-			ftype = "Info";
+			ftype = "Product";
 		}
 		Object bean = service.getEntity(ftype, fid);
 		if (!Validations.exist(bean, messages, "CommentObject", ftype + fid)) {

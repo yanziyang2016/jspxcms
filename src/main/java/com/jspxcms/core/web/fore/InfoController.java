@@ -3,7 +3,12 @@ package com.jspxcms.core.web.fore;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +38,7 @@ import com.jspxcms.core.domain.MemberGroup;
 import com.jspxcms.core.domain.Node;
 import com.jspxcms.core.domain.Order;
 import com.jspxcms.core.domain.Org;
+import com.jspxcms.core.domain.Product;
 import com.jspxcms.core.domain.ProductRecord;
 import com.jspxcms.core.domain.PublishPoint;
 import com.jspxcms.core.domain.ScoreBoard;
@@ -43,6 +49,7 @@ import com.jspxcms.core.domain.UserRecord;
 import com.jspxcms.core.service.InfoBufferService;
 import com.jspxcms.core.service.InfoQueryService;
 import com.jspxcms.core.service.OrderService;
+import com.jspxcms.core.service.ProductService;
 import com.jspxcms.core.service.RecordService;
 import com.jspxcms.core.service.ScoreBoardService;
 import com.jspxcms.core.service.ScoreItemService;
@@ -157,25 +164,25 @@ public class InfoController {
 		}
 		
 		int infoPeriod = 1;
-		if(info.getTemplate().contains("info_product.html")){
-			logger.info("info.getTemplate()------"+info.getTemplate());	
-			//商品申请记录数
-			int recordCount = recordService.findCountByInfoId(info.getId());
-			logger.info("recordCount------"+recordCount);	
-			if(recordCount>0){
-				//当前期
-				infoPeriod = recordService.findPeriodByInfoId(info.getId());
-				int  stock = Integer.valueOf(info.getCustomsValueNew("stock"));//库存
-				if(stock>0){
-					int  periodCount = Integer.valueOf(info.getCustomsValueNew("periodCount"));//每期申请数
-					int crecordCount = recordService.findCountByInfoIdAndPeriod(id,infoPeriod);//当期申请数
-					if(crecordCount==periodCount){//当期已经申请满
-						infoPeriod = infoPeriod + 1;
-					}
-				}
-				logger.info("infoPeriod------"+infoPeriod);	
-			}
-		}
+//		if(info.getTemplate().contains("info_product.html")){
+//			logger.info("info.getTemplate()------"+info.getTemplate());	
+//			//商品申请记录数
+//			int recordCount = recordService.findCountByInfoId(info.getId());
+//			logger.info("recordCount------"+recordCount);	
+//			if(recordCount>0){
+//				//当前期
+//				infoPeriod = recordService.findPeriodByInfoId(info.getId());
+//				int  stock = Integer.valueOf(info.getCustomsValueNew("stock"));//库存
+//				if(stock>0){
+//					int  periodCount = Integer.valueOf(info.getCustomsValueNew("periodCount"));//每期申请数
+//					int crecordCount = recordService.findCountByInfoIdAndPeriod(id,infoPeriod);//当期申请数
+//					if(crecordCount==periodCount){//当期已经申请满
+//						infoPeriod = infoPeriod + 1;
+//					}
+//				}
+//				logger.info("infoPeriod------"+infoPeriod);	
+//			}
+//		}
 		modelMap.addAttribute("infoPeriod", infoPeriod);
 		Page<String> pagedList = new PageImpl<String>(Arrays.asList(text),
 				new PageRequest(page - 1, 1), textList.size());
@@ -241,10 +248,10 @@ public class InfoController {
 			Integer infoPeriod, HttpServletRequest request,
 			HttpServletResponse response, org.springframework.ui.Model modelMap) {
 		try {
-			Info info = query.get(id);
-			logger.info(id+"---"+infoPeriod+"---"+(infoPeriod+id)+"--info -- periodCount"+info.getCustomsValueNew("periodCount"));
-			int  periodCount = Integer.valueOf(info.getCustomsValueNew("periodCount"));//每期申请数
-			int  stock = Integer.valueOf(info.getCustomsValueNew("stock"));//库存
+//			Info info = query.get(id);
+			Product product = productService.get(id);
+			int  periodCount = Integer.valueOf(product.getPeriodCount());//每期申请数
+			int  stock = Integer.valueOf(product.getStock());//库存
 			int recordCount = recordService.findCountByInfoIdAndPeriod(id,infoPeriod);//当期期申请数
 			User userfore = Context.getCurrentUser();
 			if(stock==0){//无库存
@@ -289,6 +296,7 @@ public class InfoController {
 			
 			
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("freeget----------"+e.toString());
 			Servlets.writeHtml(response,"服务器异常，请联系管理员" );
 		}
@@ -595,6 +603,8 @@ public class InfoController {
 		String result = mapper.toJson(map);
 		Servlets.writeHtml(response, result);
 	}
+	
+	
 
 	@Autowired
 	private SiteResolver siteResolver;
@@ -622,5 +632,7 @@ public class InfoController {
 	private OrderService orderService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private ProductService productService;
 	
 }

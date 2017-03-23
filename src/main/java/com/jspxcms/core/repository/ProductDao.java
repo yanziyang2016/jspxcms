@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 
@@ -21,5 +22,8 @@ public interface ProductDao extends Repository<Product, Integer> , ProductDaoPlu
 	public Product save(Product order);
 	public Product findOne(Integer id);
 	public void delete(Product bean);
+	@Modifying
+	@Query("update Product bean set bean.status=?1 where bean.id = ?2")
+	public void upOrDown(Integer status, Integer id);
 
 }

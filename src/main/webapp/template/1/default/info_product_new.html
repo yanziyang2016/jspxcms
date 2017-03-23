@@ -3,7 +3,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"/>
-<title>${title}_${node.name}_${site.name}${global.customs['poweredby']}</title>
+<title>${product.title}(第${infoPeriod}期)</title>
 <meta name="keywords" content="${info.keywords}"/>
 <meta name="description" content="${info.description}"/>
 <link href="_files/global.css" rel="stylesheet"/>
@@ -19,27 +19,24 @@ table{border-collapse:separate;border-spacing:1px;border-color:grey;background:#
 table th{padding:5px 0;}
 table td br{display:none;}
 </style>
-<script type="text/javascript">
-	$.get("${dy}/info_views/${info.id}.jspx?d="+new Date()*1);
-</script>
+
 </head>
 <body>
-[#include 'inc_header.html'/]
+[#include 'inc_header_product.html'/]
 <div class="w center">
-	<div style="padding:10px 5px;">[#list node.hierarchy as n]<a href="${n.url}" class="a c-desc">${n.name}</a>[#if n_has_next] > [/#if][/#list]</div>
 	<div style="height:350px;border:1px solid #f5f5f5;">
 		<div class="left" style="width:350px;border-right:1px solid #f5f5f5;">
-			<img src="${info.largeImageUrl}" width="350" height="350"/>
+			<img src="${product.largeImage}" width="350" height="350"/>
 		</div>
 		<div class="right mt20" style="width:610px;">
-			<h1 class="fs16 b" style="margin:0;line-height:1.5;color:#262626;">${title}(第${infoPeriod}期)</h1>
+			<h1 class="fs16 b" style="margin:0;line-height:1.5;color:#262626;">${product.title}(第${infoPeriod}期)</h1>
 			<div class="ff-yh" style="color:#999;line-height:28px;">
 				<span style="display:inline-block;width:55px;">商品价格</span>
-				<span>￥${info.customs['marketPrice']}</span>
+				<span>￥${product.marketPrice}</span>
 			</div>
 			<div class="ff-yh" style="color:#999;line-height:28px;">
 				<span style="display:inline-block;width:55px;">库存</span>
-				<span style="font-size:14px;font-weight:bold;">${info.customs['stock']}</span>
+				<span style="font-size:14px;font-weight:bold;">${product.stock}</span>
 			</div>
 			
 			[@ScoreGroup number='star';group]
@@ -89,14 +86,16 @@ table td br{display:none;}
 				<span id="evaluation"></span>
 			</div>
 			<div class="ff-yh" style="color:#999;line-height:48px;">
-				<a class="a fs14 fs16 b"   style="margin:0;line-height:1.5;color:#262626;" href="/gotproduct_this.jspx?fid=${info.id}&infoPeriod=${infoPeriod}" target="_blank" title="本期申请记录">本期申请记录</a>
+				<a class="a fs14 fs16 b"   style="margin:0;line-height:1.5;color:#262626;" href="/product_apply${product.id}.jspx?infoPeriod=${infoPeriod}" target="_blank" title="本期申请记录">本期申请记录</a>
 			</div>
 			<div class="ff-yh" style="color:#999;line-height:48px;">
-				<a class="a fs14 fs16 b"   style="margin:0;line-height:1.5;color:#262626;" href="/gotallproduct.jspx?fid=${info.id}" target="_blank" title="往期申请成功记录">往期申请成功记录</a>
+				<a class="a fs14 fs16 b"   style="margin:0;line-height:1.5;color:#262626;" href="/product_order${product.id}.jspx" target="_blank" title="往期申请成功记录">往期申请成功记录</a>
 			</div>
 			
 			<div class="ff-yh" style="color:#999;line-height:48px;">
-				
+				<button id="freeget" style="width:150px;height:30px">免费领取 </button>
+				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+				<button style="width:150px;height:30px">直接兑换</button>
 			</div>
 			<script type="text/javascript">
 			var userid=${userfore.id};
@@ -115,7 +114,7 @@ table td br{display:none;}
 					alert("本次领取需要100元宝，您元宝数目不够，不能进行领取！");
 				}else{
 					$.post('${ctx}/freeget.jspx',
-							{id:${info.id},infoPeriod:${infoPeriod}},
+							{id:${product.id},infoPeriod:${infoPeriod}},
 							function(data) {
 								yuanbao=yuanbao-100;
 									alert(data);	
@@ -168,16 +167,16 @@ table td br{display:none;}
 		</div>
 		<div id="tabBody" style="padding:10px 0;">
 			<div>
-				[#noescape]${info.clobs['introduce']}[/#noescape]
+				[#noescape]${product.introduce}[/#noescape]
 			</div>
 			<div class="hide" style="border-spacing: 1px;border-collapse: separate;">
-				[#noescape]${info.clobs['specification']}[/#noescape]
+				[#noescape]${product.specification}[/#noescape]
 			</div>
 			<div class="hide" style="padding:0 10px">
-				[#noescape]${info.clobs['packingList']}[/#noescape]
+				[#noescape]${product.packingList}[/#noescape]
 			</div>
 			<div class="hide" style="padding:0 10px">
-				[#noescape]${info.clobs['services']}[/#noescape]
+				[#noescape]${product.services}[/#noescape]
 			</div>
 			
 		<script>
@@ -201,7 +200,7 @@ table td br{display:none;}
 	</div>
 	<div id="commentDiv" class="mt20"></div>		
 	<script type="text/javascript">
-		$("#commentDiv").load("${dy}/comment_list.jspx?fid=${info.id}&url=${url?url}&d="+new Date()*1);
+		$("#commentDiv").load("/comment_list_new.jspx?fid=${info.id}&url=/info_product${product.id}.jspx&d="+new Date()*1);
 	</script>
 </div>
 [#include 'inc_friendlink.html'/]
