@@ -31,13 +31,16 @@ import com.jspxcms.core.constant.Constants;
 import com.jspxcms.core.domain.Info;
 import com.jspxcms.core.domain.InfoDetail;
 import com.jspxcms.core.domain.Node;
+import com.jspxcms.core.domain.Order;
 import com.jspxcms.core.domain.Org;
 import com.jspxcms.core.domain.Product;
 import com.jspxcms.core.domain.ProductClassify;
 import com.jspxcms.core.domain.ProductList;
+import com.jspxcms.core.domain.ProductOrderList;
+import com.jspxcms.core.domain.ProductRecord;
+import com.jspxcms.core.domain.ProductRecordList;
 import com.jspxcms.core.domain.Site;
 import com.jspxcms.core.domain.User;
-import com.jspxcms.core.domain.UserRecord;
 import com.jspxcms.core.domain.VideoFour;
 import com.jspxcms.core.domain.VideoList;
 import com.jspxcms.core.domain.VideoTwo;
@@ -45,6 +48,7 @@ import com.jspxcms.core.service.InfoDetailService;
 import com.jspxcms.core.service.InfoQueryService;
 import com.jspxcms.core.service.NodeBufferService;
 import com.jspxcms.core.service.NodeQueryService;
+import com.jspxcms.core.service.OrderService;
 import com.jspxcms.core.service.ProductClassifyService;
 import com.jspxcms.core.service.ProductService;
 import com.jspxcms.core.service.RecordService;
@@ -125,6 +129,30 @@ public class NodeProductController {
 		return "/1/default/index_product.html";
 	}
 	
+	/**
+	 * 商品成功领取记录
+	 * @param request
+	 * @param id
+	 * @param response
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping("/product_order{id:[0-9]+}.jspx")
+	public String product_order(HttpServletRequest request,@PathVariable Integer id,
+			HttpServletResponse response, org.springframework.ui.Model modelMap) {
+		return product_order(null, id,request, response, modelMap);
+	}
+
+	@RequestMapping(Constants.SITE_PREFIX_PATH + "/product_order{id:[0-9]+}.jspx")
+	public String product_order(@PathVariable String siteNumber,@PathVariable Integer id,
+			HttpServletRequest request, HttpServletResponse response,
+			org.springframework.ui.Model modelMap) {
+	
+		Product product = productService.get(id);
+		modelMap.addAttribute("product", product);
+		ForeContext.setData(modelMap.asMap(), request);
+		return "/1/default/product_order.html";
+	}
 	/**
 	 * 商品本期申请记录
 	 * @param request
@@ -376,9 +404,70 @@ public class NodeProductController {
 		}
 	}
 	
+	@RequestMapping(value = "/productOrderList.jspx",produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String productOrderList(@RequestParam String infoId,@RequestParam int page) {
+		ProductOrderList pageList = new ProductOrderList();
+		logger.info("infoId-----------------"+infoId);
+		{
+			Pageable pageable = new PageRequest(page, 30,Direction.DESC, "id");  
+			Map<String, String[]> params = new HashMap<String, String[]>();
+			params.put("EQ_infoId", new String[]{infoId});	
+//			EQ, LIKE, CONTAIN, STARTWITH, ENDWITH, GT, LT, GTE, LTE, IN
+			Page<Order> pagedList = orderService.findPage( params,pageable);;
+			
+			pageList.setCurrpage(page);
+			if(page==0||pagedList.getTotalPages()<2){
+				pageList.setIsfirst(1);
+			}else{
+				pageList.setIsfirst(0);
+			}
+			if(page+1==pagedList.getTotalPages()||pagedList.getTotalPages()<2){
+				pageList.setIslast(1);
+			}else{
+				pageList.setIslast(0);
+			}
+			pageList.setTotalcount(pagedList.getTotalElements());
+			pageList.setTotalpage(pagedList.getTotalPages());
+			pageList.setProductOrderList(pagedList.getContent());
+		}
+		return VideoResultController.toJson(pageList);
+	}
+	
+	@RequestMapping(value = "/productRecordList.jspx",produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String productRecordList(@RequestParam String infoPeriod,@RequestParam String infoId,@RequestParam int page) {
+		ProductRecordList pageList = new ProductRecordList();
+		logger.info("infoId-----------------"+infoId);
+		{
+			Pageable pageable = new PageRequest(page, 30,Direction.DESC, "id");  
+			Map<String, String[]> params = new HashMap<String, String[]>();
+			params.put("EQ_infoPeriod", new String[]{infoPeriod});	
+			params.put("EQ_infoId", new String[]{infoId});	
+//			EQ, LIKE, CONTAIN, STARTWITH, ENDWITH, GT, LT, GTE, LTE, IN
+			Page<ProductRecord> pagedList = recordService.findPage( params,pageable);;
+			
+			pageList.setCurrpage(page);
+			if(page==0||pagedList.getTotalPages()<2){
+				pageList.setIsfirst(1);
+			}else{
+				pageList.setIsfirst(0);
+			}
+			if(page+1==pagedList.getTotalPages()||pagedList.getTotalPages()<2){
+				pageList.setIslast(1);
+			}else{
+				pageList.setIslast(0);
+			}
+			pageList.setTotalcount(pagedList.getTotalElements());
+			pageList.setTotalpage(pagedList.getTotalPages());
+			pageList.setProductRecordList(pagedList.getContent());
+		}
+		return VideoResultController.toJson(pageList);
+	}
+	
 	@RequestMapping(value = "/productlist.jspx",produces = "text/html;charset=UTF-8")
 	@ResponseBody
-	public String videoList(@RequestParam String oneClassifyId,@RequestParam String twoClassifyId,@RequestParam String title,@RequestParam int page) {
+	public String productlist(@RequestParam String oneClassifyId,@RequestParam String twoClassifyId,@RequestParam String title,@RequestParam int page) {
 		ProductList productList = new ProductList();
 		logger.info("oneClassifyId-----------------"+oneClassifyId);
 		{
@@ -587,6 +676,8 @@ public class NodeProductController {
 	private ProductService productService;
 	@Autowired
 	private RecordService recordService;
+	@Autowired
+	private OrderService orderService;
 
 	@Autowired
 	private ProductClassifyService productClassifyService;

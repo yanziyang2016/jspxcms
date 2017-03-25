@@ -48,7 +48,7 @@ table td br{display:none;}
 			</div>
 			<script type="text/javascript">
 			function getScore() {
-				$.get("${dy}/info_score/${info.id}.jspx?d="+new Date()*1,function(data) {
+				$.get("http://shop.uliketu.com/info_score/${info.id}.jspx?d="+new Date()*1,function(data) {
 					var tickets=0,score=0,totalScore=0;	
 					for(var id in data) {
 						if($("#item-score-"+id).length>0){

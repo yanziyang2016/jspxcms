@@ -3,7 +3,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"/>
-<title>商品申请记录</title>
+<title>商品成功领取记录</title>
 <meta name="keywords" content="${anchor.title}"/>
 <meta name="description" content="${anchor.title}"/>
 <link href="_files/global.css" rel="stylesheet"/>
@@ -22,15 +22,15 @@
 		
 		<div>
 			<div class="mt10" style="border-bottom:1px solid #ddd;">
-				<span class="fs16 ff-yh" style="padding-bottom:5px;display:inline-block;border-bottom:3px solid #379be9;">申请记录</span>
+				<span class="fs16 ff-yh" style="padding-bottom:5px;display:inline-block;border-bottom:3px solid #379be9;">成功领取记录</span>
 			</div>
 			
 			<table class="table-list" >
 				<thead>
 					<tr>
-						<th width="200px">申请用户</th>
-						<th width="200px">申请期数</th>
-						<th width="300px">申请时间</th>
+						<th width="200px">领取用户</th>
+						<th width="200px">领取期数</th>
+						<th width="300px">领取时间</th>
 					</tr>
 				</thead>
 				<tbody id="videolistul">
@@ -38,7 +38,7 @@
 				</tbody>
 			</table>
 			
-			<h1 id="noproduct">该商品暂无申请领取记录！</h1>
+			<h1 id="noproduct">该商品暂无成功领取记录！</h1>
 			<div class="mt20">
 				<table class="center mt20">
 					<tbody>
@@ -68,14 +68,12 @@
 [#include 'inc_footer.html'/]
 
 <script type="text/javascript">
-var infoPeriod='${infoPeriod}';
 var infoId='${product.id}';
 var totalpage = 1;
-function videolist(infoPeriod,infoId,page){
+function videolist(infoId,page){
 	$.ajax({    
-	    url:'productRecordList.jspx',// 跳转到 action    
+	    url:'productOrderList.jspx',// 跳转到 action    
 	    data:{    
-	    	infoPeriod:infoPeriod,
 	    	infoId:infoId,
 	    	page:page
 	    },    
@@ -98,7 +96,7 @@ function videolist(infoPeriod,infoId,page){
 	    	$("#totalcount").html(data.totalcount);
 	    	$("#currpage").html(data.currpage+1);
 	    	$("#videolistul").empty();
-	    	var videoList=data.productRecordList;
+	    	var videoList=data.productOrderList;
 	    	if(videoList.length==0){
 	    		$(".table-list").hide();
 	    		$("#noproduct").show();
@@ -110,7 +108,7 @@ function videolist(infoPeriod,infoId,page){
 		    				'<tr >'+
 						'<td align="center">'+videoList[i].userName+'</td>'+
 						'<td align="center">第'+videoList[i].infoPeriod+'期</td>'+
-						'<td align="center">'+videoList[i].addDateString+'</td>'+	
+						'<td align="center">'+videoList[i].orderDateString+'</td>'+	
 						'<tr >'
 		        	);    		
 		    	}
@@ -124,30 +122,26 @@ function videolist(infoPeriod,infoId,page){
 }
 
 
-videolist(infoPeriod,infoId,0);
+videolist(infoId,0);
 
 $("#gofirstpage").click(function(){//第一页
 	var page = 0;
-	videolist(infoPeriod,infoId,page);
+	videolist(infoId,page);
 });
 $("#golastpage").click(function(){//尾页
 	var page = totalpage-1;
 	if(page>-1){
-		videolist(infoPeriod,infoId,page);;	
+		videolist(infoId,page);;	
 	}
 	
 });
 $("#gobackpage").click(function(){//上一页
 	var page = parseInt($("#currpage").html())-2;
-	videolist(infoPeriod,infoId,page);
+	videolist(infoId,page);
 });
 $("#gotopage").click(function(){//下一页
 	var page = parseInt($("#currpage").html());
-	videolist(infoPeriod,infoId,page);
-});
-$("#searchButton").click(function(){//下一页
-	var page = 0;
-	videolist(infoPeriod,infoId,page);
+	videolist(infoId,page);
 });
 
 

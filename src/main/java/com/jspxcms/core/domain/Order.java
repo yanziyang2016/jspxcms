@@ -39,7 +39,9 @@ public class Order implements java.io.Serializable {
 	private String logisticsNo;//物流单号
 	private String logisticsName;//物流公司
 	private Date orderDate;
+	private String orderDateString;
 	private String userName;//用户名
+	
 	private String mobile;//用户电话
 	private String userAddress;//用户地址
 	private String infoName;//商品名
@@ -126,6 +128,16 @@ public class Order implements java.io.Serializable {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
+	
+	@Transient
+	public String getOrderDateString() {
+		return orderDateString;
+	}
+
+	public void setOrderDateString(String orderDateString) {
+		this.orderDateString = orderDateString;
+	}
+
 	@Transient
 	public String getUserAddress() {
 		return userAddress;

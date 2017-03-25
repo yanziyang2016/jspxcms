@@ -1,5 +1,6 @@
 package com.jspxcms.core.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +42,7 @@ public class OrderServiceImpl implements OrderService{
 	public Page<Order> findPage(Map<String, String[]> params,
 			Pageable pageable) {
 		Page<Order> orderPage=dao.findAll(spec( params), pageable);
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd  hh:mm:ss");
 		if(orderPage.getContent().size()>0){
 			for(int i=0;i<orderPage.getContent().size();i++){
 				User usertemp = userdao.findOne(orderPage.getContent().get(i).getUserId());
@@ -51,6 +53,7 @@ public class OrderServiceImpl implements OrderService{
 				orderPage.getContent().get(i).setMobile(usertemp.getMobile());
 				orderPage.getContent().get(i).setInfoName(product.getTitle());
 				orderPage.getContent().get(i).setProductPro(product.getProductpro()==1?"虚拟":"实物");
+				orderPage.getContent().get(i).setOrderDateString(sdf.format(orderPage.getContent().get(i).getOrderDate()));
 			}
 			
 		}

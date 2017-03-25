@@ -34,6 +34,7 @@ public class ProductRecord implements java.io.Serializable {
 	private Integer periodNo;//申请序列
 	private Date addDate;
 	private String userName;//用户名
+	private String addDateString;
 
 	@Id
 	@Column(name = "f_record_id", unique = true, nullable = false)
@@ -55,6 +56,14 @@ public class ProductRecord implements java.io.Serializable {
 		this.userName = userName;
 	}
 
+	@Transient
+	public String getAddDateString() {
+		return addDateString;
+	}
+	
+	public void setAddDateString(String addDateString) {
+		this.addDateString = addDateString;
+	}
 
 	@Column(name = "f_user_id", nullable = false)
 	public Integer getUserId() {

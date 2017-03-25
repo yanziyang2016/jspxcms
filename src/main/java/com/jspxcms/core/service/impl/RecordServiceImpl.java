@@ -1,5 +1,6 @@
 package com.jspxcms.core.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jspxcms.common.orm.SearchFilter;
-import com.jspxcms.core.domain.Info;
 import com.jspxcms.core.domain.Product;
 //import com.jspxcms.core.domain.Order;
 import com.jspxcms.core.domain.ProductRecord;
@@ -44,7 +44,15 @@ public class RecordServiceImpl implements RecordService{
 	public Page<ProductRecord> findPage(Map<String, String[]> params,
 			Pageable pageable) {
 		Page<ProductRecord> orderPage=dao.findAll(spec( params), pageable);
-		
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd  hh:mm:ss");  
+		if(orderPage.getContent().size()>0){
+			for(int i=0;i<orderPage.getContent().size();i++){
+				User usertemp = userdao.findOne(orderPage.getContent().get(i).getUserId());
+				orderPage.getContent().get(i).setUserName(usertemp.getRealName());
+				orderPage.getContent().get(i).setAddDateString(sdf.format(orderPage.getContent().get(i).getAddDate()));
+			}
+			
+		}
 		return orderPage;
 	}
 	
