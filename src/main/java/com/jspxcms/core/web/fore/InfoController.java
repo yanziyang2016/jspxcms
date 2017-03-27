@@ -270,7 +270,6 @@ public class InfoController {
 				if(recordCount==periodCount){//当期领取完毕
 					Servlets.writeHtml(response,"当期商品已被全部领取，请进行下一期领取!" );
 				}else if(recordCount+1==periodCount){//当期最后一个领取
-					
 					bean = recordService.save(bean);
 					Order order = new Order();
 					int orderprono = 1+(int)(Math.random()*periodCount);//幸运序列

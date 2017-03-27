@@ -25,6 +25,7 @@ function confirmDeletePassword() {
 	return confirm("<s:message code='user.confirmDeletePassword'/>");
 }
 function optSingle(opt) {
+	
 	if(Cms.checkeds("ids")==0) {
 		alert("<s:message code='pleaseSelectRecord'/>");
 		return false;
@@ -33,7 +34,19 @@ function optSingle(opt) {
 		alert("<s:message code='pleaseSelectOne'/>");
 		return false;
 	}
+	var statusName = $("input[name='ids']:checkbox:checked").parent().find("input[name='statusName']").val();
+	if(statusName=="上架"){
+		alert("请先下架，再进行编辑");
+		return false;
+	}
 	var id = $("input[name='ids']:checkbox:checked").val();
+	location.href=$(opt+id).attr("href");
+}
+function editinfo(opt,id,statusName) {
+	if(statusName=="上架"){
+		alert("请先下架，再进行编辑");
+		return false;
+	}
 	location.href=$(opt+id).attr("href");
 }
 function optMulti(form, action, msg) {
@@ -157,10 +170,10 @@ function optDeletePassword(form) {
   <tbody>
   <c:forEach var="bean" varStatus="status" items="${pagedList.content}">
   <tr<shiro:hasPermission name="core:product_classify:edit"> ondblclick="location.href=$('#edit_opt_${bean.id}').attr('href');"</shiro:hasPermission>>
-    <td><input type="checkbox" name="ids" value="${bean.id}"/></td>
+    <td><input type="checkbox" name="ids" value="${bean.id}"/><input type="hidden" name="statusName" value="${bean.statusName}" /></td>
     <td align="center">
 		<shiro:hasPermission name="core:product_classify:edit">
-		      <a id="edit_opt_${bean.id}" href="edit.do?id=${bean.id}&position=${pagedList.number*pagedList.size+status.index}&${searchstring}" class="ls-opt"><s:message code="edit"/></a>
+		      <a id="edit_opt_${bean.id}" onclick="return editinfo('#edit_opt_','${bean.id}','${bean.statusName}');" href="edit.do?id=${bean.id}&position=${pagedList.number*pagedList.size+status.index}&${searchstring}" class="ls-opt"><s:message code="edit"/></a>
 		</shiro:hasPermission>
 		<shiro:hasPermission name="core:product_classify:delete">
 			<a href="delete.do?ids=${bean.id}&${searchstring}" onclick="return confirmDelete();" class="ls-opt"><s:message code="delete"/></a>
@@ -173,7 +186,7 @@ function optDeletePassword(form) {
      <td align="center">${bean.marketPrice}</td>
       <td align="center">${bean.stock}</td>
        <td align="center">${bean.periodCount}</td>
-        <td align="center">${bean.statusName}</td>
+        <td align="center" >${bean.statusName}</td>
     <td align="center">${bean.oneClassifyName}</td>
     <td align="center">${bean.twoClassifyName}</td>
   </tr>

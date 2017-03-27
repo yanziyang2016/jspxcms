@@ -162,6 +162,8 @@ public class OrderServiceImpl implements OrderService{
 
 	@Autowired
 	private ProductDao productDao;
+	
+	
 
 	private OrderDao dao;
 	@Autowired
@@ -170,6 +172,9 @@ public class OrderServiceImpl implements OrderService{
 	}
 	@Transactional
 	public Order save(Order order) {
+		Product product = productDao.findOne(order.getInfoId());
+		product.setStock(product.getStock()-1);
+		productDao.save(product);
 		return dao.save(order);
 	}
 

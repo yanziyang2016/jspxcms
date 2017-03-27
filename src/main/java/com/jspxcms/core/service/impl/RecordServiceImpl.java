@@ -120,8 +120,7 @@ public class RecordServiceImpl implements RecordService{
 	public void setInfodao(InfoDao infodao) {
 		this.infodao = infodao;
 	}
-	@Autowired
-	private ProductDao productdao;
+	
 	
 	private RecordDao dao;
 	@Autowired
@@ -147,9 +146,6 @@ public class RecordServiceImpl implements RecordService{
 		user.setYuanBao(user.getYuanBao()-100);
 		user.setMemStatus(5);
 		userdao.save(user);
-		Product product = productdao.findOne(bean.getInfoId());
-		product.setStock(product.getStock()-1);
-		productdao.save(product);
 		return dao.save(bean);
 		
 	}
