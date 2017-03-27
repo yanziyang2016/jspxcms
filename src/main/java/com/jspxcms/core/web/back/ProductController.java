@@ -2,9 +2,9 @@ package com.jspxcms.core.web.back;
 
 import static com.jspxcms.core.constant.Constants.CREATE;
 import static com.jspxcms.core.constant.Constants.DELETE_SUCCESS;
-import static com.jspxcms.core.constant.Constants.OPERATION_SUCCESS;
 import static com.jspxcms.core.constant.Constants.EDIT;
 import static com.jspxcms.core.constant.Constants.MESSAGE;
+import static com.jspxcms.core.constant.Constants.OPERATION_SUCCESS;
 import static com.jspxcms.core.constant.Constants.OPRT;
 import static com.jspxcms.core.constant.Constants.SAVE_SUCCESS;
 
@@ -37,6 +37,7 @@ import com.jspxcms.core.domain.Product;
 import com.jspxcms.core.domain.ProductClassify;
 import com.jspxcms.core.service.ProductClassifyService;
 import com.jspxcms.core.service.ProductService;
+import com.jspxcms.core.service.RecordService;
 
 /**
  * UserController
@@ -144,8 +145,14 @@ public class ProductController {
 	@RequestMapping("delete.do")
 	public String delete(Integer[] ids, HttpServletRequest request, RedirectAttributes ra) {
 		for(Integer id:ids){
-			logger.info(new Date()+"-product:delete-"+id);
-			service.delete(id);
+			if(recordService.getByInfoId(id).size()>0){
+				ra.addFlashAttribute(MESSAGE, service.get(id).getTitle()+"已经被使用，不能删除");
+				return "redirect:list.do";
+			}else{
+				logger.info(new Date()+"-product:delete-"+id);
+				service.delete(id);
+			}
+			
 		}
 		ra.addFlashAttribute(MESSAGE, DELETE_SUCCESS);
 		return "redirect:list.do";
@@ -198,6 +205,9 @@ public class ProductController {
 
 	@Autowired
 	private ProductService service;
+	
+	@Autowired
+	private RecordService recordService;
 	
 	@Autowired
 	private ProductClassifyService productClassifyService;

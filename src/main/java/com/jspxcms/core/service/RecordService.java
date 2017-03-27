@@ -1,5 +1,6 @@
 package com.jspxcms.core.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.domain.Page;
@@ -27,6 +28,7 @@ public interface RecordService {
 	public int findCountByInfoIdAndPeriod(Integer id, Integer infoPeriod);
 	public int findByProInFo(int orderprono, Integer id, Integer infoPeriod);
 	public Page<ProductRecord> findPage(Integer infoId, Integer infoPeriod, Pageable pageable);
+	public List<ProductRecord> getByInfoId(Integer id);
 	
 	
 }

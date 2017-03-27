@@ -3,6 +3,7 @@ package com.jspxcms.core.service.impl;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -158,6 +159,13 @@ public class RecordServiceImpl implements RecordService{
 	@Override
 	public int findByProInFo(int orderprono, Integer id, Integer infoPeriod) {
 		return dao.findByProInFo(orderprono, id, infoPeriod);
+	}
+
+
+
+	@Override
+	public List<ProductRecord> getByInfoId(Integer id) {
+		return dao.getByInfoId(id);
 	}
 
 	

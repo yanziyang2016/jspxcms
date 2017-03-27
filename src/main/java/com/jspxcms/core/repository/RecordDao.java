@@ -1,5 +1,7 @@
 package com.jspxcms.core.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -32,6 +34,8 @@ public interface RecordDao extends Repository<ProductRecord, Integer>, RecordDao
 
 	@Query("select userId from ProductRecord bean where bean.periodNo=?1 and bean.infoId=?2 and bean.infoPeriod=?3")
 	public int findByProInFo(int orderprono, Integer id, Integer infoPeriod);
+	@Query("from ProductRecord bean where bean.infoId=?1")
+	public List<ProductRecord> getByInfoId(Integer id);
 
 	
 }
