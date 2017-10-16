@@ -49,7 +49,7 @@ public class RecordServiceImpl implements RecordService{
 		if(orderPage.getContent().size()>0){
 			for(int i=0;i<orderPage.getContent().size();i++){
 				User usertemp = userdao.findOne(orderPage.getContent().get(i).getUserId());
-				orderPage.getContent().get(i).setUserName(usertemp.getRealName());
+				orderPage.getContent().get(i).setUserName(usertemp.getUsername());
 				orderPage.getContent().get(i).setAddDateString(sdf.format(orderPage.getContent().get(i).getAddDate()));
 			}
 			
@@ -79,7 +79,7 @@ public class RecordServiceImpl implements RecordService{
 		if(orderPage.getContent().size()>0){
 			for(int i=0;i<orderPage.getContent().size();i++){
 				User usertemp = userdao.findOne(orderPage.getContent().get(i).getUserId());
-				orderPage.getContent().get(i).setUserName(usertemp.getRealName());
+				orderPage.getContent().get(i).setUserName(usertemp.getUsername());
 			}
 			
 		}

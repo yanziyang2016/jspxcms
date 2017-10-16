@@ -49,7 +49,7 @@ public class OrderServiceImpl implements OrderService{
 //				Info infotemp = infodao.findOne(orderPage.getContent().get(i).getInfoId());
 				Product product = productDao.findOne(orderPage.getContent().get(i).getInfoId());
 				orderPage.getContent().get(i).setUserAddress(usertemp.getHomeAddress());
-				orderPage.getContent().get(i).setUserName(usertemp.getRealName());
+				orderPage.getContent().get(i).setUserName(usertemp.getUsername());
 				orderPage.getContent().get(i).setMobile(usertemp.getMobile());
 				orderPage.getContent().get(i).setInfoName(product.getTitle());
 				orderPage.getContent().get(i).setProductPro(product.getProductpro()==1?"虚拟":"实物");
@@ -85,7 +85,7 @@ public class OrderServiceImpl implements OrderService{
 				User usertemp = userdao.findOne(orderPage.getContent().get(i).getUserId());
 				Product product = productDao.findOne(orderPage.getContent().get(i).getInfoId());
 				orderPage.getContent().get(i).setUserAddress(usertemp.getHomeAddress());
-				orderPage.getContent().get(i).setUserName(usertemp.getRealName());
+				orderPage.getContent().get(i).setUserName(usertemp.getUsername());
 				orderPage.getContent().get(i).setMobile(usertemp.getMobile());
 				orderPage.getContent().get(i).setInfoName(product.getTitle());
 				orderPage.getContent().get(i).setProductPro(product.getProductpro()==1?"虚拟":"实物");
@@ -125,7 +125,7 @@ public class OrderServiceImpl implements OrderService{
 				orderPage.getContent().get(i).setInfoName(product.getTitle());
 				orderPage.getContent().get(i).setProductPro(product.getProductpro()==1?"虚拟":"实物");
 				orderPage.getContent().get(i).setUserAddress(usertemp.getHomeAddress());
-				orderPage.getContent().get(i).setUserName(usertemp.getRealName());
+				orderPage.getContent().get(i).setUserName(usertemp.getUsername());
 				orderPage.getContent().get(i).setMobile(usertemp.getMobile());
 			
 			}
@@ -185,7 +185,7 @@ public class OrderServiceImpl implements OrderService{
 //		Info infotemp = infodao.findOne(order.getInfoId());
 		Product product = productDao.findOne(order.getInfoId());
 		order.setUserAddress(usertemp.getHomeAddress());
-		order.setUserName(usertemp.getRealName());
+		order.setUserName(usertemp.getUsername());
 		order.setMobile(usertemp.getMobile());
 		order.setInfoName(product.getTitle());
 		order.setProductPro(product.getProductpro()==1?"虚拟":"实物");

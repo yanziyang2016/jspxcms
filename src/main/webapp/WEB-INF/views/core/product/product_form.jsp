@@ -151,6 +151,17 @@ function confirmDelete() {
 	
 </form>
 <script  type="text/javascript">
+$(function() {
+	$("#validForm").validate({
+		submitHandler: function(form) {
+			if($("#oneClassifyId").val()==-1) {
+				alert("一级分类未设置");
+				return;
+			}
+			form.submit();
+		}
+	});
+});
 function imgCrop(name) {
 	if($("#"+name).val()=="") {alert("<s:message code='noImageToCrop'/>");return;}
 	Cms.imgCrop("../../commons/img_area_select.do",name);
